@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { COLORS } from '@/lib/theme'
 import BotonInstalar from '@/components/BotonInstalar'
+import { LEGAL } from '@/lib/legal'
 
 // Landing pública: la ve quien entra sin sesión (proxy.ts manda "/" acá).
 // Su trabajo es explicar la app en dos minutos y que la instalen.
@@ -208,6 +209,41 @@ export default function BienvenidaPage() {
         </div>
       </section>
 
+      {/* Qué es */}
+      <section style={{ ...contenedor, paddingBottom: 56 }}>
+        <span style={eyebrow}>Qué es Rebuscapp</span>
+        <h2 style={{ ...tituloSeccion, maxWidth: 760 }}>Para conseguir a alguien que haga un trabajo, o conseguir trabajo.</h2>
+        <p style={{ fontSize: 'clamp(16px, 4vw, 18px)', lineHeight: 1.6, color: COLORS.inkSoft, maxWidth: 760, margin: '-8px 0 28px' }}>
+          Rebuscapp conecta a personas y comercios que necesitan que alguien haga un trabajo (arreglar una
+          canilla, pintar, limpiar, hacer un flete, cubrir un puesto) con trabajadores de Comodoro Rivadavia
+          que buscan trabajo. Se publica, se postulan, chatean y se arreglan directamente entre ustedes.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 16 }}>
+          {[
+            {
+              titulo: 'Si necesitás a alguien',
+              texto: 'Para un arreglo de una tarde o para cubrir un puesto fijo. Publicás gratis y elegís entre quienes se postulan.',
+            },
+            {
+              titulo: 'Si buscás trabajo',
+              texto: 'Te avisamos cuando sale algo de tu rubro. Tu perfil y tus calificaciones te ayudan a conseguir el próximo.',
+            },
+            {
+              titulo: 'Si tenés un comercio',
+              texto: 'Podés publicar tus puestos como empresa y, si querés, anunciar tu negocio en la app.',
+            },
+          ].map((c) => (
+            <div key={c.titulo} style={tarjeta}>
+              <p style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink, margin: '0 0 6px' }}>{c.titulo}</p>
+              <p style={{ fontSize: 14, color: COLORS.inkSoft, lineHeight: 1.5, margin: 0 }}>{c.texto}</p>
+            </div>
+          ))}
+        </div>
+        <p style={{ fontSize: 14, color: COLORS.inkSoft, lineHeight: 1.5, margin: '18px 0 0', maxWidth: 760 }}>
+          Rebuscapp no es una agencia ni se mete en el pago: no cobra comisión y lo que acuerdan es entre ustedes.
+        </p>
+      </section>
+
       {/* Cómo funciona */}
       <section style={{ ...contenedor, paddingBottom: 56 }}>
         <span style={eyebrow}>Cómo funciona</span>
@@ -240,7 +276,7 @@ export default function BienvenidaPage() {
       <section style={{ ...contenedor, paddingBottom: 56 }}>
         <span style={eyebrow}>Por qué Rebuscapp</span>
         <h2 style={tituloSeccion}>Pensada para Comodoro.</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 16 }}>
           <Ventaja
             titulo="Gratis, sin comisiones"
             texto="No cobramos por publicar ni por postularte. Lo que acuerdan es entre ustedes."
@@ -261,6 +297,112 @@ export default function BienvenidaPage() {
             texto="Tu DNI, tu edad y tu mail no se muestran a nadie. Hablás por el chat de la app."
             icono={<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />}
           />
+          <Ventaja
+            titulo="Publicidad que no molesta"
+            texto="Pocos banners fijos de comercios de la ciudad. Nada de popups ni videos que tapen la pantalla."
+            icono={<path d="M3 5h18v14H3zM3 9h18M7 13h6M7 16h4" />}
+          />
+        </div>
+      </section>
+
+      {/* Para comercios */}
+      <section style={{ ...contenedor, paddingBottom: 56 }}>
+        <div
+          style={{
+            ...tarjeta,
+            padding: 'clamp(24px, 5vw, 44px)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+            gap: 36,
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <span style={eyebrow}>Para comercios</span>
+            <h2 style={tituloSeccion}>Anunciá tu negocio donde la gente busca trabajo y trabajadores.</h2>
+            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {[
+                ['Espacios fijos', 'Tu banner aparece en el inicio, en la lista de trabajos y en el detalle de cada pedido.'],
+                ['Según el rubro', 'Tu ferretería puede aparecer justo cuando alguien busca plomería o electricidad.'],
+                ['Resultados a la vista', 'Sabés cuántas veces se vio tu anuncio y cuántas personas lo tocaron.'],
+                ['Sin molestar a nadie', 'Nada de popups ni ventanas que tapen: la gente ve tu anuncio sin que le corte lo que está haciendo.'],
+              ].map(([t, d]) => (
+                <li key={t} style={{ display: 'flex', gap: 12 }}>
+                  <span
+                    style={{
+                      flexShrink: 0,
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      background: COLORS.clay,
+                      color: COLORS.onClay,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 1,
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                  <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: COLORS.inkSoft }}>
+                    <b style={{ color: COLORS.ink }}>{t}.</b> {d}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            {LEGAL.contacto && (
+              <a
+                href={`mailto:${LEGAL.contacto}?subject=Quiero anunciar en Rebuscapp`}
+                style={{
+                  display: 'inline-block',
+                  marginTop: 24,
+                  padding: '14px 24px',
+                  borderRadius: 100,
+                  background: COLORS.dark,
+                  color: COLORS.onDark,
+                  fontSize: 15,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                }}
+              >
+                Quiero anunciar
+              </a>
+            )}
+          </div>
+
+          {/* Ejemplo de cómo se ve un banner dentro de la app */}
+          <div aria-hidden style={{ background: COLORS.paper, borderRadius: 26, padding: 18 }}>
+            {[0, 1].map((i) => (
+              <div key={i} style={{ background: COLORS.card, borderRadius: 16, padding: 14, marginBottom: 10, boxShadow: COLORS.cardShadow }}>
+                <div style={{ height: 10, width: '60%', borderRadius: 6, background: COLORS.line, marginBottom: 8 }} />
+                <div style={{ height: 8, width: '35%', borderRadius: 6, background: COLORS.iconBg }} />
+              </div>
+            ))}
+            <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: COLORS.inkSoft, margin: '14px 0 6px 4px' }}>
+              PATROCINADO
+            </p>
+            <div
+              style={{
+                aspectRatio: '5 / 2',
+                borderRadius: 16,
+                background: COLORS.clayGradient,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+              }}
+            >
+              <p style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.02em', color: COLORS.ink, margin: 0 }}>Tu negocio acá</p>
+              <p style={{ fontSize: 13, color: 'rgba(28,28,30,0.7)', margin: 0 }}>Ferretería · Av. Rivadavia 1234</p>
+            </div>
+            <div style={{ background: COLORS.card, borderRadius: 16, padding: 14, marginTop: 10, boxShadow: COLORS.cardShadow }}>
+              <div style={{ height: 10, width: '50%', borderRadius: 6, background: COLORS.line, marginBottom: 8 }} />
+              <div style={{ height: 8, width: '30%', borderRadius: 6, background: COLORS.iconBg }} />
+            </div>
+          </div>
         </div>
       </section>
 
