@@ -90,7 +90,7 @@ export default function LoginPage() {
   return (
     <div style={{ maxWidth: 360, margin: '0 auto', minHeight: '100vh', padding: '80px 20px', fontFamily: 'var(--font-body)', background: COLORS.paper }}>
       <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'center' }}>
-        <Image src="/logo.png" alt="Rebuscapp" width={220} height={55} priority />
+        <Image src="/logo-color.png" alt="Rebuscapp" width={220} height={67} priority />
       </div>
 
       {cuentaEliminada && paso === 'email' && (

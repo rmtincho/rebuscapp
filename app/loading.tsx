@@ -1,7 +1,7 @@
 import { COLORS } from '@/lib/theme'
 
-// Pantalla de carga mientras el servidor arma la página: el mismo
-// degradé amarillo de las tarjetas del inicio, con la lupa negra.
+// Pantalla de carga mientras el servidor arma la página: el degradé
+// amarillo de marca con la lupa negra del logo (public/icono-negro.png).
 export default function Cargando() {
   return (
     <div
@@ -12,25 +12,12 @@ export default function Cargando() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: `linear-gradient(160deg, #FFD54A 0%, ${COLORS.clay} 100%)`,
+        background: COLORS.clayGradient,
         color: COLORS.onClay,
       }}
     >
-      <svg
-        className="lupa-cargando"
-        width="72"
-        height="72"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        role="img"
-        aria-label="Cargando"
-      >
-        <circle cx="11" cy="11" r="7" />
-        <path d="M21 21l-4.3-4.3" />
-      </svg>
+      {/* eslint-disable-next-line @next/next/no-img-element -- imagen local fija, sin optimizar a propósito para que aparezca al instante */}
+      <img className="lupa-cargando" src="/icono-negro.png" alt="Cargando" width={64} height={100} />
     </div>
   )
 }

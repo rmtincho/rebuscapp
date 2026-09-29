@@ -10,6 +10,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  // Dirección pública del sitio: la imagen de "compartir link" (og.png)
+  // necesita URL completa. Con el dominio nuevo, definir NEXT_PUBLIC_SITE_URL.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rebuscapp.vercel.app'),
   title: 'Rebuscapp',
   description: 'Trabajos y trabajadores cerca tuyo en Comodoro Rivadavia.',
   // Sin este link el navegador no ofrece "Agregar a pantalla de inicio"
@@ -20,6 +23,7 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
   },
   icons: {
+    icon: '/favicon.png',
     apple: '/icons/apple-touch-icon.png',
   },
 }
