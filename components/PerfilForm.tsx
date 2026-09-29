@@ -88,6 +88,7 @@ export default function PerfilForm({
   categoriasInteresIniciales,
   visibleEnListadoInicial,
   estadisticas,
+  esAdmin = false,
 }: {
   perfilExistente: Perfil
   fotoActual: string | null
@@ -100,6 +101,7 @@ export default function PerfilForm({
   // null = la columna todavía no existe en la base: no mostramos la opción
   visibleEnListadoInicial: boolean | null
   estadisticas?: Estadisticas
+  esAdmin?: boolean
 }) {
   const supabase = createClient()
 
@@ -390,6 +392,28 @@ export default function PerfilForm({
         />
 
         {estadisticas && <TusEstadisticas e={estadisticas} />}
+
+        {esAdmin && (
+          <a
+            href="/admin/anuncios"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              background: COLORS.dark,
+              color: COLORS.onDark,
+              borderRadius: 20,
+              padding: '16px 18px',
+              marginBottom: 28,
+              textDecoration: 'none',
+              fontWeight: 700,
+              fontSize: 15,
+            }}
+          >
+            Panel de administración · Anuncios
+            <span style={{ color: COLORS.clay }}>→</span>
+          </a>
+        )}
         </div>
 
         <div style={{ minWidth: 0 }}>

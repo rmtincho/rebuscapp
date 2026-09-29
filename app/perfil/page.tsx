@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import PerfilForm from '@/components/PerfilForm'
+import { esEmailAdmin } from '@/lib/admin'
 import type { Estadisticas } from '@/components/TusEstadisticas'
 
 export default async function PerfilPage() {
@@ -114,6 +115,7 @@ export default async function PerfilPage() {
       categoriasInteresIniciales={categoriasInteresFormateadas}
       visibleEnListadoInicial={visibleEnListado}
       estadisticas={estadisticas}
+      esAdmin={esEmailAdmin(user.email)}
     />
   )
 }
