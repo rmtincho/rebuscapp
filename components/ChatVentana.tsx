@@ -20,6 +20,7 @@ export default function ChatVentana({
   mensajesIniciales,
   puedeEscribir = true,
   mensajeSoloLectura,
+  bloqueado = false,
 }: {
   pedidoId: string
   usuarioId: string
@@ -30,6 +31,8 @@ export default function ChatVentana({
   // de que el solicitante le escriba)
   puedeEscribir?: boolean
   mensajeSoloLectura?: string
+  // Hay un bloqueo entre los dos: no se puede escribir nunca
+  bloqueado?: boolean
 }) {
   const supabase = createClient()
   const [mensajes, setMensajes] = useState<Mensaje[]>(mensajesIniciales)
@@ -39,7 +42,7 @@ export default function ChatVentana({
 
   // Una vez que hay al menos un mensaje, cualquiera de los dos puede
   // seguir escribiendo (el bloqueo es solo para "iniciar" la charla).
-  const habilitado = puedeEscribir || mensajes.length > 0
+  const habilitado = !bloqueado && (puedeEscribir || mensajes.length > 0)
 
   // Al entrar al chat, marcamos como leídos los mensajes pendientes
   // de este par de usuarios en este pedido — así el contador de

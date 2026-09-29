@@ -3,6 +3,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { COLORS } from '@/lib/theme'
 import PostularseForm from '@/components/PostularseForm'
 import EliminarPedidoBoton from '@/components/EliminarPedidoBoton'
+import DenunciarBloquear from '@/components/DenunciarBloquear'
+import { idsConBloqueo, loBloqueo } from '@/lib/bloqueos'
 import Link from 'next/link'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
 
@@ -59,6 +61,12 @@ export default async function DetallePedidoPage({
 
   const esElDueño = user?.id === pedido.solicitante_id
   const soyElPrestadorAsignado = user?.id === pedido.prestador_asignado_id
+
+  // Bloqueos en cualquier dirección: el que no es dueño no se puede
+  // postular, y el dueño no ve a esos postulantes
+  const bloqueados = user ? await idsConBloqueo(user.id) : new Set<string>()
+  const hayBloqueoConDueño = !esElDueño && bloqueados.has(pedido.solicitante_id)
+  const loBloqueeYo = hayBloqueoConDueño && (await loBloqueo(user!.id, pedido.solicitante_id))
 
   let yaPostulado = false
   let motivoBloqueo: string | null = null
@@ -131,7 +139,7 @@ export default async function DetallePedidoPage({
       .eq('pedido_id', id)
       .order('fecha', { ascending: false })
 
-    postulaciones = postulacionesData ?? []
+    postulaciones = (postulacionesData ?? []).filter((p) => !bloqueados.has(p.prestador_id))
 
     for (const postulacion of postulaciones) {
       const { count } = await supabase
@@ -593,6 +601,20 @@ export default async function DetallePedidoPage({
                     Completar datos
                   </Link>
                 </div>
+              ) : hayBloqueoConDueño ? (
+                <div
+                  style={{
+                    background: COLORS.line,
+                    color: COLORS.inkSoft,
+                    padding: 14,
+                    borderRadius: 14,
+                    fontSize: 13.5,
+                    fontWeight: 600,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  No podés postularte a este pedido.
+                </div>
               ) : motivoBloqueo ? (
                 <div
                   style={{
@@ -613,6 +635,16 @@ export default async function DetallePedidoPage({
               ) : (
                 <PostularseForm pedidoId={id} />
               )
+            )}
+
+            {user && !esElDueño && (
+              <DenunciarBloquear
+                pedidoId={id}
+                otroId={pedido.solicitante_id}
+                nombre={nombrePublicador ?? 'quien lo publicó'}
+                bloqueado={loBloqueeYo}
+                centrado
+              />
             )}
           </div>
 

@@ -3,6 +3,7 @@
 import { enviarPush } from '@/lib/push-server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { idsConBloqueo } from '@/lib/bloqueos';
 
 // Las server actions son endpoints públicos: cualquiera con sesión las
 // puede llamar con los argumentos que quiera. Por eso acá NO confiamos
@@ -149,9 +150,11 @@ export async function notificarPedidoCerca(pedidoId: string) {
 
   // Evitamos notificarle a alguien su propio pedido (por si publica y
   // también tiene esa categoría entre sus intereses como prestador)
+  // ...ni a quien tiene un bloqueo con quien lo publicó
+  const bloqueados = await idsConBloqueo(user.id);
   const destinatarios = interesados
     .map((i) => i.prestador_id)
-    .filter((id) => id !== user.id);
+    .filter((id) => id !== user.id && !bloqueados.has(id));
 
   // Mandamos los push en paralelo, pero sin que uno que falle tumbe
   // a los demás.

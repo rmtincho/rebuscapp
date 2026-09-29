@@ -19,7 +19,8 @@ export type TipoNotificacion =
   | 'postulacion_recibida'
   | 'postulante_elegido'
   | 'pedido_editado'
-  | 'postulacion_rechazada';
+  | 'postulacion_rechazada'
+  | 'denuncia';
 
 interface EnviarPushParams {
   usuarioId: string;

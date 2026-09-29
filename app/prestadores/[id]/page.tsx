@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { COLORS } from '@/lib/theme'
 import Link from 'next/link'
 import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
+import { loBloqueo } from '@/lib/bloqueos'
+import DenunciarBloquear from '@/components/DenunciarBloquear'
 
 const NIVEL_LABEL: Record<string, string> = {
   primario: 'Primario',
@@ -49,6 +51,9 @@ export default async function PerfilPrestadorPublicoPage({
   const { id } = await params
   const { volver } = await searchParams
   const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   const { data: usuario } = await supabase
     .from('usuarios')
@@ -72,6 +77,9 @@ export default async function PerfilPrestadorPublicoPage({
     )
     .eq('usuario_id', id)
     .maybeSingle()
+
+  const esOtro = !!user && user.id !== id
+  const bloqueado = esOtro ? await loBloqueo(user.id, id) : false
 
   const { data: categoriasInteres } = await supabase
     .from('prestador_categorias')
@@ -226,6 +234,8 @@ export default async function PerfilPrestadorPublicoPage({
               <p style={{ fontSize: 13.5, color: COLORS.ink, lineHeight: 1.55, margin: 0 }}>{perfil.sobre_mi}</p>
             </div>
           )}
+
+          {esOtro && <DenunciarBloquear otroId={id} nombre={usuario.nombre ?? 'esta persona'} bloqueado={bloqueado} />}
         </div>
       </div>
     </div>
