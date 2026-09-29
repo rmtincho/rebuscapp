@@ -21,6 +21,7 @@ import {
 import BottomNav from '@/components/BottomNav'
 import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
+import EliminarCuenta from '@/components/EliminarCuenta'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -268,8 +269,8 @@ export default function PerfilForm({
     // Edad y DNI son opcionales acá (se piden recién para postularse),
     // pero si los completa tienen que ser válidos
     const edadNum = Number(edad)
-    if (edad !== '' && (isNaN(edadNum) || edadNum < 16 || edadNum > 99)) {
-      setError('Ingresá una edad válida (entre 16 y 99).')
+    if (edad !== '' && (isNaN(edadNum) || edadNum < 18 || edadNum > 99)) {
+      setError('Ingresá una edad válida (entre 18 y 99).')
       return
     }
     if (dni !== '' && (dni.length < 7 || dni.length > 8)) {
@@ -717,6 +718,14 @@ export default function PerfilForm({
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <BotonCerrarSesion />
         </div>
+
+        <EliminarCuenta />
+
+        <p style={{ marginTop: 24, textAlign: 'center', fontSize: 12, color: COLORS.inkSoft }}>
+          <a href="/terminos" style={{ color: 'inherit' }}>Términos y condiciones</a>
+          {' · '}
+          <a href="/privacidad" style={{ color: 'inherit' }}>Política de privacidad</a>
+        </p>
       </div>
       <BottomNav />
     </PantallaBase>

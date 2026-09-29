@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Rutas que cualquiera puede ver sin estar logueado
-const RUTAS_PUBLICAS = ['/login']
+const RUTAS_PUBLICAS = ['/login', '/terminos', '/privacidad']
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -42,7 +42,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // Ya logueado intentando entrar a /login → a la home
-  if (user && esRutaPublica) {
+  // (Términos y Privacidad se ven igual, logueado o no)
+  if (user && request.nextUrl.pathname.startsWith('/login')) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)

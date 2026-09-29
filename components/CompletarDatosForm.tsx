@@ -40,8 +40,8 @@ export default function CompletarDatosForm({
     }
 
     const edadNum = Number(edad)
-    if (!edad || isNaN(edadNum) || edadNum < 16 || edadNum > 99) {
-      setError('Ingresá una edad válida (entre 16 y 99).')
+    if (!edad || isNaN(edadNum) || edadNum < 18 || edadNum > 99) {
+      setError('Ingresá una edad válida (entre 18 y 99).')
       return
     }
 

@@ -102,6 +102,11 @@ export default function LoginPage() {
           >
             {cargando ? 'Enviando...' : 'Continuar'}
           </button>
+          <p style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 14, textAlign: 'center', lineHeight: 1.5 }}>
+            Al continuar aceptás los{' '}
+            <a href="/terminos" style={{ color: COLORS.ink, fontWeight: 600 }}>Términos y condiciones</a> y la{' '}
+            <a href="/privacidad" style={{ color: COLORS.ink, fontWeight: 600 }}>Política de privacidad</a>.
+          </p>
         </form>
       )}
 
