@@ -29,3 +29,13 @@ export function formatearHora(fecha: string | Date): string {
 export function formatearFechaCorta(fecha: string | Date): string {
   return formatoFechaCorta.format(new Date(fecha))
 }
+
+/** "hoy a las 19:40", "mañana a las 08:15" o "2 oct a las 10:00" */
+export function formatearCuando(fecha: string | Date): string {
+  const d = new Date(fecha)
+  const dia = (x: Date) => formatoFechaCorta.format(x)
+  const hoy = new Date()
+  const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000)
+  const prefijo = dia(d) === dia(hoy) ? 'hoy' : dia(d) === dia(manana) ? 'mañana' : dia(d)
+  return `${prefijo} a las ${formatearHora(d)}`
+}

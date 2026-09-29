@@ -4,6 +4,8 @@ import { COLORS } from '@/lib/theme'
 import PostularseForm from '@/components/PostularseForm'
 import EliminarPedidoBoton from '@/components/EliminarPedidoBoton'
 import Link from 'next/link'
+import { proximaPostulacionPermitida, POSTULACIONES_POR_DIA } from '@/lib/limites'
+import { formatearCuando } from '@/lib/fechas'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
 
 export default async function DetallePedidoPage({
@@ -62,6 +64,7 @@ export default async function DetallePedidoPage({
 
   let yaPostulado = false
   let motivoBloqueo: string | null = null
+  let proximaPostulacion: Date | null = null
   let faltanDatosBasicos = false
 
   if (user && !esElDueño) {
@@ -73,6 +76,9 @@ export default async function DetallePedidoPage({
       .maybeSingle()
 
     yaPostulado = !!postulacionExistente
+    if (!yaPostulado && pedido.estado === 'abierto') {
+      proximaPostulacion = await proximaPostulacionPermitida(user.id)
+    }
 
     if (!yaPostulado && pedido.estado === 'abierto') {
       // Edad y DNI no son públicos: los propios se leen con el cliente
@@ -609,6 +615,21 @@ export default async function DetallePedidoPage({
                   <Link href="/perfil" style={{ color: '#8A0A32', fontWeight: 700, textDecoration: 'underline' }}>
                     Revisar mi perfil
                   </Link>
+                </div>
+              ) : proximaPostulacion ? (
+                <div
+                  style={{
+                    background: COLORS.line,
+                    color: COLORS.inkSoft,
+                    padding: 14,
+                    borderRadius: 14,
+                    fontSize: 13.5,
+                    fontWeight: 600,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Ya te postulaste a {POSTULACIONES_POR_DIA} trabajos en las últimas 24 horas. Vas a poder
+                  postularte de nuevo {formatearCuando(proximaPostulacion)}.
                 </div>
               ) : (
                 <PostularseForm pedidoId={id} />

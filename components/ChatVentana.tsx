@@ -119,6 +119,8 @@ export default function ChatVentana({
     setEnviando(false)
 
     if (error) {
+      // Devolvemos el texto al campo para que no se pierda
+      setTexto(contenidoAEnviar)
       alert('No pudimos enviar el mensaje: ' + error.message)
       return
     }
