@@ -161,7 +161,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
 
     setCargando(true)
 
-    const { error: errorUpdate } = await supabase
+    const { data: actualizados, error: errorUpdate } = await supabase
       .from('pedidos')
       .update({
         categoria_slug: categoriaSlug,
@@ -184,11 +184,17 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
         requisitos_adicionales: requisitosAdicionales.trim() || null,
       })
       .eq('id', pedido.id)
+      .select('id')
 
     setCargando(false)
 
     if (errorUpdate) {
       setError('No pudimos guardar los cambios: ' + errorUpdate.message)
+      return
+    }
+    // Si RLS no dejó tocar la fila, no hay error pero tampoco cambios
+    if (!actualizados || actualizados.length === 0) {
+      setError('No pudimos guardar los cambios. Probá de nuevo en un rato.')
       return
     }
 

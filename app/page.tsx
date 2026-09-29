@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
@@ -110,9 +111,26 @@ export default async function HomePage() {
       .select('id, descripcion, estado, jornada, fecha_creacion, categorias ( nombre )')
       .eq('solicitante_id', user.id)
       .order('fecha_creacion', { ascending: false })
-      .limit(5)
+      .limit(15)
 
-    misPedidos = pedidosPropios ?? []
+    // "Eliminar pedido" y "No concretado" dejan los dos el estado
+    // 'cancelado'. Se distinguen porque el no concretado tiene su fila en
+    // no_concretados: los que no la tienen fueron eliminados y no se
+    // muestran. (Cliente admin: RLS puede no dejar leer esa tabla, y acá
+    // solo se consultan pedidos propios.)
+    const idsCancelados = (pedidosPropios ?? []).filter((p) => p.estado === 'cancelado').map((p) => p.id)
+    let noConcretados = new Set<string>()
+    if (idsCancelados.length > 0) {
+      const { data: filas } = await createAdminClient()
+        .from('no_concretados')
+        .select('pedido_id')
+        .in('pedido_id', idsCancelados)
+      noConcretados = new Set((filas ?? []).map((f) => f.pedido_id))
+    }
+
+    misPedidos = (pedidosPropios ?? [])
+      .filter((p) => p.estado !== 'cancelado' || noConcretados.has(p.id))
+      .slice(0, 5)
 
     for (const p of misPedidos) {
       if (p.estado === 'abierto') {

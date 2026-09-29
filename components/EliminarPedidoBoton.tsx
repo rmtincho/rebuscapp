@@ -21,12 +21,22 @@ export default function EliminarPedidoBoton({ pedidoId }: { pedidoId: string }) 
     // Soft-delete: lo marcamos como cancelado en vez de borrar la fila,
     // así queda el historial (y no rompe nada que referencie este id,
     // como postulaciones ya existentes).
-    const { error } = await supabase.from('pedidos').update({ estado: 'cancelado' }).eq('id', pedidoId)
+    // Sin fila en no_concretados, el inicio lo trata como eliminado.
+    const { data, error } = await supabase
+      .from('pedidos')
+      .update({ estado: 'cancelado' })
+      .eq('id', pedidoId)
+      .select('id')
 
     setCargando(false)
 
     if (error) {
       alert('No pudimos eliminar el pedido: ' + error.message)
+      return
+    }
+    // Si RLS no dejó tocar la fila, no hay error pero tampoco cambios
+    if (!data || data.length === 0) {
+      alert('No pudimos eliminar el pedido. Probá de nuevo en un rato.')
       return
     }
 

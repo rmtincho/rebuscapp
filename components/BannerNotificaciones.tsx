@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { activarNotificaciones, estadoPermiso, pushSoportado } from '@/lib/push-client'
+import { activarNotificaciones, estadoPermiso, pushSoportado, sincronizarNotificaciones } from '@/lib/push-client'
 
 const CLAVE_DESCARTADO = 'rebuscapp_banner_notif_descartado'
 
@@ -20,8 +20,19 @@ export default function BannerNotificaciones() {
   useEffect(() => {
     if (!pushSoportado()) return
 
-    const yaDescartado = localStorage.getItem(CLAVE_DESCARTADO) === '1'
     const permiso = estadoPermiso()
+
+    // Con el permiso ya dado, nos aseguramos en silencio de que la
+    // suscripción de este dispositivo esté guardada para esta cuenta
+    if (permiso === 'granted') {
+      sincronizarNotificaciones().catch(() => {})
+      return
+    }
+
+    let yaDescartado = false
+    try {
+      yaDescartado = localStorage.getItem(CLAVE_DESCARTADO) === '1'
+    } catch {}
 
     // Solo se muestra si el navegador nunca preguntó (ni activado, ni
     // bloqueado) y el usuario no lo cerró antes en este dispositivo.

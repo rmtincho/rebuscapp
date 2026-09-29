@@ -7,6 +7,7 @@ import {
   desactivarNotificaciones,
   estadoPermiso,
   pushSoportado,
+  sincronizarNotificaciones,
 } from '@/lib/push-client'
 
 const COLORS = {
@@ -21,10 +22,18 @@ export default function AjustesNotificacionesPage() {
   const [soportado, setSoportado] = useState(true)
   const [cargando, setCargando] = useState(false)
   const [mensaje, setMensaje] = useState<string | null>(null)
+  // true solo cuando la suscripción quedó guardada para esta cuenta;
+  // el permiso del navegador solo no alcanza
+  const [guardada, setGuardada] = useState(false)
 
   useEffect(() => {
     setSoportado(pushSoportado())
     setPermiso(estadoPermiso())
+    sincronizarNotificaciones().then((r) => {
+      if (!r) return
+      setGuardada(r.ok)
+      if (!r.ok) setMensaje(`No pudimos confirmar tus avisos (${r.detalle ?? r.motivo}). Tocá Activar para reintentar.`)
+    })
   }, [])
 
   async function handleActivar() {
@@ -34,6 +43,7 @@ export default function AjustesNotificacionesPage() {
     setCargando(false)
     setPermiso(estadoPermiso())
 
+    setGuardada(resultado.ok)
     if (resultado.ok) {
       setMensaje('¡Listo! Ya vas a recibir avisos.')
     } else if (resultado.motivo === 'permiso_denegado') {
@@ -41,7 +51,7 @@ export default function AjustesNotificacionesPage() {
     } else if (resultado.motivo === 'no_soportado') {
       setMensaje('Tu navegador no soporta notificaciones. Si estás en iPhone, primero instalá la app (Compartir → Agregar a inicio).')
     } else {
-      setMensaje('No pudimos activarlo ahora. Probá de nuevo en un rato.')
+      setMensaje(`No pudimos activarlo ahora (${resultado.detalle ?? 'error desconocido'}). Probá de nuevo en un rato.`)
     }
   }
 
@@ -50,10 +60,11 @@ export default function AjustesNotificacionesPage() {
     setMensaje(null)
     await desactivarNotificaciones()
     setCargando(false)
+    setGuardada(false)
     setMensaje('Desactivadas. No vas a recibir más avisos push.')
   }
 
-  const activo = permiso === 'granted'
+  const activo = permiso === 'granted' && guardada
 
   return (
     <div style={{ background: COLORS.fondo, minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>

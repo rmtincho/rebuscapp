@@ -2,7 +2,8 @@
 // Se usa desde la pantalla de "activar notificaciones"
 // (la que ya tenés mockeada como notificaciones.html).
 
-import { createClient } from '@/lib/supabase/client'; // ajustar si tu cliente de Supabase vive en otro path
+import { createClient } from '@/lib/supabase/client';
+import { guardarSuscripcionPush } from '@/app/actions/push';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
@@ -60,39 +61,58 @@ export async function activarNotificaciones(): Promise<
 
     const subJson = subscription.toJSON();
 
-    // Guardamos la suscripción en Supabase, asociada al usuario logueado.
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // Guardamos la suscripción asociada al usuario logueado (en el
+    // servidor, para poder reasignarla si este dispositivo antes
+    // estaba con otra cuenta).
+    const resultado = await guardarSuscripcionPush({
+      endpoint: subJson.endpoint!,
+      p256dh: subJson.keys!.p256dh,
+      auth: subJson.keys!.auth,
+    });
 
-    if (!user) {
-      return { ok: false, motivo: 'error', detalle: 'usuario no logueado' };
+    if (!resultado.ok) {
+      return { ok: false, motivo: 'error', detalle: resultado.error };
     }
 
-    const { error } = await supabase.from('push_subscriptions').upsert(
-      {
-        usuario_id: user.id,
-        endpoint: subJson.endpoint!,
-        p256dh: subJson.keys!.p256dh,
-        auth: subJson.keys!.auth,
-      },
-      { onConflict: 'endpoint' }
-    );
-
-    if (error) {
-      return { ok: false, motivo: 'error', detalle: error.message };
-    }
-
+    marcarDesactivado(false);
     return { ok: true };
   } catch (e) {
     return { ok: false, motivo: 'error', detalle: e instanceof Error ? e.message : String(e) };
   }
 }
 
+// Si el permiso ya está concedido, vuelve a guardar la suscripción de
+// este dispositivo a nombre del usuario actual, sin mostrar ningún
+// popup. Cubre dos casos: que el guardado haya fallado antes, y que en
+// este celular se haya entrado con otra cuenta.
+// Si el usuario tocó "Desactivar" en este dispositivo, no lo
+// reactivamos solos.
+const CLAVE_DESACTIVADO = 'rebuscapp_push_desactivado';
+
+function marcarDesactivado(valor: boolean) {
+  try {
+    if (valor) localStorage.setItem(CLAVE_DESACTIVADO, '1');
+    else localStorage.removeItem(CLAVE_DESACTIVADO);
+  } catch {}
+}
+
+function estaDesactivado() {
+  try {
+    return localStorage.getItem(CLAVE_DESACTIVADO) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function sincronizarNotificaciones() {
+  if (!pushSoportado() || estadoPermiso() !== 'granted' || estaDesactivado()) return null;
+  return activarNotificaciones();
+}
+
 // Para cuando el usuario desactiva las notificaciones desde configuración.
 export async function desactivarNotificaciones(): Promise<void> {
   if (!pushSoportado()) return;
+  marcarDesactivado(true);
 
   const registration = await navigator.serviceWorker.getRegistration();
   const subscription = await registration?.pushManager.getSubscription();
