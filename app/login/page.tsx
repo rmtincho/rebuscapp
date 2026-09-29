@@ -1,12 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { COLORS } from '@/lib/theme'
 
+// Después de eliminar la cuenta se llega acá con ?cuenta=eliminada.
+// Se lee de la URL en el navegador (en el servidor no hay aviso).
+function useCuentaEliminada() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => new URLSearchParams(window.location.search).get('cuenta') === 'eliminada',
+    () => false
+  )
+}
+
 export default function LoginPage() {
+  const cuentaEliminada = useCuentaEliminada()
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const [paso, setPaso] = useState<'email' | 'codigo'>('email')
@@ -81,6 +92,14 @@ export default function LoginPage() {
       <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'center' }}>
         <Image src="/logo.png" alt="Rebuscapp" width={220} height={55} priority />
       </div>
+
+      {cuentaEliminada && paso === 'email' && (
+        <div style={{ marginBottom: 20, padding: '14px 16px', borderRadius: 14, background: COLORS.card, boxShadow: COLORS.cardShadow, fontSize: 14, color: COLORS.ink, lineHeight: 1.5, textAlign: 'center' }}>
+          <b>Tu cuenta se eliminó.</b>
+          <br />
+          Gracias por haber usado Rebuscapp.
+        </div>
+      )}
 
       {paso === 'email' && (
         <form onSubmit={enviarCodigo}>

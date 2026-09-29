@@ -26,7 +26,7 @@ export default function EliminarCuenta() {
       setError(resultado.error)
       return
     }
-    router.push('/login')
+    router.push('/login?cuenta=eliminada')
     router.refresh()
   }
 
