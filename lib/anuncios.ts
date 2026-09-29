@@ -1,46 +1,61 @@
 // Solo servidor. Publicidad propia (tabla anuncios, ver
-// scripts/sql/2026-09-29-anuncios.sql): elige un anuncio activo por espacio.
-// La impresión la cuenta el banner cuando de verdad se ve (BannerPublicidad). Si la tabla no existe o no hay anuncios, devuelve
-// null y el espacio muestra "Anunciá tu negocio acá".
+// scripts/sql/2026-09-29-anuncios.sql). La impresión la cuenta el banner
+// cuando de verdad se ve (BannerPublicidad). Si la tabla no existe o no hay
+// anuncios, el espacio no muestra nada.
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { elegirAnuncio, type AnuncioElegible } from '@/lib/elegirAnuncio'
 
-export type Espacio = 'inicio_movil' | 'inicio_web' | 'lateral_web' | 'pedido'
+export type Espacio = 'inicio_movil' | 'inicio_web' | 'lateral_web' | 'lista' | 'pedido' | 'notificaciones' | 'perfil_web'
 
-export type Anuncio = {
-  id: string
-  anunciante: string
-  imagen_url: string
-  texto_alternativo: string | null
-}
+export type Anuncio = AnuncioElegible
 
-export async function anunciosPara<E extends Espacio>(espacios: E[]): Promise<Record<E, Anuncio | null>> {
-  const resultado = Object.fromEntries(espacios.map((e) => [e, null])) as Record<E, Anuncio | null>
-  const hoy = new Date().toISOString().slice(0, 10)
-  const admin = createAdminClient()
+type Fila = Anuncio & { espacio: Espacio }
 
-  const { data, error } = await admin
+// Anuncios activos y vigentes hoy de esos espacios
+async function vigentes(espacios: Espacio[]): Promise<Fila[]> {
+  const { data, error } = await createAdminClient()
     .from('anuncios')
-    .select('id, anunciante, espacio, imagen_url, texto_alternativo, desde, hasta')
+    .select('id, anunciante, espacio, rubro, imagen_url, texto_alternativo, desde, hasta')
     .in('espacio', espacios)
     .eq('activo', true)
-  if (error || !data) return resultado
+  if (error || !data) return []
+  // Fechas como 'AAAA-MM-DD': se comparan como texto
+  const hoy = new Date().toISOString().slice(0, 10)
+  return data
+    .filter((a) => (!a.desde || a.desde <= hoy) && (!a.hasta || a.hasta >= hoy))
+    .map((a) => ({
+      id: a.id,
+      anunciante: a.anunciante,
+      espacio: a.espacio,
+      rubro: a.rubro ?? null,
+      imagen_url: a.imagen_url,
+      texto_alternativo: a.texto_alternativo,
+    }))
+}
 
-  // Vigentes hoy (fechas como 'AAAA-MM-DD': se comparan como texto)
-  const vigentes = data.filter((a) => (!a.desde || a.desde <= hoy) && (!a.hasta || a.hasta >= hoy))
+// Semilla al azar para que los anuncios roten entre visitas
+export function semillaAnuncios() {
+  return Math.floor(Math.random() * 1_000_000)
+}
 
-  for (const espacio of espacios) {
-    const candidatos = vigentes.filter((a) => a.espacio === espacio)
-    if (candidatos.length === 0) continue
-    // Rotan: uno al azar en cada visita
-    const elegido = candidatos[Math.floor(Math.random() * candidatos.length)]
-    resultado[espacio] = {
-      id: elegido.id,
-      anunciante: elegido.anunciante,
-      imagen_url: elegido.imagen_url,
-      texto_alternativo: elegido.texto_alternativo,
-    }
-  }
+// Un anuncio por espacio (o null). Con `rubro`, prefiere los de ese rubro.
+export async function anunciosPara<E extends Espacio>(espacios: E[], rubro: string | null = null): Promise<Record<E, Anuncio | null>> {
+  const filas = await vigentes(espacios)
+  const semilla = semillaAnuncios()
+  return Object.fromEntries(
+    espacios.map((e) => [e, elegirAnuncio(filas.filter((f) => f.espacio === e), rubro, semilla)])
+  ) as Record<E, Anuncio | null>
+}
 
-  return resultado
+// Todos los de un espacio, para elegir en el navegador según el filtro de
+// rubro que tenga puesto el usuario (la tarjeta "Patrocinado" de las listas)
+export async function anunciosDeEspacio(espacio: Espacio): Promise<Anuncio[]> {
+  return (await vigentes([espacio])).map(({ id, anunciante, rubro, imagen_url, texto_alternativo }) => ({
+    id,
+    anunciante,
+    rubro,
+    imagen_url,
+    texto_alternativo,
+  }))
 }

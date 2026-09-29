@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { Fragment, useState, useMemo } from 'react'
 import { COLORS } from '@/lib/theme'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 
@@ -27,7 +27,8 @@ function distanciaKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-export default function PedidosList({ pedidos }: { pedidos: Pedido[] }) {
+// `patrocinado`: tarjeta de publicidad que se intercala en la lista
+export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[]; patrocinado?: React.ReactNode }) {
   const [orden, setOrden] = useState<'recientes' | 'cercanos'>('recientes')
   const [miUbicacion, setMiUbicacion] = useState<{ lat: number; lng: number } | null>(null)
   const [buscandoUbicacion, setBuscandoUbicacion] = useState(false)
@@ -85,7 +86,7 @@ export default function PedidosList({ pedidos }: { pedidos: Pedido[] }) {
         </button>
       </div>
 
-      {pedidosOrdenados.map((pedido) => {
+      {pedidosOrdenados.map((pedido, indice) => {
         const nombrePublicador = pedido.es_comercio
           ? pedido.nombre_comercio
           : pedido.usuarios?.nombre ?? 'Alguien'
@@ -103,9 +104,10 @@ export default function PedidosList({ pedidos }: { pedidos: Pedido[] }) {
             ? distanciaKm(miUbicacion.lat, miUbicacion.lng, pedido.ubicacion_lat, pedido.ubicacion_lng)
             : null
 
+        const conPatrocinado = !!patrocinado && indice === Math.min(8, pedidosOrdenados.length) - 1
         return (
+          <Fragment key={pedido.id}>
           <a
-            key={pedido.id}
             href={`/pedidos/${pedido.id}`}
             style={{
               display: 'flex',
@@ -173,6 +175,8 @@ export default function PedidosList({ pedidos }: { pedidos: Pedido[] }) {
               </div>
             </div>
           </a>
+          {conPatrocinado && <div style={{ marginBottom: 12 }}>{patrocinado}</div>}
+          </Fragment>
         )
       })}
     </div>

@@ -3,12 +3,11 @@
 import { useEffect, useRef } from 'react'
 import { registrarImpresion } from '@/app/actions/anuncios'
 import { COLORS } from '@/lib/theme'
-import { LEGAL } from '@/lib/legal'
 import type { Anuncio } from '@/lib/anuncios'
 
 // Espacio de publicidad: una imagen fija dentro del contenido, con la
-// etiqueta "Publicidad". Nada de popups ni cosas que tapen. Sin anuncio
-// cargado, ofrece el espacio ("Anunciá tu negocio acá").
+// etiqueta "Publicidad" (o "Patrocinado" dentro de las listas). Nada de
+// popups ni cosas que tapen. Sin anuncio cargado no se muestra nada.
 
 const PROPORCION = {
   movil: '3 / 1', // 1080 x 360
@@ -21,11 +20,13 @@ export default function BannerPublicidad({
   formato,
   className,
   style,
+  etiqueta = 'Publicidad',
 }: {
   anuncio: Anuncio | null
   formato: keyof typeof PROPORCION
   className?: string
   style?: React.CSSProperties
+  etiqueta?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -48,6 +49,8 @@ export default function BannerPublicidad({
     return () => obs.disconnect()
   }, [anuncio])
 
+  if (!anuncio) return null
+
   return (
     <div ref={ref} className={className} style={style}>
       <p
@@ -60,45 +63,22 @@ export default function BannerPublicidad({
           margin: '0 0 6px 4px',
         }}
       >
-        Publicidad
+        {etiqueta}
       </p>
-      {anuncio ? (
-        <a
-          href={`/anuncio/${anuncio.id}`}
-          target="_blank"
-          rel="sponsored noopener"
-          style={{ display: 'block', borderRadius: 20, overflow: 'hidden', boxShadow: COLORS.cardShadow, aspectRatio: PROPORCION[formato] }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}
-          <img
-            src={anuncio.imagen_url}
-            alt={anuncio.texto_alternativo ?? `Publicidad de ${anuncio.anunciante}`}
-            loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
-        </a>
-      ) : (
-        <div
-          style={{
-            aspectRatio: PROPORCION[formato],
-            borderRadius: 20,
-            border: `2px dashed ${COLORS.line}`,
-            background: COLORS.card,
-            display: 'flex',
-            flexDirection: formato === 'horizontal' ? 'row' : 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: formato === 'horizontal' ? 14 : 4,
-            padding: 12,
-            textAlign: 'center',
-          }}
-        >
-          <p style={{ fontSize: 14.5, fontWeight: 700, color: COLORS.ink, margin: 0 }}>Anunciá tu negocio acá</p>
-          <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: 0 }}>
-            {LEGAL.contacto ? `Escribinos a ${LEGAL.contacto}` : 'Llegá a la gente de Comodoro que busca y ofrece trabajo'}
-          </p>
-        </div>
-      )}
+      <a
+        href={`/anuncio/${anuncio.id}`}
+        target="_blank"
+        rel="sponsored noopener"
+        style={{ display: 'block', borderRadius: 20, overflow: 'hidden', boxShadow: COLORS.cardShadow, aspectRatio: PROPORCION[formato] }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}
+        <img
+          src={anuncio.imagen_url}
+          alt={anuncio.texto_alternativo ?? `Publicidad de ${anuncio.anunciante}`}
+          loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </a>
     </div>
   )
 }

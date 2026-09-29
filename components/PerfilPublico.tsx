@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
 import { formatearFechaCorta } from '@/lib/fechas'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import type { Anuncio } from '@/lib/anuncios'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
@@ -106,6 +108,7 @@ export type PerfilPublicoProps = {
   hechos: number
   ofrecidosCompletados: number
   volver: string
+  anuncio?: Anuncio | null
 }
 
 export default function PerfilPublico({
@@ -116,6 +119,7 @@ export default function PerfilPublico({
   hechos,
   ofrecidosCompletados,
   volver,
+  anuncio = null,
 }: PerfilPublicoProps) {
   const promedio =
     calificaciones.length > 0
@@ -195,6 +199,9 @@ export default function PerfilPublico({
             cantidadCalificaciones={calificaciones.length}
             boton={calificaciones.length > 0 ? { href: '#calificaciones', label: 'Ver calificaciones' } : null}
           />
+
+          {/* Publicidad: solo en compu, debajo de la tarjeta */}
+          <BannerPublicidad anuncio={anuncio} formato="lateral" className="solo-escritorio" style={{ marginTop: 20 }} />
 
           {!perfil && (
             <p style={{ color: COLORS.inkSoft, fontSize: 13, textAlign: 'center', margin: '14px 0 0' }}>

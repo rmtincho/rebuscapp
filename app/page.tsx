@@ -7,7 +7,7 @@ import BannerNotificaciones from '@/components/BannerNotificaciones'
 import FeedPedidos from '@/components/FeedPedidos'
 import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
 import BannerPublicidad from '@/components/BannerPublicidad'
-import { anunciosPara } from '@/lib/anuncios'
+import { anunciosPara, anunciosDeEspacio, semillaAnuncios } from '@/lib/anuncios'
 import type { Trabajador } from '@/components/TrabajadoresList'
 
 const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
@@ -283,7 +283,11 @@ export default async function HomePage() {
   }
 
   const cantidadTrabajos = pedidos?.length ?? 0
-  const anuncios = await anunciosPara(['inicio_movil', 'inicio_web', 'lateral_web'])
+  const [anuncios, anunciosLista] = await Promise.all([
+    anunciosPara(['inicio_movil', 'inicio_web', 'lateral_web']),
+    anunciosDeEspacio('lista'),
+  ])
+  const semilla = semillaAnuncios()
 
   // Para el inicio web: tus pedidos y postulaciones como tarjetas en fila
   const actividad: ActividadWeb[] = [
@@ -331,6 +335,8 @@ export default async function HomePage() {
           centro={CENTRO_DEFAULT}
           anuncioHorizontal={anuncios.inicio_web}
           anuncioLateral={anuncios.lateral_web}
+          anunciosLista={anunciosLista}
+          semilla={semilla}
         />
       </div>
 
@@ -633,7 +639,13 @@ export default async function HomePage() {
           )}
         </div>
 
-        <FeedPedidos pedidos={pedidos ?? []} trabajadores={trabajadores} centro={CENTRO_DEFAULT} />
+        <FeedPedidos
+          pedidos={pedidos ?? []}
+          trabajadores={trabajadores}
+          centro={CENTRO_DEFAULT}
+          anunciosLista={anunciosLista}
+          semilla={semilla}
+        />
       </div>
 
       <BottomNav />

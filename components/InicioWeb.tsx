@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
@@ -8,6 +8,7 @@ import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import type { Anuncio } from '@/lib/anuncios'
+import { elegirAnuncio } from '@/lib/elegirAnuncio'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
@@ -87,6 +88,8 @@ export default function InicioWeb({
   centro,
   anuncioHorizontal,
   anuncioLateral,
+  anunciosLista,
+  semilla,
 }: {
   nombre: string | null
   pedidos: PedidoWeb[]
@@ -96,6 +99,8 @@ export default function InicioWeb({
   centro: [number, number]
   anuncioHorizontal: Anuncio | null
   anuncioLateral: Anuncio | null
+  anunciosLista: Anuncio[]
+  semilla: number
 }) {
   const [texto, setTexto] = useState('')
   const [busqueda, setBusqueda] = useState('')
@@ -127,6 +132,10 @@ export default function InicioWeb({
       return true
     })
   }, [trabajadores, grupo, busqueda])
+
+  // Tarjeta "Patrocinado" en la grilla: del rubro filtrado si hay, si no general
+  const patrocinado = elegirAnuncio(anunciosLista, grupo, semilla)
+  const posicionPatrocinado = Math.min(6, filtrados.length)
 
   const conUbicacion = filtrados.filter((p) => p.ubicacion_lat !== null && p.ubicacion_lng !== null)
 
@@ -495,8 +504,13 @@ export default function InicioWeb({
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
-                {filtrados.map((p) => (
-                  <TarjetaTrabajo key={p.id} p={p} />
+                {filtrados.map((p, i) => (
+                  <Fragment key={p.id}>
+                    <TarjetaTrabajo p={p} />
+                    {patrocinado && i === posicionPatrocinado - 1 && (
+                      <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ gridColumn: 'span 2' }} />
+                    )}
+                  </Fragment>
                 ))}
               </div>
             )}

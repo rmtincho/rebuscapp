@@ -6,6 +6,8 @@ import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import PedidosList from '@/components/PedidosList'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import { elegirAnuncio, type AnuncioElegible } from '@/lib/elegirAnuncio'
 
 type Seccion = 'trabajos' | 'trabajadores'
 type Vista = 'lista' | 'mapa'
@@ -14,10 +16,14 @@ export default function FeedPedidos({
   pedidos,
   trabajadores,
   centro,
+  anunciosLista = [],
+  semilla = 0,
 }: {
   pedidos: any[]
   trabajadores: Trabajador[]
   centro: [number, number]
+  anunciosLista?: AnuncioElegible[]
+  semilla?: number
 }) {
   const [seccion, setSeccion] = useState<Seccion>('trabajos')
   const [vista, setVista] = useState<Vista>('lista')
@@ -38,6 +44,9 @@ export default function FeedPedidos({
   const sinUbicacion = pedidosFiltrados.length - pedidosConUbicacion.length
 
   const labelGrupo = CATEGORIAS_DESTACADAS.find((c) => c.slug === grupo)?.label
+
+  // Tarjeta "Patrocinado" en la lista: del rubro filtrado si hay, si no general
+  const patrocinado = elegirAnuncio(anunciosLista, grupo, semilla)
 
   const segmentoBase: React.CSSProperties = {
     flex: 1,
@@ -202,7 +211,14 @@ export default function FeedPedidos({
                   ? `No hay trabajos de ${labelGrupo} por ahora.`
                   : 'Todavía no hay trabajos publicados. Sé el primero.'
               )}
-            {mostrarLista && pedidosFiltrados.length > 0 && <PedidosList pedidos={pedidosFiltrados as any} />}
+            {mostrarLista && pedidosFiltrados.length > 0 && (
+              <PedidosList
+                pedidos={pedidosFiltrados as any}
+                patrocinado={
+                  patrocinado ? <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" /> : undefined
+                }
+              />
+            )}
           </div>
         </div>
       ) : (

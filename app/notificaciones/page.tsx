@@ -5,6 +5,8 @@ import { COLORS } from '@/lib/theme'
 import { PantallaBase, LinkVolver, TituloPagina, Subtitulo } from '@/lib/ui'
 import { formatearFechaCorta, formatearHora } from '@/lib/fechas'
 import BottomNav from '@/components/BottomNav'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import { anunciosPara } from '@/lib/anuncios'
 
 // Avisos del usuario (los mismos que llegan como push), el más reciente
 // arriba. Los de mensajes nuevos no van acá: tienen su propio botón.
@@ -92,6 +94,8 @@ export default async function NotificacionesPage() {
   if (notificaciones.some((n) => !n.leida)) {
     await admin.from('notificaciones').update({ leida: true }).eq('usuario_id', user.id).eq('leida', false)
   }
+
+  const { notificaciones: anuncio } = await anunciosPara(['notificaciones'])
 
   return (
     <PantallaBase>
@@ -188,6 +192,8 @@ export default async function NotificacionesPage() {
             )
           })}
         </div>
+        {/* Publicidad: al final de la lista */}
+        <BannerPublicidad anuncio={anuncio} formato="movil" style={{ marginTop: 28, maxWidth: 720 }} />
       </div>
       <BottomNav />
     </PantallaBase>

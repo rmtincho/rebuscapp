@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import PerfilPublico, { type Calificacion } from '@/components/PerfilPublico'
+import { anunciosPara } from '@/lib/anuncios'
 
 export default async function PerfilPrestadorPublicoPage({
   params,
@@ -83,6 +84,7 @@ export default async function PerfilPrestadorPublicoPage({
       hechos={completadosComoTrabajador ?? 0}
       ofrecidosCompletados={completadosComoOferente ?? 0}
       volver={volver || '/'}
+      anuncio={(await anunciosPara(['perfil_web'])).perfil_web}
     />
   )
 }

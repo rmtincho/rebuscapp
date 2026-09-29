@@ -45,7 +45,7 @@ export default async function DetallePedidoPage({
       solicitante_id,
       prestador_asignado_id,
       estado,
-      categorias ( nombre ),
+      categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre, apellido )
     `
     )
@@ -177,7 +177,10 @@ export default async function DetallePedidoPage({
     nombrePrestadorAsignado = prestador?.nombre ?? 'un trabajador'
   }
 
-  const { pedido: anuncioPedido } = await anunciosPara(['pedido'])
+  // Publicidad: si hay un anuncio del mismo rubro que el pedido, ese
+  const categoriaPedido = pedido.categorias as { grupo_slug?: string | null } | { grupo_slug?: string | null }[] | null
+  const rubroPedido = (Array.isArray(categoriaPedido) ? categoriaPedido[0]?.grupo_slug : categoriaPedido?.grupo_slug) ?? null
+  const { pedido: anuncioPedido } = await anunciosPara(['pedido'], rubroPedido)
 
   const botonChatStyle: React.CSSProperties = {
     display: 'flex',

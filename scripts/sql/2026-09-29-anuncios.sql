@@ -6,19 +6,30 @@
 --   2. Copiar su URL pública.
 --   3. Table Editor → anuncios → Insert row: anunciante, espacio, imagen_url,
 --      enlace (a dónde lleva el clic), desde / hasta (opcional).
+--      rubro (opcional): el slug de un grupo de categorías (ej. 'plomeria',
+--      'limpieza', 'automotor'). Con rubro, el anuncio sale cuando se miran
+--      trabajos de ese rubro; sin rubro, sale para todos.
 --
 -- Espacios y medidas de imagen:
---   inicio_movil  Inicio en el celular, debajo de los accesos    1080 x 360  (3:1)
---   inicio_web    Inicio en compu, franja ancha                  1200 x 200  (6:1)
---   lateral_web   Inicio en compu, debajo de los filtros          600 x 500
---   pedido        Final del detalle de un pedido                 1080 x 360  (3:1)
+--   inicio_movil    Inicio en el celular, debajo de los accesos          1080 x 360  (3:1)
+--   inicio_web      Inicio en compu, franja ancha                        1200 x 200  (6:1)
+--   lateral_web     Inicio en compu, debajo de los filtros                600 x 500
+--   lista           Dentro de la lista de trabajos ("Patrocinado")        1080 x 360  (3:1)
+--   pedido          Final del detalle de un pedido                       1080 x 360  (3:1)
+--   notificaciones  Final de la pantalla de notificaciones               1080 x 360  (3:1)
+--   perfil_web      Perfil público en compu, debajo de la tarjeta         600 x 500
+--
+-- Si un espacio no tiene anuncios, no se muestra nada.
 
 begin;
 
 create table if not exists anuncios (
   id uuid primary key default gen_random_uuid(),
   anunciante text not null,
-  espacio text not null check (espacio in ('inicio_movil', 'inicio_web', 'lateral_web', 'pedido')),
+  espacio text not null check (
+    espacio in ('inicio_movil', 'inicio_web', 'lateral_web', 'lista', 'pedido', 'notificaciones', 'perfil_web')
+  ),
+  rubro text, -- slug de categorias_grupo, o vacío = para todos
   imagen_url text not null,
   enlace text,
   texto_alternativo text,
