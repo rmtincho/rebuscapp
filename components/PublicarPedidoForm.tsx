@@ -61,6 +61,8 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
   const [nombreComercio, setNombreComercio] = useState('')
   const [jornada, setJornada] = useState<'changa' | 'fulltime' | 'parttime'>('changa')
   const [nivelRequerido, setNivelRequerido] = useState('')
+  // Edad mínima: '' = sin requisito
+  const [edadMinima, setEdadMinima] = useState('')
   const [requiereCarnet, setRequiereCarnet] = useState(false)
   const [claseCarnet, setClaseCarnet] = useState('')
   const [requiereIdioma, setRequiereIdioma] = useState(false)
@@ -185,6 +187,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
         nombre_comercio: esComercio ? nombreComercio : null,
         jornada: esComercio ? jornada : 'changa',
         requisito_nivel_educativo: nivelRequerido || null,
+        edad_minima: edadMinima ? Number(edadMinima) : null,
         requiere_carnet_conducir: requiereCarnet,
         categoria_carnet_requerida: requiereCarnet ? claseCarnet || null : null,
         idioma_requerido: requiereIdioma ? (idiomaRequerido === 'Otro' ? idiomaOtro.trim() || null : idiomaRequerido || null) : null,
@@ -528,6 +531,22 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
               </Chip>
             ))}
           </div>
+
+          <Etiqueta>Edad mínima</Etiqueta>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+            {[
+              { valor: '', label: 'Sin requisito' },
+              { valor: '21', label: '21 o más' },
+              { valor: '25', label: '25 o más' },
+            ].map((op) => (
+              <Chip key={op.valor || 'ninguna'} activo={edadMinima === op.valor} onClick={() => setEdadMinima(op.valor)}>
+                {op.label}
+              </Chip>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: COLORS.inkSoft, margin: '0 0 14px' }}>
+            Pedila solo si el trabajo lo justifica (por ejemplo, manejar un vehículo). Todos en la app son mayores de 18.
+          </p>
 
           <label style={{ ...checkboxRowStyle, marginBottom: requiereCarnet ? 8 : 14 }}>
             <input type="checkbox" checked={requiereCarnet} onChange={(e) => setRequiereCarnet(e.target.checked)} />

@@ -37,6 +37,7 @@ export default async function DetallePedidoPage({
       tipo_comercio,
       jornada,
       requisito_nivel_educativo,
+      edad_minima,
       requiere_carnet_conducir,
       categoria_carnet_requerida,
       idioma_requerido,
@@ -101,7 +102,11 @@ export default async function DetallePedidoPage({
           .eq('usuario_id', user.id)
           .maybeSingle()
 
-        if (pedido.categoria_carnet_requerida) {
+        if (pedido.edad_minima && (miUsuario?.edad ?? 0) < pedido.edad_minima) {
+          motivoBloqueo = `Este pedido pide ${pedido.edad_minima} años o más.`
+        }
+
+        if (!motivoBloqueo && pedido.categoria_carnet_requerida) {
           if (perfil?.tiene_carnet === 'no') {
             motivoBloqueo = `Este pedido requiere carnet de conducir (${pedido.categoria_carnet_requerida}), y declaraste en tu perfil que no tenés.`
           } else if (
@@ -322,6 +327,7 @@ export default async function DetallePedidoPage({
             )}
 
             {(pedido.requisito_nivel_educativo ||
+              pedido.edad_minima ||
               pedido.requiere_carnet_conducir ||
               pedido.categoria_carnet_requerida ||
               pedido.idioma_requerido ||
@@ -335,6 +341,11 @@ export default async function DetallePedidoPage({
                   {pedido.requisito_nivel_educativo && (
                     <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🎓 {pedido.requisito_nivel_educativo === 'secundario' ? 'Secundario completo' : pedido.requisito_nivel_educativo === 'terciario' ? 'Terciario' : pedido.requisito_nivel_educativo === 'universitario' ? 'Universitario' : 'Posgrado'}
+                    </span>
+                  )}
+                  {pedido.edad_minima && (
+                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                      🪪 {pedido.edad_minima} años o más
                     </span>
                   )}
                   {pedido.categoria_carnet_requerida ? (

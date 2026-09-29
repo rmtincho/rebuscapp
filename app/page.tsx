@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { cumpleRequisitos, type PerfilParaRequisitos } from '@/lib/requisitos'
 import { COOKIE_MODO, esModo, type ModoInicio } from '@/lib/modoInicio'
 import SelectorModo from '@/components/SelectorModo'
 import { COLORS } from '@/lib/theme'
@@ -40,6 +42,11 @@ export default async function HomePage() {
       es_comercio,
       nombre_comercio,
       categoria_slug,
+      edad_minima,
+      requisito_nivel_educativo,
+      requiere_carnet_conducir,
+      categoria_carnet_requerida,
+      idioma_requerido,
       categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre )
     `
@@ -286,6 +293,25 @@ export default async function HomePage() {
     .eq('prestador_id', user.id)
   const misCategorias = (misCategoriasData ?? []).map((c) => c.categoria_slug as string)
 
+  // Para el mismo filtro: qué trabajos tienen requisitos que cumplo (edad,
+  // estudios, carnet, idioma). La edad es privada: se lee por el servidor.
+  const [{ data: miEdad }, { data: miPerfil }] = await Promise.all([
+    createAdminClient().from('usuarios').select('edad').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('perfiles_prestador')
+      .select('nivel_educativo, tiene_carnet, carnets_declarados, idiomas_declarados')
+      .eq('usuario_id', user.id)
+      .maybeSingle(),
+  ])
+  const yo: PerfilParaRequisitos = {
+    edad: miEdad?.edad ?? null,
+    nivel_educativo: miPerfil?.nivel_educativo ?? null,
+    tiene_carnet: miPerfil?.tiene_carnet ?? null,
+    carnets_declarados: miPerfil?.carnets_declarados ?? null,
+    idiomas_declarados: miPerfil?.idiomas_declarados ?? null,
+  }
+  const pedidosConRequisitos = (pedidos ?? []).map((p) => ({ ...p, cumple_requisitos: cumpleRequisitos(p, yo) }))
+
   // Para el inicio web: tus pedidos y postulaciones como tarjetas en fila
   const actividad: ActividadWeb[] = [
     ...misPedidos.map((p): ActividadWeb => {
@@ -325,7 +351,7 @@ export default async function HomePage() {
       <div className="solo-escritorio">
         <InicioWeb
           nombre={primerNombre}
-          pedidos={(pedidos ?? []) as never}
+          pedidos={pedidosConRequisitos as never}
           trabajadores={trabajadores}
           actividad={actividad}
           tieneHistorial={tieneHistorial}
@@ -626,7 +652,7 @@ export default async function HomePage() {
         </div>
 
         <FeedPedidos
-          pedidos={pedidos ?? []}
+          pedidos={pedidosConRequisitos}
           trabajadores={trabajadores}
           centro={CENTRO_DEFAULT}
           anunciosLista={anunciosLista}

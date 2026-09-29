@@ -41,12 +41,12 @@ export default function FeedPedidos({
   const mostrarLista = vista === 'lista'
   const mostrarMapa = vista === 'mapa'
 
-  // "Coinciden con mis habilidades": solo trabajos de mis rubros
+  // "Coinciden con mis habilidades": trabajos de mis rubros cuyos requisitos cumplo
   const [soloMios, setSoloMios] = useState(false)
   const pedidosFiltrados = pedidos.filter(
     (p) =>
       (!grupo || p.categorias?.grupo_slug === grupo) &&
-      (!soloMios || misCategorias.includes(p.categoria_slug))
+      (!soloMios || (misCategorias.includes(p.categoria_slug) && p.cumple_requisitos !== false))
   )
   const trabajadoresFiltrados = grupo
     ? trabajadores.filter((t) => t.categorias.some((c) => c.grupoSlug === grupo))

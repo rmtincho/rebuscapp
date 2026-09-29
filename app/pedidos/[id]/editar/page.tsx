@@ -32,6 +32,7 @@ export default async function EditarPedidoPage({
       nombre_comercio,
       jornada,
       requisito_nivel_educativo,
+      edad_minima,
       requiere_carnet_conducir,
       categoria_carnet_requerida,
       idioma_requerido,

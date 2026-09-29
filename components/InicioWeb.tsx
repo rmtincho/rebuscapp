@@ -29,6 +29,8 @@ export type PedidoWeb = {
   nombre_comercio: string | null
   fecha_creacion?: string | null
   categoria_slug?: string | null
+  // Calculado en el servidor: ¿cumplo edad, estudios, carnet e idioma?
+  cumple_requisitos?: boolean
   categorias: { nombre: string; grupo_slug: string | null } | null
   usuarios: { nombre: string } | null
 }
@@ -136,7 +138,7 @@ export default function InicioWeb({
     const q = busqueda.trim().toLowerCase()
     const lista = pedidos.filter((p) => {
       if (grupo && p.categorias?.grupo_slug !== grupo) return false
-      if (soloMios && !misCategorias.includes(p.categoria_slug ?? '')) return false
+      if (soloMios && (!misCategorias.includes(p.categoria_slug ?? '') || p.cumple_requisitos === false)) return false
       if (pago === 'con_monto' && !p.monto_ofrecido) return false
       if (pago === 'a_convenir' && !p.monto_a_convenir) return false
       if (q && !`${p.descripcion} ${p.categorias?.nombre ?? ''}`.toLowerCase().includes(q)) return false
