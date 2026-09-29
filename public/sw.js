@@ -2,13 +2,23 @@
 // Va en /public/sw.js para que quede servido en la raíz del sitio
 // (necesario para que el scope cubra toda la app).
 
+// Que una versión nueva de este archivo tome el control enseguida, y
+// que controle también las pestañas ya abiertas (si no, al tocar una
+// notificación no se puede navegar en ellas).
+self.addEventListener('install', function () {
+  self.skipWaiting();
+});
+self.addEventListener('activate', function (event) {
+  event.waitUntil(self.clients.claim());
+});
+
 self.addEventListener('push', function (event) {
   if (!event.data) return;
 
   let payload;
   try {
     payload = event.data.json();
-  } catch (e) {
+  } catch {
     payload = { titulo: 'Rebuscapp', cuerpo: event.data.text() };
   }
 
@@ -38,16 +48,17 @@ self.addEventListener('notificationclick', function (event) {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-      for (const client of windowClients) {
-        // Si ya hay una pestaña de Rebuscapp abierta, la reusamos y navegamos.
-        if ('focus' in client) {
-          client.navigate(urlDestino);
-          return client.focus();
-        }
+      // Si ya hay una pestaña de Rebuscapp abierta, la reusamos: la
+      // enfocamos y la llevamos a la pantalla de la notificación. Si no
+      // se puede navegar en ella, abrimos una nueva.
+      const abierta = windowClients.find((c) => 'focus' in c);
+      if (abierta) {
+        return abierta
+          .focus()
+          .then((c) => c.navigate(urlDestino))
+          .catch(() => clients.openWindow(urlDestino));
       }
-      if (clients.openWindow) {
-        return clients.openWindow(urlDestino);
-      }
+      return clients.openWindow(urlDestino);
     })
   );
 });

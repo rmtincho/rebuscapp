@@ -91,12 +91,28 @@ export async function notificarMensajeNuevo(pedidoId: string, receptorId: string
   // Recortamos el contenido para que la notificación no quede gigante
   const preview = contenido.length > 80 ? contenido.slice(0, 80) + '…' : contenido;
 
+  // Hay dos pantallas de chat: /chat es el del trabajo ya asignado
+  // (solicitante ↔ trabajador elegido) y /chat/<otro> es el que se usa
+  // con cada postulante. Desde el lado del receptor, "el otro" es quien
+  // mandó el mensaje.
+  const { data: pedido } = await supabase
+    .from('pedidos')
+    .select('estado, solicitante_id, prestador_asignado_id')
+    .eq('id', pedidoId)
+    .maybeSingle();
+
+  const esChatDelAsignado =
+    !!pedido &&
+    pedido.estado !== 'abierto' &&
+    [user.id, receptorId].includes(pedido.solicitante_id) &&
+    [user.id, receptorId].includes(pedido.prestador_asignado_id);
+
   await enviarPush({
     usuarioId: receptorId,
     tipo: 'mensaje_nuevo',
     titulo: emisor?.nombre ?? 'Mensaje nuevo',
     cuerpo: preview,
-    urlDestino: `/pedidos/${pedidoId}/chat`,
+    urlDestino: esChatDelAsignado ? `/pedidos/${pedidoId}/chat` : `/pedidos/${pedidoId}/chat/${user.id}`,
   });
 }
 
