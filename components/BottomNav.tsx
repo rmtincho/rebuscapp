@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 
-// Nav flotante: dos cápsulas negras con íconos y, en el medio, el botón
-// amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
+// Nav flotante: Inicio a la izquierda, Mi perfil a la derecha (cápsulas
+// negras) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
 // lleva aria-label para lectores de pantalla).
 
 type Tab = { href: string; label: string; icon: (activo: boolean) => React.ReactNode }
@@ -16,15 +16,6 @@ const IZQUIERDA: Tab[] = [
     icon: (activo) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/mis-postulaciones',
-    label: 'Postulaciones',
-    icon: (activo) => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     ),
   },

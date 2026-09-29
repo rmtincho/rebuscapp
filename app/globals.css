@@ -45,3 +45,14 @@ input::placeholder,
 textarea::placeholder {
   color: rgba(31, 41, 55, 0.4);
 }
+/* Lupa de la pantalla de carga: late suave mientras espera */
+@keyframes lupa-latido {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+.lupa-cargando {
+  animation: lupa-latido 1.1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lupa-cargando { animation: none; }
+}

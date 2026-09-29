@@ -72,7 +72,9 @@ export default function CategoriaPicker({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 5000,
+        // Por encima de la barra de navegación (10000): si no, la barra
+        // tapa el botón "Listo"
+        zIndex: 20000,
         background: COLORS.wrapperBg,
         display: 'flex',
         justifyContent: 'center',
