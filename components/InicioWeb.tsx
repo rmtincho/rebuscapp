@@ -9,6 +9,7 @@ import { iconoParaCategoria } from '@/lib/categoryIcons'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
+import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import type { Anuncio } from '@/lib/anuncios'
 import { elegirAnuncio } from '@/lib/elegirAnuncio'
 
@@ -27,6 +28,7 @@ export type PedidoWeb = {
   es_comercio: boolean
   nombre_comercio: string | null
   fecha_creacion?: string | null
+  categoria_slug?: string | null
   categorias: { nombre: string; grupo_slug: string | null } | null
   usuarios: { nombre: string } | null
 }
@@ -93,6 +95,7 @@ export default function InicioWeb({
   anunciosLista,
   semilla,
   modo,
+  misCategorias,
 }: {
   nombre: string | null
   pedidos: PedidoWeb[]
@@ -106,6 +109,8 @@ export default function InicioWeb({
   semilla: number
   // Busco trabajo → trabajos; necesito a alguien → trabajadores y tus pedidos
   modo: ModoInicio
+  // Rubros del perfil de trabajador, para "Coinciden con mis habilidades"
+  misCategorias: string[]
 }) {
   const router = useRouter()
   const [texto, setTexto] = useState('')
@@ -113,6 +118,7 @@ export default function InicioWeb({
   const [grupo, setGrupo] = useState<string | null>(null)
   const [pago, setPago] = useState<Pago>('todos')
   const [orden, setOrden] = useState<Orden>('recientes')
+  const [soloMios, setSoloMios] = useState(false)
   const seccion = modo === 'busco' ? 'trabajos' : 'trabajadores'
   const actividadDelModo = actividad.filter((a) => (modo === 'busco' ? a.tipo === 'postulacion' : a.tipo === 'pedido'))
 
@@ -130,6 +136,7 @@ export default function InicioWeb({
     const q = busqueda.trim().toLowerCase()
     const lista = pedidos.filter((p) => {
       if (grupo && p.categorias?.grupo_slug !== grupo) return false
+      if (soloMios && !misCategorias.includes(p.categoria_slug ?? '')) return false
       if (pago === 'con_monto' && !p.monto_ofrecido) return false
       if (pago === 'a_convenir' && !p.monto_a_convenir) return false
       if (q && !`${p.descripcion} ${p.categorias?.nombre ?? ''}`.toLowerCase().includes(q)) return false
@@ -137,7 +144,7 @@ export default function InicioWeb({
     })
     if (orden === 'monto') return [...lista].sort((a, b) => (b.monto_ofrecido ?? 0) - (a.monto_ofrecido ?? 0))
     return lista
-  }, [pedidos, grupo, pago, orden, busqueda])
+  }, [pedidos, grupo, pago, orden, busqueda, soloMios, misCategorias])
 
   const trabajadoresFiltrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase()
@@ -166,9 +173,10 @@ export default function InicioWeb({
     setBusqueda('')
     setGrupo(null)
     setPago('todos')
+    setSoloMios(false)
   }
 
-  const hayFiltros = !!busqueda || !!grupo || pago !== 'todos'
+  const hayFiltros = !!busqueda || !!grupo || pago !== 'todos' || soloMios
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 24px 80px' }}>
@@ -471,6 +479,11 @@ export default function InicioWeb({
               boxShadow: COLORS.cardShadow,
             }}
           >
+            {seccion === 'trabajos' && (
+              <div style={{ marginBottom: 18, paddingBottom: 16, borderBottom: `1px solid ${COLORS.line}` }}>
+                <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
+              </div>
+            )}
             <Filtro titulo="Rubro">
               {[{ slug: null, label: 'Todos' }, ...CATEGORIAS_DESTACADAS].map((c) => (
                 <OpcionFiltro key={c.label} activa={grupo === c.slug} onClick={() => setGrupo(c.slug)}>

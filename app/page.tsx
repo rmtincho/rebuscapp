@@ -39,6 +39,7 @@ export default async function HomePage() {
       fecha_creacion,
       es_comercio,
       nombre_comercio,
+      categoria_slug,
       categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre )
     `
@@ -278,6 +279,13 @@ export default async function HomePage() {
   ])
   const semilla = semillaAnuncios()
 
+  // Mis rubros (perfil de trabajador), para "Coinciden con mis habilidades"
+  const { data: misCategoriasData } = await supabase
+    .from('prestador_categorias')
+    .select('categoria_slug')
+    .eq('prestador_id', user.id)
+  const misCategorias = (misCategoriasData ?? []).map((c) => c.categoria_slug as string)
+
   // Para el inicio web: tus pedidos y postulaciones como tarjetas en fila
   const actividad: ActividadWeb[] = [
     ...misPedidos.map((p): ActividadWeb => {
@@ -327,6 +335,7 @@ export default async function HomePage() {
           anunciosLista={anunciosLista}
           semilla={semilla}
           modo={modo}
+          misCategorias={misCategorias}
         />
       </div>
 
@@ -623,6 +632,7 @@ export default async function HomePage() {
           anunciosLista={anunciosLista}
           semilla={semilla}
           seccionFija={modo === 'busco' ? 'trabajos' : 'trabajadores'}
+          misCategorias={misCategorias}
         />
       </div>
 

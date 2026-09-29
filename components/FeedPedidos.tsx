@@ -7,6 +7,7 @@ import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import PedidosList from '@/components/PedidosList'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
+import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import { elegirAnuncio, type AnuncioElegible } from '@/lib/elegirAnuncio'
 
 type Seccion = 'trabajos' | 'trabajadores'
@@ -19,6 +20,7 @@ export default function FeedPedidos({
   anunciosLista = [],
   semilla = 0,
   seccionFija,
+  misCategorias = [],
 }: {
   pedidos: any[]
   trabajadores: Trabajador[]
@@ -27,6 +29,8 @@ export default function FeedPedidos({
   semilla?: number
   // Con el modo del inicio elegido, solo esa sección y sin las pestañas
   seccionFija?: Seccion
+  // Rubros del perfil de trabajador, para el filtro rápido
+  misCategorias?: string[]
 }) {
   const [seccionElegida, setSeccion] = useState<Seccion>('trabajos')
   const seccion = seccionFija ?? seccionElegida
@@ -37,7 +41,13 @@ export default function FeedPedidos({
   const mostrarLista = vista === 'lista'
   const mostrarMapa = vista === 'mapa'
 
-  const pedidosFiltrados = grupo ? pedidos.filter((p) => p.categorias?.grupo_slug === grupo) : pedidos
+  // "Coinciden con mis habilidades": solo trabajos de mis rubros
+  const [soloMios, setSoloMios] = useState(false)
+  const pedidosFiltrados = pedidos.filter(
+    (p) =>
+      (!grupo || p.categorias?.grupo_slug === grupo) &&
+      (!soloMios || misCategorias.includes(p.categoria_slug))
+  )
   const trabajadoresFiltrados = grupo
     ? trabajadores.filter((t) => t.categorias.some((c) => c.grupoSlug === grupo))
     : trabajadores
@@ -137,35 +147,9 @@ export default function FeedPedidos({
         </div>
       </div>
 
-      {/* Filtro por categoría: fila deslizable de pills */}
-      <div
-        ref={filaPillsRef}
-        style={{
-          display: 'flex',
-          gap: 8,
-          overflowX: 'auto',
-          padding: '2px 20px 14px',
-          scrollbarWidth: 'none',
-        }}
-      >
-        <button type="button" style={pill(grupo === null)} onClick={() => setGrupo(null)}>
-          Todas
-        </button>
-        {CATEGORIAS_DESTACADAS.map((c) => (
-          <button
-            key={c.slug}
-            type="button"
-            style={pill(grupo === c.slug)}
-            onClick={() => setGrupo(grupo === c.slug ? null : c.slug)}
-          >
-            {c.label}
-          </button>
-        ))}
-      </div>
-
       {/* Título de la sección + botón redondo Lista/Mapa (solo en Trabajos) */}
-      <div style={{ padding: '0 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-        <p style={{ fontSize: 16, fontWeight: 600, color: COLORS.ink, letterSpacing: '-0.01em', margin: 0 }}>
+      <div style={{ padding: '8px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+        <p style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, letterSpacing: '-0.02em', margin: 0 }}>
           {seccion === 'trabajos' ? 'Trabajos cerca tuyo' : 'Trabajadores'}
           <span style={{ color: COLORS.inkSoft, fontWeight: 400 }}> · {cantidad}</span>
         </p>
@@ -204,6 +188,46 @@ export default function FeedPedidos({
         )}
       </div>
 
+      {/* Filtros, destacados en un recuadro debajo del título */}
+      <div style={{ padding: '0 20px 14px' }}>
+        <div style={{ background: COLORS.card, borderRadius: 20, boxShadow: COLORS.cardShadow, padding: '12px 0' }}>
+          <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 14px 10px' }}>
+            Filtrar por rubro
+          </p>
+          <div
+            ref={filaPillsRef}
+            style={{
+              display: 'flex',
+              gap: 8,
+              overflowX: 'auto',
+              padding: '0 14px 2px',
+              scrollbarWidth: 'none',
+            }}
+          >
+            <button type="button" style={pill(grupo === null)} onClick={() => setGrupo(null)}>
+              Todas
+            </button>
+            {CATEGORIAS_DESTACADAS.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                style={pill(grupo === c.slug)}
+                onClick={() => setGrupo(grupo === c.slug ? null : c.slug)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          {seccion === 'trabajos' && (
+            <div style={{ borderTop: `1px solid ${COLORS.line}`, margin: '12px 0 0', padding: '12px 14px 0' }}>
+              <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
+            </div>
+          )}
+        </div>
+      </div>
+
+
       {seccion === 'trabajos' ? (
         // Mapa arriba (si se eligió) y lista abajo
         <div style={{ padding: '0 20px 20px' }}>
@@ -211,7 +235,9 @@ export default function FeedPedidos({
           <div style={{ minWidth: 0 }}>
             {pedidosFiltrados.length === 0 &&
               vacio(
-                grupo
+                soloMios
+                  ? 'No hay trabajos de tus rubros por ahora. Probá sacar el filtro o sumar rubros en tu perfil.'
+                  : grupo
                   ? `No hay trabajos de ${labelGrupo} por ahora.`
                   : 'Todavía no hay trabajos publicados. Sé el primero.'
               )}
