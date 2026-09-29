@@ -99,8 +99,11 @@ export default function FormAnuncio({ rubros }: { rubros: { slug: string; nombre
       </div>
 
       <div style={campo}>
-        <TituloSeccion>Enlace (a dónde lleva el clic)</TituloSeccion>
+        <TituloSeccion>Enlace (opcional)</TituloSeccion>
         <input name="enlace" type="url" placeholder="https://instagram.com/..." style={inputBaseStyle} />
+        <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '6px 2px 0' }}>
+          A dónde lleva el toque. Sin enlace, el banner es solo una imagen: no se puede tocar y se miden solo las impresiones.
+        </p>
       </div>
 
       <div style={campo}>

@@ -16,7 +16,7 @@ type Fila = Anuncio & { espacio: Espacio }
 async function vigentes(espacios: Espacio[]): Promise<Fila[]> {
   const { data, error } = await createAdminClient()
     .from('anuncios')
-    .select('id, anunciante, espacio, rubro, imagen_url, texto_alternativo, desde, hasta')
+    .select('id, anunciante, espacio, rubro, imagen_url, texto_alternativo, enlace, desde, hasta')
     .in('espacio', espacios)
     .eq('activo', true)
   if (error || !data) return []
@@ -31,6 +31,7 @@ async function vigentes(espacios: Espacio[]): Promise<Fila[]> {
       rubro: a.rubro ?? null,
       imagen_url: a.imagen_url,
       texto_alternativo: a.texto_alternativo,
+      con_enlace: !!a.enlace && /^https?:\/\//.test(a.enlace),
     }))
 }
 
@@ -51,12 +52,13 @@ export async function anunciosPara<E extends Espacio>(espacios: E[], rubro: stri
 // Todos los de un espacio, para elegir en el navegador según el filtro de
 // rubro que tenga puesto el usuario (la tarjeta "Patrocinado" de las listas)
 export async function anunciosDeEspacio(espacio: Espacio): Promise<Anuncio[]> {
-  return (await vigentes([espacio])).map(({ id, anunciante, rubro, imagen_url, texto_alternativo }) => ({
+  return (await vigentes([espacio])).map(({ id, anunciante, rubro, imagen_url, texto_alternativo, con_enlace }) => ({
     id,
     anunciante,
     rubro,
     imagen_url,
     texto_alternativo,
+    con_enlace,
   }))
 }
 

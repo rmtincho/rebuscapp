@@ -157,13 +157,13 @@ export default async function AdminAnunciosPage() {
                       {a.desde || a.hasta
                         ? `Del ${a.desde ? a.desde.split('-').reverse().join('/') : 'inicio'} al ${a.hasta ? a.hasta.split('-').reverse().join('/') : 'sin fecha de fin'}`
                         : 'Sin fechas'}
-                      {a.enlace && (
-                        <>
-                          {' · '}
-                          <a href={a.enlace} target="_blank" rel="noopener" style={{ color: COLORS.clayDark }}>
-                            {a.enlace.replace(/^https?:\/\//, '')}
-                          </a>
-                        </>
+                      {' · '}
+                      {a.enlace ? (
+                        <a href={a.enlace} target="_blank" rel="noopener" style={{ color: COLORS.clayDark }}>
+                          {a.enlace.replace(/^https?:\/\//, '')}
+                        </a>
+                      ) : (
+                        'Sin enlace (no se puede tocar)'
                       )}
                     </p>
 

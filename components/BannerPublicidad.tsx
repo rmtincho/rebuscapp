@@ -70,9 +70,9 @@ export default function BannerPublicidad({
         {etiqueta}
       </p>
       <a
-        href={`/anuncio/${anuncio.id}`}
-        target="_blank"
-        rel="sponsored noopener"
+        href={anuncio.con_enlace ? `/anuncio/${anuncio.id}` : undefined}
+        target={anuncio.con_enlace ? '_blank' : undefined}
+        rel={anuncio.con_enlace ? 'sponsored noopener' : undefined}
         style={{ display: 'block', borderRadius: 20, overflow: 'hidden', boxShadow: COLORS.cardShadow, aspectRatio: PROPORCION[formato] }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}

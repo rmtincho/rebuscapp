@@ -9,6 +9,8 @@ export type AnuncioElegible = {
   imagen_url: string
   texto_alternativo: string | null
   rubro: string | null
+  // Sin enlace, el banner es solo una imagen (no se puede tocar)
+  con_enlace: boolean
 }
 
 export function elegirAnuncio<A extends AnuncioElegible>(candidatos: A[], rubro: string | null, semilla: number): A | null {

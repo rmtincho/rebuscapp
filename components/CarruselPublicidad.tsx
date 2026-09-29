@@ -118,9 +118,9 @@ function Placa({ anuncio, formato }: { anuncio: Anuncio; formato: keyof typeof P
   return (
     <a
       ref={ref}
-      href={`/anuncio/${anuncio.id}`}
-      target="_blank"
-      rel="sponsored noopener"
+      href={anuncio.con_enlace ? `/anuncio/${anuncio.id}` : undefined}
+      target={anuncio.con_enlace ? '_blank' : undefined}
+      rel={anuncio.con_enlace ? 'sponsored noopener' : undefined}
       style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio: PROPORCION[formato], display: 'block' }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}
