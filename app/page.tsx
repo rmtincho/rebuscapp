@@ -5,6 +5,7 @@ import { formatearFechaCorta } from '@/lib/fechas'
 import BottomNav from '@/components/BottomNav'
 import BannerNotificaciones from '@/components/BannerNotificaciones'
 import FeedPedidos from '@/components/FeedPedidos'
+import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
 import type { Trabajador } from '@/components/TrabajadoresList'
 
 const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
@@ -30,6 +31,7 @@ export default async function HomePage() {
       ubicacion_lng,
       monto_ofrecido,
       monto_a_convenir,
+      fecha_creacion,
       es_comercio,
       nombre_comercio,
       categorias ( nombre, grupo_slug ),
@@ -280,13 +282,57 @@ export default async function HomePage() {
 
   const cantidadTrabajos = pedidos?.length ?? 0
 
+  // Para el inicio web: tus pedidos y postulaciones como tarjetas en fila
+  const actividad: ActividadWeb[] = [
+    ...misPedidos.map((p): ActividadWeb => {
+      const postulantes = postulantesPorPedido[p.id] ?? 0
+      return {
+        tipo: 'pedido',
+        href: `/pedidos/${p.id}`,
+        titulo: p.descripcion,
+        detalle: `${(p.categorias as { nombre?: string } | null)?.nombre ?? 'Trabajo'} · publicado ${fechaRelativa(p.fecha_creacion).toLowerCase()}`,
+        estado:
+          p.estado === 'en_curso'
+            ? 'En curso'
+            : `${postulantes} postulante${postulantes === 1 ? '' : 's'}`,
+        colorEstado: p.estado === 'en_curso' ? 'verde' : postulantes > 0 ? 'amarillo' : 'gris',
+        sinLeer: sinLeerPedidoPropio[p.id] ?? 0,
+      }
+    }),
+    ...misPostulaciones
+      .filter((p) => p.pedidos)
+      .map((p): ActividadWeb => {
+        const pedido = p.pedidos as { id: string; descripcion: string; solicitante_id: string }
+        return {
+          tipo: 'postulacion',
+          href: `/pedidos/${pedido.id}/chat/${pedido.solicitante_id}`,
+          titulo: pedido.descripcion,
+          detalle: `Te postulaste ${fechaRelativa(p.fecha).toLowerCase()}`,
+          estado: p.estado === 'aceptada' ? 'Te eligieron' : p.estado === 'rechazada' ? 'Rechazada' : 'Pendiente',
+          colorEstado: p.estado === 'aceptada' ? 'verde' : p.estado === 'rechazada' ? 'rojo' : 'gris',
+          sinLeer: sinLeerPorPedido[pedido.id] ?? 0,
+        }
+      }),
+  ]
+
   return (
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
-      <div className="pantalla pantalla-ancha" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
-        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha.
-            En compu no va: está la cabecera web. */}
+      {/* En compu: un inicio propio de web (components/InicioWeb) */}
+      <div className="solo-escritorio">
+        <InicioWeb
+          nombre={primerNombre}
+          pedidos={(pedidos ?? []) as never}
+          trabajadores={trabajadores}
+          actividad={actividad}
+          tieneHistorial={tieneHistorial}
+          centro={CENTRO_DEFAULT}
+        />
+      </div>
+
+      {/* En el celular: el inicio de siempre */}
+      <div className="pantalla solo-movil" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
+        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha */}
         <div
-          className="solo-movil"
           style={{
             padding: '20px 20px 4px',
             display: 'flex',
@@ -332,9 +378,6 @@ export default async function HomePage() {
           </a>
         </div>
 
-        {/* En compu: esta columna a la izquierda y los trabajos a la derecha */}
-        <div className="inicio-grilla">
-        <aside className="inicio-lateral">
         <div style={{ padding: '18px 20px 18px' }}>
           <h1
             style={{
@@ -574,9 +617,6 @@ export default async function HomePage() {
           </div>
         )}
 
-        </aside>
-
-        <main style={{ minWidth: 0 }}>
         <div style={{ padding: '0 20px 8px' }}>
           {error && (
             <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
@@ -586,8 +626,6 @@ export default async function HomePage() {
         </div>
 
         <FeedPedidos pedidos={pedidos ?? []} trabajadores={trabajadores} centro={CENTRO_DEFAULT} />
-        </main>
-        </div>
       </div>
 
       <BottomNav />

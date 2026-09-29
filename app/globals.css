@@ -119,36 +119,6 @@ textarea::placeholder {
   .web-ancho-completo { grid-column: 1 / -1; }
 }
 
-/* Inicio en compu: columna izquierda (saludo, accesos, lo tuyo) fija
-   mientras se recorren los trabajos a la derecha */
-@media (min-width: 900px) {
-  .inicio-grilla {
-    display: grid;
-    grid-template-columns: 340px minmax(0, 1fr);
-    gap: 24px;
-    align-items: start;
-  }
-  .inicio-lateral {
-    position: sticky;
-    top: calc(var(--alto-cabecera) + 12px);
-    max-height: calc(100vh - var(--alto-cabecera) - 24px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
-  /* Lista y mapa lado a lado; el mapa queda fijo al recorrer la lista */
-  .feed-cuerpo {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 16px;
-    align-items: start;
-  }
-  .feed-mapa {
-    position: sticky;
-    top: calc(var(--alto-cabecera) + 12px);
-  }
-  /* Filtros de rubro: en compu en varias filas en vez de deslizar */
-  .feed-pills { flex-wrap: wrap; overflow-x: visible !important; }
-}
 
 @media (min-width: 900px) {
   /* Datos del perfil público: más columnas */
