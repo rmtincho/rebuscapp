@@ -4,6 +4,8 @@ import { COLORS } from '@/lib/theme'
 import PostularseForm from '@/components/PostularseForm'
 import EliminarPedidoBoton from '@/components/EliminarPedidoBoton'
 import Link from 'next/link'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import { anunciosPara } from '@/lib/anuncios'
 import { proximaPostulacionPermitida, POSTULACIONES_POR_DIA } from '@/lib/limites'
 import { formatearCuando } from '@/lib/fechas'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
@@ -174,6 +176,8 @@ export default async function DetallePedidoPage({
       .maybeSingle()
     nombrePrestadorAsignado = prestador?.nombre ?? 'un trabajador'
   }
+
+  const { pedido: anuncioPedido } = await anunciosPara(['pedido'])
 
   const botonChatStyle: React.CSSProperties = {
     display: 'flex',
@@ -831,6 +835,9 @@ export default async function DetallePedidoPage({
               })}
             </div>
           )}
+
+          {/* Publicidad: al final del detalle, fija dentro del contenido */}
+          <BannerPublicidad anuncio={anuncioPedido} formato="movil" className="pedido-publicidad" style={{ marginTop: 28 }} />
           </div>
         </div>
       </div>

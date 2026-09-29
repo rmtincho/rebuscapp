@@ -34,6 +34,10 @@ export default function PrivacidadPage() {
           avisos y cuidar la seguridad de la comunidad (por ejemplo, frenar cuentas falsas). No vendemos tus
           datos ni los usamos para publicidad.
         </p>
+        <p style={p}>
+          La app muestra banners de comercios en algunos espacios fijos. Los anunciantes no reciben ningún dato
+          tuyo: solo sabemos cuántas veces se vio y se tocó cada banner, en total.
+        </p>
       </Seccion>
 
       <Seccion titulo="Quién ve qué">

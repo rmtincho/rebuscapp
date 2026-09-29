@@ -6,6 +6,8 @@ import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import type { Anuncio } from '@/lib/anuncios'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
@@ -83,6 +85,8 @@ export default function InicioWeb({
   actividad,
   tieneHistorial,
   centro,
+  anuncioHorizontal,
+  anuncioLateral,
 }: {
   nombre: string | null
   pedidos: PedidoWeb[]
@@ -90,6 +94,8 @@ export default function InicioWeb({
   actividad: ActividadWeb[]
   tieneHistorial: boolean
   centro: [number, number]
+  anuncioHorizontal: Anuncio | null
+  anuncioLateral: Anuncio | null
 }) {
   const [texto, setTexto] = useState('')
   const [busqueda, setBusqueda] = useState('')
@@ -372,6 +378,9 @@ export default function InicioWeb({
         </section>
       )}
 
+      {/* ——— Publicidad: franja ancha fija ——— */}
+      <BannerPublicidad anuncio={anuncioHorizontal} formato="horizontal" style={{ marginTop: 40 }} />
+
       {/* ——— Resultados: filtros a la izquierda, grilla o mapa a la derecha ——— */}
       <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 'calc(var(--alto-cabecera) + 16px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
@@ -405,11 +414,10 @@ export default function InicioWeb({
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '250px minmax(0, 1fr)', gap: 28, alignItems: 'start' }}>
-          {/* Filtros */}
+          {/* Filtros, y debajo un espacio de publicidad */}
+          <div>
           <aside
             style={{
-              position: 'sticky',
-              top: 'calc(var(--alto-cabecera) + 20px)',
               background: COLORS.card,
               borderRadius: 22,
               padding: 20,
@@ -462,6 +470,8 @@ export default function InicioWeb({
               </button>
             )}
           </aside>
+          <BannerPublicidad anuncio={anuncioLateral} formato="lateral" style={{ marginTop: 18 }} />
+          </div>
 
           {/* Resultados */}
           <div style={{ minWidth: 0 }}>

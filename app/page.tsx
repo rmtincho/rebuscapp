@@ -6,6 +6,8 @@ import BottomNav from '@/components/BottomNav'
 import BannerNotificaciones from '@/components/BannerNotificaciones'
 import FeedPedidos from '@/components/FeedPedidos'
 import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
+import BannerPublicidad from '@/components/BannerPublicidad'
+import { anunciosPara } from '@/lib/anuncios'
 import type { Trabajador } from '@/components/TrabajadoresList'
 
 const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
@@ -281,6 +283,7 @@ export default async function HomePage() {
   }
 
   const cantidadTrabajos = pedidos?.length ?? 0
+  const anuncios = await anunciosPara(['inicio_movil', 'inicio_web', 'lateral_web'])
 
   // Para el inicio web: tus pedidos y postulaciones como tarjetas en fila
   const actividad: ActividadWeb[] = [
@@ -326,6 +329,8 @@ export default async function HomePage() {
           actividad={actividad}
           tieneHistorial={tieneHistorial}
           centro={CENTRO_DEFAULT}
+          anuncioHorizontal={anuncios.inicio_web}
+          anuncioLateral={anuncios.lateral_web}
         />
       </div>
 
@@ -453,6 +458,9 @@ export default async function HomePage() {
             </span>
           </a>
         </div>
+
+        {/* Publicidad: un banner fijo, debajo de los accesos */}
+        <BannerPublicidad anuncio={anuncios.inicio_movil} formato="movil" style={{ padding: '0 20px 20px' }} />
 
         <div style={{ padding: '0 20px' }}>
           {user && <BannerNotificaciones />}
