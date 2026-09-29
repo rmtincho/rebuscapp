@@ -22,6 +22,7 @@ import BottomNav from '@/components/BottomNav'
 import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
+import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
 type Perfil = {
   nivel_educativo: string | null
@@ -208,17 +209,12 @@ export default function PerfilForm({
     const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(ruta)
     const urlConCacheBuster = `${publicUrlData.publicUrl}?t=${Date.now()}`
 
-    // El upsert también manda el nombre: usamos el que está en el
-    // formulario para no pisar el nombre real con el del mail
-    await supabase.from('usuarios').upsert(
-      {
-        id: user.id,
-        email: user.email,
-        nombre: nombre.trim() || user.email?.split('@')[0] || 'Usuario',
-        foto_perfil_url: urlConCacheBuster,
-      },
-      { onConflict: 'id' }
-    )
+    const resultado = await guardarDatosPersonales({ fotoPerfilUrl: urlConCacheBuster })
+    if (!resultado.ok) {
+      setError(resultado.error)
+      setSubiendoFoto(false)
+      return
+    }
 
     setFotoUrl(urlConCacheBuster)
     setSubiendoFoto(false)
@@ -293,21 +289,16 @@ export default function PerfilForm({
       return
     }
 
-    const { error: errorUsuario } = await supabase.from('usuarios').upsert(
-      {
-        id: user.id,
-        email: user.email,
-        nombre: nombreLimpio,
-        apellido: apellidoLimpio,
-        ...(edad !== '' && { edad: edadNum }),
-        ...(dni !== '' && { dni }),
-        rol_prestador_activo: categoriasInteres.length > 0,
-      },
-      { onConflict: 'id' }
-    )
+    const resultadoUsuario = await guardarDatosPersonales({
+      nombre: nombreLimpio,
+      apellido: apellidoLimpio,
+      ...(edad !== '' && { edad: edadNum }),
+      ...(dni !== '' && { dni }),
+      rolPrestadorActivo: categoriasInteres.length > 0,
+    })
 
-    if (errorUsuario) {
-      setError('No pudimos guardar tus datos: ' + errorUsuario.message)
+    if (!resultadoUsuario.ok) {
+      setError(resultadoUsuario.error)
       setCargando(false)
       return
     }

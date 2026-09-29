@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import PerfilForm from '@/components/PerfilForm'
 
@@ -29,7 +30,10 @@ export default async function PerfilPage() {
     .maybeSingle()
   const visibleEnListado = errorVisibilidad ? null : (visibilidad?.visible_en_listado ?? false)
 
-  const { data: usuario } = await supabase
+  // Edad y DNI no son públicos (ver scripts/sql/2026-09-29-seguridad-rls.sql):
+  // los datos propios se leen con el cliente admin, siempre filtrando por
+  // el usuario de la sesión.
+  const { data: usuario } = await createAdminClient()
     .from('usuarios')
     .select('foto_perfil_url, nombre, apellido, edad, dni')
     .eq('id', user.id)

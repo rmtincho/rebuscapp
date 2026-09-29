@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { guardarDatosPersonales } from '@/app/actions/usuarios'
 import { COLORS } from '@/lib/theme'
 import { PantallaBase, LinkVolver, TituloPagina, Subtitulo, inputBaseStyle, BotonPrincipal, MensajeError } from '@/lib/ui'
 
@@ -20,7 +20,6 @@ export default function CompletarDatosForm({
   volverA: string
 }) {
   const router = useRouter()
-  const supabase = createClient()
 
   const [nombre, setNombre] = useState(nombreActual)
   const [apellido, setApellido] = useState(apellidoActual)
@@ -54,32 +53,17 @@ export default function CompletarDatosForm({
 
     setCargando(true)
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      setError('Tu sesión expiró, volvé a loguearte.')
-      setCargando(false)
-      return
-    }
-
-    const { error: errorGuardar } = await supabase.from('usuarios').upsert(
-      {
-        id: user.id,
-        email: user.email,
-        nombre: nombreLimpio,
-        apellido: apellidoLimpio,
-        edad: edadNum,
-        dni: dniLimpio,
-      },
-      { onConflict: 'id' }
-    )
+    const resultado = await guardarDatosPersonales({
+      nombre: nombreLimpio,
+      apellido: apellidoLimpio,
+      edad: edadNum,
+      dni: dniLimpio,
+    })
 
     setCargando(false)
 
-    if (errorGuardar) {
-      setError('No pudimos guardar tus datos: ' + errorGuardar.message)
+    if (!resultado.ok) {
+      setError(resultado.error)
       return
     }
 

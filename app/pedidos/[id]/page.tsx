@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { COLORS } from '@/lib/theme'
 import PostularseForm from '@/components/PostularseForm'
 import EliminarPedidoBoton from '@/components/EliminarPedidoBoton'
@@ -74,7 +75,9 @@ export default async function DetallePedidoPage({
     yaPostulado = !!postulacionExistente
 
     if (!yaPostulado && pedido.estado === 'abierto') {
-      const { data: miUsuario } = await supabase
+      // Edad y DNI no son públicos: los propios se leen con el cliente
+      // admin, filtrando por el usuario de la sesión.
+      const { data: miUsuario } = await createAdminClient()
         .from('usuarios')
         .select('nombre, apellido, edad, dni')
         .eq('id', user.id)
