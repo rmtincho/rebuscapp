@@ -174,7 +174,7 @@ export default function PerfilPublico({
 
   return (
     <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
-      <div style={{ maxWidth: 480, margin: '0 auto', background: COLORS.paper, minHeight: '100vh' }}>
+      <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: '20px 16px 40px' }}>
           <Link
             href={volver}

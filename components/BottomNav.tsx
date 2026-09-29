@@ -1,10 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
-import { createClient } from '@/lib/supabase/client'
-import { contarNotificacionesSinLeer } from '@/app/actions/notificacionesLeidas'
+import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadores'
 
 // Nav flotante: Inicio y Mensajes a la izquierda, Notificaciones y Mi perfil
 // a la derecha (círculos negros, uno por botón) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
@@ -54,66 +52,6 @@ const DERECHA: Tab[] = [
     ),
   },
 ]
-
-// Mensajes sin leer del usuario, para el globito rojo. Se vuelve a contar
-// al cambiar de pantalla y cada vez que llega o se lee un mensaje.
-function useMensajesSinLeer(pathname: string) {
-  const [cantidad, setCantidad] = useState(0)
-
-  useEffect(() => {
-    const supabase = createClient()
-    let cancelado = false
-    let canal: ReturnType<typeof supabase.channel> | null = null
-
-    async function contar(usuarioId: string) {
-      const { count } = await supabase
-        .from('mensajes')
-        .select('id', { count: 'exact', head: true })
-        .eq('receptor_id', usuarioId)
-        .eq('leido', false)
-      if (!cancelado) setCantidad(count ?? 0)
-    }
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const usuarioId = session?.user.id
-      if (!usuarioId || cancelado) return
-      contar(usuarioId)
-      canal = supabase
-        .channel(`sin-leer-${usuarioId}`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'mensajes', filter: `receptor_id=eq.${usuarioId}` },
-          () => contar(usuarioId)
-        )
-        .subscribe()
-    })
-
-    return () => {
-      cancelado = true
-      if (canal) supabase.removeChannel(canal)
-    }
-  }, [pathname])
-
-  return cantidad
-}
-
-// Lo mismo para la campana. Se cuenta por el servidor; se actualiza al
-// cambiar de pantalla.
-function useNotificacionesSinLeer(pathname: string) {
-  const [cantidad, setCantidad] = useState(0)
-  useEffect(() => {
-    let cancelado = false
-    contarNotificacionesSinLeer()
-      .then((n) => {
-        if (!cancelado) setCantidad(n)
-      })
-      .catch(() => {})
-    return () => {
-      cancelado = true
-    }
-  }, [pathname])
-  return cantidad
-}
 
 function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: string; globos?: Record<string, number> }) {
   return (
@@ -189,6 +127,7 @@ export default function BottomNav() {
 
   return (
     <div
+      className="solo-movil"
       style={{
         position: 'fixed',
         bottom: 18,

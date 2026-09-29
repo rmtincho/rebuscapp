@@ -12,9 +12,11 @@ const MapaPedidos = dynamic(() => import('./MapaPedidos'), {
 export default function MapaPedidosWrapper({
   pedidos,
   centro,
+  alto,
 }: {
   pedidos: PedidoParaMapa[]
   centro: [number, number]
+  alto?: string
 }) {
-  return <MapaPedidos pedidos={pedidos} centro={centro} />
+  return <MapaPedidos pedidos={pedidos} centro={centro} alto={alto} />
 }

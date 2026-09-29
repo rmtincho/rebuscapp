@@ -57,11 +57,10 @@ export default async function ChatPage({
   return (
     <div style={{ background: '#F5EBD3', minHeight: '100dvh' }}>
       <div
+        className="pantalla"
         style={{
-          maxWidth: 480,
-          margin: '0 auto',
           background: COLORS.paper,
-          minHeight: '100dvh',
+          minHeight: 'calc(100dvh - var(--alto-cabecera))',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -72,7 +71,7 @@ export default async function ChatPage({
             borderBottom: `1px solid ${COLORS.line}`,
             background: COLORS.card,
             position: 'sticky',
-            top: 0,
+            top: 'var(--alto-cabecera)',
             zIndex: 10,
           }}
         >

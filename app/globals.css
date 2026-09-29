@@ -56,3 +56,59 @@ textarea::placeholder {
 @media (prefers-reduced-motion: reduce) {
   .lupa-cargando { animation: none; }
 }
+
+/* ============================================================
+   Versión web (compu). Hasta 899 px todo se ve como en el celular.
+   Desde 900 px: cabecera arriba de lado a lado (CabeceraWeb), sin la
+   barra de abajo, y el contenido centrado con un ancho máximo.
+   ============================================================ */
+:root {
+  --alto-cabecera: 0px;
+}
+
+.solo-escritorio { display: none !important; }
+
+/* Columna de cada pantalla: 480 px en el celular */
+.pantalla { max-width: 480px; margin: 0 auto; }
+
+@media (min-width: 900px) {
+  :root { --alto-cabecera: 68px; }
+  .solo-movil { display: none !important; }
+  .solo-escritorio { display: revert !important; }
+
+  /* Pantallas sin diseño propio para compu: un poco más anchas */
+  .pantalla { max-width: 760px; padding-top: 12px; }
+  /* Pantallas con diseño de compu: contenido centrado, ancho máximo */
+  .pantalla-ancha { max-width: 1200px; padding: 12px 24px 0; }
+}
+
+/* Inicio en compu: columna izquierda (saludo, accesos, lo tuyo) fija
+   mientras se recorren los trabajos a la derecha */
+@media (min-width: 900px) {
+  .inicio-grilla {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .inicio-lateral {
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 12px);
+    max-height: calc(100vh - var(--alto-cabecera) - 24px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  /* Lista y mapa lado a lado; el mapa queda fijo al recorrer la lista */
+  .feed-cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .feed-mapa {
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 12px);
+  }
+  /* Filtros de rubro: en compu en varias filas en vez de deslizar */
+  .feed-pills { flex-wrap: wrap; overflow-x: visible !important; }
+}

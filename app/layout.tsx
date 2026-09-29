@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import CabeceraWeb from '@/components/CabeceraWeb'
 
 // Una sola familia (Inter, fuente variable) para títulos y texto: estética
 // neutra y limpia. Las dos variables se mantienen para no tocar el CSS.
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.variable}>
+        <CabeceraWeb />
         {children}
       </body>
     </html>

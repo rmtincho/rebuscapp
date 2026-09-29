@@ -51,15 +51,17 @@ function crearIcono() {
 export default function MapaPedidos({
   pedidos,
   centro,
+  alto = '320px',
 }: {
   pedidos: PedidoParaMapa[]
   centro: [number, number]
+  alto?: string
 }) {
   return (
     <MapContainer
       center={centro}
       zoom={13}
-      style={{ height: '320px', width: '100%' }}
+      style={{ height: alto, width: '100%' }}
       zoomControl={false}
       className="mapa-oscuro"
     >

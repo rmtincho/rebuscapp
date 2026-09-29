@@ -1,11 +1,25 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useSyncExternalStore } from 'react'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import PedidosList from '@/components/PedidosList'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
+
+// true en pantallas de compu (mismo corte que la versión web en globals.css)
+const CONSULTA_ESCRITORIO = '(min-width: 900px)'
+function useEsEscritorio() {
+  return useSyncExternalStore(
+    (avisar) => {
+      const mq = window.matchMedia(CONSULTA_ESCRITORIO)
+      mq.addEventListener('change', avisar)
+      return () => mq.removeEventListener('change', avisar)
+    },
+    () => window.matchMedia(CONSULTA_ESCRITORIO).matches,
+    () => false
+  )
+}
 
 type Seccion = 'trabajos' | 'trabajadores'
 type Vista = 'lista' | 'mapa'
@@ -24,6 +38,10 @@ export default function FeedPedidos({
   // null = "Todas"
   const [grupo, setGrupo] = useState<string | null>(null)
   const filaPillsRef = useRef<HTMLDivElement>(null)
+  // En compu la lista y el mapa se ven juntos, sin el botón Lista/Mapa
+  const esEscritorio = useEsEscritorio()
+  const mostrarLista = esEscritorio || vista === 'lista'
+  const mostrarMapa = esEscritorio || vista === 'mapa'
 
   const pedidosFiltrados = grupo ? pedidos.filter((p) => p.categorias?.grupo_slug === grupo) : pedidos
   const trabajadoresFiltrados = grupo
@@ -76,6 +94,23 @@ export default function FeedPedidos({
 
   const cantidad = seccion === 'trabajos' ? pedidosFiltrados.length : trabajadoresFiltrados.length
 
+  const mapa = (
+    <div className="feed-mapa" style={{ marginBottom: 12 }}>
+      <div style={{ borderRadius: 28, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
+        <MapaPedidosWrapper
+          pedidos={pedidosConUbicacion as any}
+          centro={centro}
+          alto={esEscritorio ? 'calc(100vh - var(--alto-cabecera) - 60px)' : undefined}
+        />
+      </div>
+      {sinUbicacion > 0 && (
+        <p style={{ fontSize: 12, color: COLORS.inkSoft, margin: '10px 4px 0' }}>
+          {sinUbicacion} pedido{sinUbicacion > 1 ? 's' : ''} sin ubicación — visible{sinUbicacion > 1 ? 's' : ''} solo en la lista
+        </p>
+      )}
+    </div>
+  )
+
   return (
     <div id="trabajos" style={{ scrollMarginTop: 16 }}>
       {/* Trabajos | Trabajadores */}
@@ -112,6 +147,7 @@ export default function FeedPedidos({
       {/* Filtro por categoría: fila deslizable de pills */}
       <div
         ref={filaPillsRef}
+        className="feed-pills"
         style={{
           display: 'flex',
           gap: 8,
@@ -144,6 +180,7 @@ export default function FeedPedidos({
         {seccion === 'trabajos' && (
           <button
             type="button"
+            className="solo-movil"
             onClick={() => setVista(vista === 'lista' ? 'mapa' : 'lista')}
             aria-label={vista === 'lista' ? 'Ver en el mapa' : 'Ver como lista'}
             style={{
@@ -176,37 +213,29 @@ export default function FeedPedidos({
         )}
       </div>
 
-      {seccion === 'trabajos' && vista === 'mapa' && (
-        <div style={{ padding: '0 20px 12px' }}>
-          <div style={{ borderRadius: 28, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
-            <MapaPedidosWrapper pedidos={pedidosConUbicacion as any} centro={centro} />
-          </div>
-          {sinUbicacion > 0 && (
-            <p style={{ fontSize: 12, color: COLORS.inkSoft, margin: '10px 4px 0' }}>
-              {sinUbicacion} pedido{sinUbicacion > 1 ? 's' : ''} sin ubicación — visible{sinUbicacion > 1 ? 's' : ''} solo en la lista
-            </p>
-          )}
-        </div>
-      )}
-
-      <div style={{ padding: '0 20px 20px' }}>
-        {seccion === 'trabajos' && (
-          <>
+      {seccion === 'trabajos' ? (
+        // En el celular: mapa arriba (si se eligió) y lista abajo.
+        // En compu (.feed-cuerpo): lista a la izquierda, mapa fijo a la derecha.
+        <div className="feed-cuerpo" style={{ padding: '0 20px 20px' }}>
+          {mostrarMapa && !esEscritorio && mapa}
+          <div style={{ minWidth: 0 }}>
             {pedidosFiltrados.length === 0 &&
               vacio(
                 grupo
                   ? `No hay trabajos de ${labelGrupo} por ahora.`
                   : 'Todavía no hay trabajos publicados. Sé el primero.'
               )}
-            {vista === 'lista' && pedidosFiltrados.length > 0 && <PedidosList pedidos={pedidosFiltrados as any} />}
-          </>
-        )}
-
-        {seccion === 'trabajadores' &&
-          (grupo && trabajadores.length > 0 && trabajadoresFiltrados.length === 0
+            {mostrarLista && pedidosFiltrados.length > 0 && <PedidosList pedidos={pedidosFiltrados as any} />}
+          </div>
+          {mostrarMapa && esEscritorio && mapa}
+        </div>
+      ) : (
+        <div style={{ padding: '0 20px 20px' }}>
+          {grupo && trabajadores.length > 0 && trabajadoresFiltrados.length === 0
             ? vacio(`Nadie de ${labelGrupo} en el listado por ahora.`)
-            : <TrabajadoresList trabajadores={trabajadoresFiltrados} />)}
-      </div>
+            : <TrabajadoresList trabajadores={trabajadoresFiltrados} />}
+        </div>
+      )}
     </div>
   )
 }

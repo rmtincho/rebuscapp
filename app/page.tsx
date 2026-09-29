@@ -282,9 +282,11 @@ export default async function HomePage() {
 
   return (
     <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
-      <div style={{ maxWidth: 480, margin: '0 auto', background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
-        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha */}
+      <div className="pantalla pantalla-ancha" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
+        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha.
+            En compu no va: está la cabecera web. */}
         <div
+          className="solo-movil"
           style={{
             padding: '20px 20px 4px',
             display: 'flex',
@@ -330,6 +332,9 @@ export default async function HomePage() {
           </a>
         </div>
 
+        {/* En compu: esta columna a la izquierda y los trabajos a la derecha */}
+        <div className="inicio-grilla">
+        <aside className="inicio-lateral">
         <div style={{ padding: '18px 20px 18px' }}>
           <h1
             style={{
@@ -569,6 +574,9 @@ export default async function HomePage() {
           </div>
         )}
 
+        </aside>
+
+        <main style={{ minWidth: 0 }}>
         <div style={{ padding: '0 20px 8px' }}>
           {error && (
             <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
@@ -578,6 +586,8 @@ export default async function HomePage() {
         </div>
 
         <FeedPedidos pedidos={pedidos ?? []} trabajadores={trabajadores} centro={CENTRO_DEFAULT} />
+        </main>
+        </div>
       </div>
 
       <BottomNav />
