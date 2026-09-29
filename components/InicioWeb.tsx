@@ -1,6 +1,8 @@
 'use client'
 
 import { Fragment, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { guardarModo, type ModoInicio } from '@/lib/modoInicio'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
@@ -90,6 +92,7 @@ export default function InicioWeb({
   anuncioLateral,
   anunciosLista,
   semilla,
+  modo,
 }: {
   nombre: string | null
   pedidos: PedidoWeb[]
@@ -101,13 +104,26 @@ export default function InicioWeb({
   anuncioLateral: Anuncio | null
   anunciosLista: Anuncio[]
   semilla: number
+  // Busco trabajo → trabajos; necesito a alguien → trabajadores y tus pedidos
+  modo: ModoInicio
 }) {
+  const router = useRouter()
   const [texto, setTexto] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [grupo, setGrupo] = useState<string | null>(null)
   const [pago, setPago] = useState<Pago>('todos')
   const [orden, setOrden] = useState<Orden>('recientes')
-  const [seccion, setSeccion] = useState<'trabajos' | 'trabajadores'>('trabajos')
+  const seccion = modo === 'busco' ? 'trabajos' : 'trabajadores'
+  const actividadDelModo = actividad.filter((a) => (modo === 'busco' ? a.tipo === 'postulacion' : a.tipo === 'pedido'))
+
+  function cambiarModo(m: ModoInicio) {
+    if (m === modo) return
+    guardarModo(m)
+    setBusqueda('')
+    setTexto('')
+    setGrupo(null)
+    router.refresh()
+  }
   const [vista, setVista] = useState<'grilla' | 'mapa'>('grilla')
 
   const filtrados = useMemo(() => {
@@ -169,11 +185,39 @@ export default function InicioWeb({
         }}
       >
         <div>
+          <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: 'rgba(255,255,255,0.5)', borderRadius: 100, padding: 4, marginBottom: 22 }}>
+            {(
+              [
+                ['busco', 'Busco trabajo'],
+                ['ofrezco', 'Necesito a alguien'],
+              ] as const
+            ).map(([v, l]) => (
+              <button
+                key={v}
+                type="button"
+                role="tab"
+                aria-selected={modo === v}
+                onClick={() => cambiarModo(v)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 100,
+                  border: 'none',
+                  background: modo === v ? COLORS.dark : 'transparent',
+                  color: modo === v ? COLORS.onDark : COLORS.ink,
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
           <p style={{ fontSize: 16, fontWeight: 600, color: 'rgba(28,28,30,0.7)', margin: '0 0 6px' }}>
             {nombre ? `Hola, ${nombre}` : 'Hola'}
           </p>
           <h1 style={{ fontSize: 46, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, margin: '0 0 24px', color: COLORS.ink }}>
-            ¿Qué trabajo buscás hoy?
+            {modo === 'busco' ? '¿Qué trabajo buscás hoy?' : '¿A quién necesitás?'}
           </h1>
           <form
             onSubmit={buscar}
@@ -197,7 +241,7 @@ export default function InicioWeb({
             <input
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
-              placeholder="Plomería, limpieza, flete, pintar una pieza..."
+              placeholder={modo === 'busco' ? 'Plomería, limpieza, flete, pintar una pieza...' : 'Plomero, electricista, pintor, cuidado de personas...'}
               style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', fontSize: 16, padding: '12px 4px', background: 'transparent', color: COLORS.ink }}
             />
             <button
@@ -312,15 +356,17 @@ export default function InicioWeb({
       </section>
 
       {/* ——— Tu actividad ——— */}
-      {actividad.length > 0 && (
+      {actividadDelModo.length > 0 && (
         <section style={{ marginTop: 40 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 }}>
             <h2 style={tituloSeccion}>Tu actividad</h2>
             <div style={{ display: 'flex', gap: 18 }}>
-              <a href="/mis-postulaciones" style={{ fontSize: 14, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none' }}>
-                Mis postulaciones →
-              </a>
-              {tieneHistorial && (
+              {modo === 'busco' && (
+                <a href="/mis-postulaciones" style={{ fontSize: 14, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none' }}>
+                  Mis postulaciones →
+                </a>
+              )}
+              {modo === 'ofrezco' && tieneHistorial && (
                 <a href="/historial" style={{ fontSize: 14, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none' }}>
                   Historial →
                 </a>
@@ -328,7 +374,7 @@ export default function InicioWeb({
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14 }}>
-            {actividad.slice(0, 6).map((a) => {
+            {actividadDelModo.slice(0, 6).map((a) => {
               const est = COLORES_ESTADO[a.colorEstado]
               return (
                 <a
@@ -401,14 +447,6 @@ export default function InicioWeb({
             </span>
           </h2>
           <div style={{ display: 'flex', gap: 10 }}>
-            <Segmento
-              opciones={[
-                { valor: 'trabajos', label: 'Trabajos' },
-                { valor: 'trabajadores', label: 'Trabajadores' },
-              ]}
-              valor={seccion}
-              onChange={(v) => setSeccion(v as 'trabajos' | 'trabajadores')}
-            />
             {seccion === 'trabajos' && (
               <Segmento
                 opciones={[

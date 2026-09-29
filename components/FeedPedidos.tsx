@@ -18,14 +18,18 @@ export default function FeedPedidos({
   centro,
   anunciosLista = [],
   semilla = 0,
+  seccionFija,
 }: {
   pedidos: any[]
   trabajadores: Trabajador[]
   centro: [number, number]
   anunciosLista?: AnuncioElegible[]
   semilla?: number
+  // Con el modo del inicio elegido, solo esa sección y sin las pestañas
+  seccionFija?: Seccion
 }) {
-  const [seccion, setSeccion] = useState<Seccion>('trabajos')
+  const [seccionElegida, setSeccion] = useState<Seccion>('trabajos')
+  const seccion = seccionFija ?? seccionElegida
   const [vista, setVista] = useState<Vista>('lista')
   // null = "Todas"
   const [grupo, setGrupo] = useState<string | null>(null)
@@ -103,7 +107,7 @@ export default function FeedPedidos({
   return (
     <div id="trabajos" style={{ scrollMarginTop: 16 }}>
       {/* Trabajos | Trabajadores */}
-      <div style={{ padding: '8px 20px 12px' }}>
+      <div style={{ padding: '8px 20px 12px' }} hidden={!!seccionFija}>
         <div
           role="tablist"
           style={{ display: 'flex', background: COLORS.card, boxShadow: COLORS.cardShadow, borderRadius: 100, padding: 4 }}

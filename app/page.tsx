@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { COOKIE_MODO, esModo, type ModoInicio } from '@/lib/modoInicio'
+import SelectorModo from '@/components/SelectorModo'
 import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
 import BottomNav from '@/components/BottomNav'
@@ -244,16 +247,6 @@ export default async function HomePage() {
     borderRadius: 100,
   })
 
-  // Cápsula negra chica arriba de cada acceso rápido ("Publicar", "Buscar"...)
-  const pildora: React.CSSProperties = {
-    display: 'inline-block',
-    background: COLORS.dark,
-    color: COLORS.onDark,
-    fontSize: 12,
-    fontWeight: 500,
-    padding: '5px 12px',
-    borderRadius: 100,
-  }
 
   const circuloIcono = (fondo: string): React.CSSProperties => ({
     width: 36,
@@ -267,22 +260,17 @@ export default async function HomePage() {
     flexShrink: 0,
   })
 
-  const tarjetaAmarilla: React.CSSProperties = {
-    flex: 1,
-    minWidth: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: 18,
-    background: `linear-gradient(160deg, #FFD54A 0%, ${COLORS.clay} 100%)`,
-    borderRadius: 24,
-    padding: 14,
-    textDecoration: 'none',
-    color: COLORS.onClay,
-    boxShadow: '0 10px 24px rgba(255, 184, 0, 0.25)',
-  }
 
   const cantidadTrabajos = pedidos?.length ?? 0
+
+  // Modo del inicio: el último elegido (cookie). La primera vez, si publicó
+  // pedidos y nunca se postuló, "necesito a alguien"; si no, "busco trabajo".
+  const modoGuardado = (await cookies()).get(COOKIE_MODO)?.value
+  const modo: ModoInicio = esModo(modoGuardado)
+    ? modoGuardado
+    : misPedidos.length > 0 && misPostulaciones.length === 0
+    ? 'ofrezco'
+    : 'busco'
   const [anuncios, anunciosLista, anunciosInicioMovil] = await Promise.all([
     anunciosPara(['inicio_web', 'lateral_web']),
     anunciosDeEspacio('lista'),
@@ -338,6 +326,7 @@ export default async function HomePage() {
           anuncioLateral={anuncios.lateral_web}
           anunciosLista={anunciosLista}
           semilla={semilla}
+          modo={modo}
         />
       </div>
 
@@ -401,69 +390,56 @@ export default async function HomePage() {
               letterSpacing: '-0.035em',
             }}
           >
-            Trabajo
-            <br />
-            cerca tuyo
+            {modo === 'busco' ? (
+              <>
+                Trabajo
+                <br />
+                cerca tuyo
+              </>
+            ) : (
+              <>
+                ¿A quién
+                <br />
+                necesitás?
+              </>
+            )}
           </h1>
         </div>
 
-        {/* Accesos rápidos: dos tarjetas amarillas + una blanca ancha */}
+        {/* Modo: busco trabajo / necesito a alguien. El resto del inicio
+            muestra solo lo de ese modo, para no mezclar todo. */}
         <div style={{ padding: '0 20px 20px' }}>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-            <a href="/publicar" style={tarjetaAmarilla}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <span style={pildora}>Publicar</span>
-                <span style={circuloIcono('rgba(255,255,255,0.45)')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>¿Ofrecés un trabajo?</p>
-                <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>Recibí postulaciones</p>
-              </div>
-            </a>
-            <a href="#trabajos" style={tarjetaAmarilla}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <span style={pildora}>Buscar</span>
-                <span style={circuloIcono('rgba(255,255,255,0.45)')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="M21 21l-4.3-4.3" />
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>¿En busca de trabajo?</p>
-                <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>
-                  {cantidadTrabajos} cerca tuyo
-                </p>
-              </div>
-            </a>
-          </div>
+          <SelectorModo modo={modo} cantidadTrabajos={cantidadTrabajos} />
 
-          <a
-            href="/mis-postulaciones"
-            style={{ ...tarjeta, marginBottom: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
-          >
-            <div>
-              <span style={pildora}>Gestionar</span>
-              <p style={{ margin: '14px 0 0', fontSize: 16, fontWeight: 500, color: COLORS.ink, letterSpacing: '-0.01em' }}>
-                Pedidos y postulaciones
-              </p>
-              <p style={{ margin: '3px 0 0', fontSize: 12, color: COLORS.inkSoft }}>
-                {misPedidos.length} pedido{misPedidos.length !== 1 ? 's' : ''} · {misPostulaciones.length}{' '}
-                {misPostulaciones.length !== 1 ? 'postulaciones' : 'postulación'}
-              </p>
-            </div>
-            <span style={circuloIcono(COLORS.clay)}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-              </svg>
-            </span>
-          </a>
+          {modo === 'ofrezco' && (
+            <a
+              href="/publicar"
+              style={{
+                marginTop: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+                padding: '16px 18px',
+                borderRadius: 22,
+                background: COLORS.dark,
+                color: COLORS.onDark,
+                textDecoration: 'none',
+              }}
+            >
+              <span>
+                <span style={{ display: 'block', fontSize: 16, fontWeight: 600 }}>Publicar un trabajo</span>
+                <span style={{ display: 'block', fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
+                  Les avisamos a los trabajadores del rubro
+                </span>
+              </span>
+              <span style={circuloIcono(COLORS.clay)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+            </a>
+          )}
         </div>
 
         {/* Publicidad: debajo de los accesos. Con varios anuncios, carrusel */}
@@ -473,7 +449,7 @@ export default async function HomePage() {
           {user && <BannerNotificaciones />}
         </div>
 
-        {(misPedidos.length > 0 || tieneHistorial) && (
+        {modo === 'ofrezco' && (misPedidos.length > 0 || tieneHistorial) && (
           <div style={{ padding: '0 20px 16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
               <p style={tituloSeccion}>Tus ofrecimientos de trabajo</p>
@@ -566,7 +542,7 @@ export default async function HomePage() {
           </div>
         )}
 
-        {misPostulaciones.length > 0 && (
+        {modo === 'busco' && misPostulaciones.length > 0 && (
           <div style={{ padding: '0 20px 16px' }}>
             <p style={tituloSeccion}>Mis postulaciones</p>
             {misPostulaciones.map((p) => {
@@ -646,6 +622,7 @@ export default async function HomePage() {
           centro={CENTRO_DEFAULT}
           anunciosLista={anunciosLista}
           semilla={semilla}
+          seccionFija={modo === 'busco' ? 'trabajos' : 'trabajadores'}
         />
       </div>
 
