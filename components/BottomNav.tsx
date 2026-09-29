@@ -6,7 +6,7 @@ import { COLORS } from '@/lib/theme'
 import { createClient } from '@/lib/supabase/client'
 
 // Nav flotante: Inicio a la izquierda, Mensajes y Mi perfil a la derecha
-// (cápsulas negras) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
+// (círculos negros, uno por botón) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
 // lleva aria-label para lectores de pantalla).
 
 type Tab = { href: string; label: string; icon: (activo: boolean) => React.ReactNode }
@@ -195,7 +195,10 @@ export default function BottomNav() {
         </svg>
       </a>
 
-      <Capsula tabs={DERECHA} pathname={pathname} globos={{ '/mensajes': sinLeer }} />
+      {/* Un círculo por botón, igual que Inicio */}
+      {DERECHA.map((tab) => (
+        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={{ '/mensajes': sinLeer }} />
+      ))}
     </div>
   )
 }
