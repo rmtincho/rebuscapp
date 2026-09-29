@@ -6,6 +6,7 @@ import { COLORS } from '@/lib/theme'
 import { PantallaBase, TituloPagina, Subtitulo } from '@/lib/ui'
 import BottomNav from '@/components/BottomNav'
 import FormAnuncio from '@/components/admin/FormAnuncio'
+import Link from 'next/link'
 import AccionesAnuncio from '@/components/admin/AccionesAnuncio'
 
 // Panel de admin → anuncios: cargar, pausar y ver cómo rinde cada uno.
@@ -18,6 +19,7 @@ type Fila = {
   rubro: string | null
   imagen_url: string
   enlace: string | null
+  texto_alternativo: string | null
   activo: boolean
   desde: string | null
   hasta: string | null
@@ -42,19 +44,21 @@ function numero(n: number) {
   return n.toLocaleString('es-AR')
 }
 
-export default async function AdminAnunciosPage() {
+export default async function AdminAnunciosPage({ searchParams }: { searchParams: Promise<{ editar?: string }> }) {
   if (!(await usuarioAdmin())) notFound()
+  const { editar } = await searchParams
 
   const admin = createAdminClient()
   const [{ data, error }, { data: rubros }] = await Promise.all([
     admin
       .from('anuncios')
-      .select('id, anunciante, espacio, rubro, imagen_url, enlace, activo, desde, hasta, impresiones, clics')
+      .select('id, anunciante, espacio, rubro, imagen_url, enlace, texto_alternativo, activo, desde, hasta, impresiones, clics')
       .order('created_at', { ascending: false }),
     admin.from('categorias_grupo').select('slug, nombre').order('nombre'),
   ])
   const anuncios = (data ?? []) as Fila[]
   const hoy = new Date().toISOString().slice(0, 10)
+  const enEdicion = editar ? anuncios.find((a) => a.id === editar) : undefined
   const nombreRubro = new Map((rubros ?? []).map((r) => [r.slug, r.nombre]))
 
   const enCurso = anuncios.filter((a) => estadoDe(a, hoy).texto !== 'Pausado' && estadoDe(a, hoy).texto !== 'Vencido')
@@ -91,7 +95,8 @@ export default async function AdminAnunciosPage() {
         </div>
 
         <div className="web-dos-columnas">
-          <FormAnuncio rubros={rubros ?? []} />
+          {/* key: al pasar de un anuncio a otro, el formulario arranca de cero */}
+          <FormAnuncio key={enEdicion?.id ?? 'nuevo'} rubros={rubros ?? []} inicial={enEdicion} />
 
           <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
             {anuncios.length === 0 && !error && (
@@ -118,6 +123,7 @@ export default async function AdminAnunciosPage() {
                     gridTemplateColumns: 'minmax(0, 200px) minmax(0, 1fr)',
                     gap: 16,
                     opacity: estado.texto === 'Pausado' || estado.texto === 'Vencido' ? 0.7 : 1,
+                    outline: enEdicion?.id === a.id ? `2px solid ${COLORS.dark}` : 'none',
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage */}
@@ -167,7 +173,23 @@ export default async function AdminAnunciosPage() {
                       )}
                     </p>
 
-                    <AccionesAnuncio id={a.id} activo={a.activo} anunciante={a.anunciante} />
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <Link
+                        href={`/admin/anuncios?editar=${a.id}`}
+                        style={{
+                          padding: '7px 14px',
+                          borderRadius: 100,
+                          background: COLORS.dark,
+                          color: COLORS.onDark,
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Editar
+                      </Link>
+                      <AccionesAnuncio id={a.id} activo={a.activo} anunciante={a.anunciante} />
+                    </div>
                   </div>
                 </div>
               )
