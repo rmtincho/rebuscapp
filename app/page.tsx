@@ -101,6 +101,7 @@ export default async function HomePage() {
 
   // Mis pedidos publicados (lado solicitante) — simétrico a "Mis postulaciones"
   let misPedidos: any[] = []
+  let tieneHistorial = false
   const postulantesPorPedido: Record<string, number> = {}
   const sinLeerPedidoPropio: Record<string, number> = {}
 
@@ -116,6 +117,14 @@ export default async function HomePage() {
       .limit(5)
 
     misPedidos = pedidosPropios ?? []
+
+    // ¿Hay trabajos ya cerrados? Para mostrar el acceso al historial
+    const { count: cerrados } = await supabase
+      .from('pedidos')
+      .select('id', { count: 'exact', head: true })
+      .eq('solicitante_id', user.id)
+      .in('estado', ['completado', 'cancelado'])
+    tieneHistorial = (cerrados ?? 0) > 0
 
     for (const p of misPedidos) {
       if (p.estado === 'abierto') {
@@ -401,9 +410,19 @@ export default async function HomePage() {
           {user && <BannerNotificaciones />}
         </div>
 
-        {misPedidos.length > 0 && (
+        {(misPedidos.length > 0 || tieneHistorial) && (
           <div style={{ padding: '0 20px 16px' }}>
-            <p style={tituloSeccion}>Tus ofrecimientos de trabajo</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
+              <p style={tituloSeccion}>Tus ofrecimientos de trabajo</p>
+              {tieneHistorial && (
+                <a href="/historial" style={{ fontSize: 13, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none', flexShrink: 0 }}>
+                  Historial →
+                </a>
+              )}
+            </div>
+            {misPedidos.length === 0 && (
+              <p style={{ fontSize: 13, color: COLORS.inkSoft, margin: '0 0 4px' }}>No tenés ofrecimientos activos.</p>
+            )}
             {misPedidos.map((p) => {
               const postulantesPendientes = postulantesPorPedido[p.id] ?? 0
               const sinLeer = sinLeerPedidoPropio[p.id] ?? 0
