@@ -2,7 +2,7 @@ import { COLORS } from '@/lib/theme'
 import Link from 'next/link'
 import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
 import { formatearFechaCorta } from '@/lib/fechas'
-import TarjetaPerfil from '@/components/TarjetaPerfil'
+import TarjetaPerfil, { textoRubros } from '@/components/TarjetaPerfil'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
@@ -123,12 +123,11 @@ export default function PerfilPublico({
       : null
 
   const nombreCompleto = usuario.apellido ? `${usuario.nombre} ${usuario.apellido}` : usuario.nombre
-  const subtitulo = perfil?.tipo_busqueda
-    ? BUSQUEDA_LABEL[perfil.tipo_busqueda] ?? perfil.tipo_busqueda
-    : rubros[0] ?? null
+  const subtitulo = textoRubros(rubros)
 
   // Datos rápidos de la tarjeta amarilla (solo los que tiene cargados)
   const pillsRapidas = [
+    perfil?.tipo_busqueda && (BUSQUEDA_LABEL[perfil.tipo_busqueda] ?? perfil.tipo_busqueda),
     perfil?.disponibilidad_horaria && (DISPONIBILIDAD_LABEL[perfil.disponibilidad_horaria] ?? perfil.disponibilidad_horaria),
     perfil?.nivel_educativo && (NIVEL_LABEL[perfil.nivel_educativo] ?? perfil.nivel_educativo),
     hechos > 0 && `${hechos} trabajo${hechos === 1 ? '' : 's'}`,

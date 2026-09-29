@@ -3,6 +3,13 @@ import { COLORS } from '@/lib/theme'
 // La tarjeta amarilla de arriba del perfil: foto, nombre, calificación,
 // datos rápidos y un botón. La usan el perfil público y "Tu perfil".
 
+// Debajo del nombre: sus rubros ("Plomería · Gas · Electricidad y 2 más")
+export function textoRubros(rubros: string[]): string | null {
+  if (rubros.length === 0) return null
+  const primeros = rubros.slice(0, 3).join(' · ')
+  return rubros.length > 3 ? `${primeros} y ${rubros.length - 3} más` : primeros
+}
+
 const pillClara: React.CSSProperties = {
   display: 'inline-block',
   fontSize: 12.5,

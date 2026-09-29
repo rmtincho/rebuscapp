@@ -23,7 +23,7 @@ import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
-import TarjetaPerfil from '@/components/TarjetaPerfil'
+import TarjetaPerfil, { textoRubros } from '@/components/TarjetaPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -365,9 +365,10 @@ export default function PerfilForm({
         <TarjetaPerfil
           nombre={`${nombre} ${apellido}`.trim() || 'Tu nombre'}
           fotoUrl={fotoUrl}
-          subtitulo={perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label ?? null : null}
+          subtitulo={textoRubros(categoriasInteres.map((c) => c.nombre))}
           pills={
             [
+              perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label : null,
               DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
               NIVELES.find((n) => n.valor === nivelEducativo)?.label,
               estadisticas && estadisticas.trabajosHechos > 0
