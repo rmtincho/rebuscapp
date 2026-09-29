@@ -32,7 +32,7 @@ const IZQUIERDA: Tab[] = [
 
 const DERECHA: Tab[] = [
   {
-    href: '/perfil/prestador',
+    href: '/perfil',
     label: 'Mi perfil',
     icon: (activo) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

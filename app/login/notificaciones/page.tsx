@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { activarNotificaciones } from '@/lib/push-client';
 
 // Paso 4 de 4 del registro. Redirige a completar el perfil.
-const RUTA_SIGUIENTE = '/perfil/prestador';
+const RUTA_SIGUIENTE = '/perfil';
 
 export default function NotificacionesRegistroPage() {
   const router = useRouter();

@@ -184,7 +184,7 @@ export function MensajeExito({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Barra de progreso de completitud (ej. perfil de prestador)
+// Barra de progreso de completitud (ej. perfil de trabajador)
 export function BarraProgreso({ porcentaje }: { porcentaje: number }) {
   return (
     <div

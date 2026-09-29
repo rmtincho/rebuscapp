@@ -603,7 +603,7 @@ export default async function DetallePedidoPage({
                   }}
                 >
                   🔒 No podés postularte: {motivoBloqueo}{' '}
-                  <Link href="/perfil/prestador" style={{ color: '#8A0A32', fontWeight: 700, textDecoration: 'underline' }}>
+                  <Link href="/perfil" style={{ color: '#8A0A32', fontWeight: 700, textDecoration: 'underline' }}>
                     Revisar mi perfil
                   </Link>
                 </div>

@@ -281,7 +281,7 @@ export default async function HomePage() {
             gap: 10,
           }}
         >
-          <a href="/perfil/prestador" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', minWidth: 0 }}>
+          <a href="/perfil" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', minWidth: 0 }}>
             <span
               style={{
                 width: 44,
