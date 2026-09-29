@@ -1,10 +1,12 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
+import { createClient } from '@/lib/supabase/client'
 
-// Nav flotante: Inicio a la izquierda, Mi perfil a la derecha (cápsulas
-// negras) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
+// Nav flotante: Inicio a la izquierda, Mensajes y Mi perfil a la derecha
+// (cápsulas negras) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
 // lleva aria-label para lectores de pantalla).
 
 type Tab = { href: string; label: string; icon: (activo: boolean) => React.ReactNode }
@@ -23,6 +25,15 @@ const IZQUIERDA: Tab[] = [
 
 const DERECHA: Tab[] = [
   {
+    href: '/mensajes',
+    label: 'Mensajes',
+    icon: (activo) => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
+      </svg>
+    ),
+  },
+  {
     href: '/perfil',
     label: 'Mi perfil',
     icon: (activo) => (
@@ -34,7 +45,49 @@ const DERECHA: Tab[] = [
   },
 ]
 
-function Capsula({ tabs, pathname }: { tabs: Tab[]; pathname: string }) {
+// Mensajes sin leer del usuario, para el globito rojo. Se vuelve a contar
+// al cambiar de pantalla y cada vez que llega o se lee un mensaje.
+function useMensajesSinLeer(pathname: string) {
+  const [cantidad, setCantidad] = useState(0)
+
+  useEffect(() => {
+    const supabase = createClient()
+    let cancelado = false
+    let canal: ReturnType<typeof supabase.channel> | null = null
+
+    async function contar(usuarioId: string) {
+      const { count } = await supabase
+        .from('mensajes')
+        .select('id', { count: 'exact', head: true })
+        .eq('receptor_id', usuarioId)
+        .eq('leido', false)
+      if (!cancelado) setCantidad(count ?? 0)
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const usuarioId = session?.user.id
+      if (!usuarioId || cancelado) return
+      contar(usuarioId)
+      canal = supabase
+        .channel(`sin-leer-${usuarioId}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'mensajes', filter: `receptor_id=eq.${usuarioId}` },
+          () => contar(usuarioId)
+        )
+        .subscribe()
+    })
+
+    return () => {
+      cancelado = true
+      if (canal) supabase.removeChannel(canal)
+    }
+  }, [pathname])
+
+  return cantidad
+}
+
+function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: string; globos?: Record<string, number> }) {
   return (
     <div
       style={{
@@ -63,9 +116,34 @@ function Capsula({ tabs, pathname }: { tabs: Tab[]; pathname: string }) {
               justifyContent: 'center',
               color: activo ? COLORS.dark : 'rgba(255,255,255,0.6)',
               background: activo ? COLORS.card : 'transparent',
+              position: 'relative',
             }}
           >
             {tab.icon(activo)}
+            {(globos[tab.href] ?? 0) > 0 && (
+              <span
+                aria-label={`${globos[tab.href]} sin leer`}
+                style={{
+                  position: 'absolute',
+                  top: 2,
+                  right: 0,
+                  minWidth: 18,
+                  height: 18,
+                  padding: '0 5px',
+                  borderRadius: 100,
+                  background: COLORS.red,
+                  color: '#FFFFFF',
+                  fontSize: 10.5,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: `2px solid ${COLORS.navBg}`,
+                }}
+              >
+                {globos[tab.href] > 99 ? '99+' : globos[tab.href]}
+              </span>
+            )}
           </a>
         )
       })}
@@ -76,6 +154,7 @@ function Capsula({ tabs, pathname }: { tabs: Tab[]; pathname: string }) {
 export default function BottomNav() {
   const pathname = usePathname()
   const publicarActivo = pathname.startsWith('/publicar')
+  const sinLeer = useMensajesSinLeer(pathname)
 
   return (
     <div
@@ -116,7 +195,7 @@ export default function BottomNav() {
         </svg>
       </a>
 
-      <Capsula tabs={DERECHA} pathname={pathname} />
+      <Capsula tabs={DERECHA} pathname={pathname} globos={{ '/mensajes': sinLeer }} />
     </div>
   )
 }
