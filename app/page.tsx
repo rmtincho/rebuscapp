@@ -6,8 +6,8 @@ import BottomNav from '@/components/BottomNav'
 import BannerNotificaciones from '@/components/BannerNotificaciones'
 import FeedPedidos from '@/components/FeedPedidos'
 import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
-import BannerPublicidad from '@/components/BannerPublicidad'
-import { anunciosPara, anunciosDeEspacio, semillaAnuncios } from '@/lib/anuncios'
+import { anunciosPara, anunciosDeEspacio, anunciosParaCarrusel, semillaAnuncios } from '@/lib/anuncios'
+import CarruselPublicidad from '@/components/CarruselPublicidad'
 import type { Trabajador } from '@/components/TrabajadoresList'
 
 const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
@@ -283,9 +283,10 @@ export default async function HomePage() {
   }
 
   const cantidadTrabajos = pedidos?.length ?? 0
-  const [anuncios, anunciosLista] = await Promise.all([
-    anunciosPara(['inicio_movil', 'inicio_web', 'lateral_web']),
+  const [anuncios, anunciosLista, anunciosInicioMovil] = await Promise.all([
+    anunciosPara(['inicio_web', 'lateral_web']),
     anunciosDeEspacio('lista'),
+    anunciosParaCarrusel('inicio_movil'),
   ])
   const semilla = semillaAnuncios()
 
@@ -465,8 +466,8 @@ export default async function HomePage() {
           </a>
         </div>
 
-        {/* Publicidad: un banner fijo, debajo de los accesos */}
-        <BannerPublicidad anuncio={anuncios.inicio_movil} formato="movil" style={{ padding: '0 20px 20px' }} />
+        {/* Publicidad: debajo de los accesos. Con varios anuncios, carrusel */}
+        <CarruselPublicidad anuncios={anunciosInicioMovil} formato="movil" style={{ padding: '0 20px 20px' }} />
 
         <div style={{ padding: '0 20px' }}>
           {user && <BannerNotificaciones />}

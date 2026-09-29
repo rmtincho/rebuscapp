@@ -59,3 +59,12 @@ export async function anunciosDeEspacio(espacio: Espacio): Promise<Anuncio[]> {
     texto_alternativo,
   }))
 }
+
+// Todos los anuncios generales (sin rubro) de un espacio, para un carrusel.
+// Arranca en uno distinto en cada visita, así ninguno sale siempre primero.
+export async function anunciosParaCarrusel(espacio: Espacio): Promise<Anuncio[]> {
+  const generales = (await anunciosDeEspacio(espacio)).filter((a) => !a.rubro)
+  if (generales.length < 2) return generales
+  const inicio = semillaAnuncios() % generales.length
+  return [...generales.slice(inicio), ...generales.slice(0, inicio)]
+}

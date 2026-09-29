@@ -9,11 +9,32 @@ import type { Anuncio } from '@/lib/anuncios'
 // etiqueta "Publicidad" (o "Patrocinado" dentro de las listas). Nada de
 // popups ni cosas que tapen. Sin anuncio cargado no se muestra nada.
 
-const PROPORCION = {
+export const PROPORCION = {
   movil: '5 / 2', // 1200 x 480
   horizontal: '6 / 1', // 1200 x 200
   lateral: '6 / 5', // 600 x 500
 } as const
+
+// Impresión: cuando al menos la mitad del anuncio se ve en pantalla, una
+// sola vez. Lo que está oculto (la versión de compu en el celular y al
+// revés, o las otras placas de un carrusel) no se ve, así que no cuenta.
+export function useImpresion(ref: React.RefObject<HTMLElement | null>, anuncioId: string | null) {
+  useEffect(() => {
+    const el = ref.current
+    if (!anuncioId || !el) return
+    const obs = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((e) => e.isIntersecting)) {
+          registrarImpresion(anuncioId).catch(() => {})
+          obs.disconnect()
+        }
+      },
+      { threshold: 0.5 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [ref, anuncioId])
+}
 
 export default function BannerPublicidad({
   anuncio,
@@ -30,24 +51,7 @@ export default function BannerPublicidad({
 }) {
   const ref = useRef<HTMLDivElement>(null)
 
-  // Impresión: cuando al menos la mitad del banner se ve en pantalla, una
-  // sola vez. Los espacios ocultos (la versión de compu en el celular y al
-  // revés) nunca se ven, así que no cuentan.
-  useEffect(() => {
-    const el = ref.current
-    if (!anuncio || !el) return
-    const obs = new IntersectionObserver(
-      (entradas) => {
-        if (entradas.some((e) => e.isIntersecting)) {
-          registrarImpresion(anuncio.id).catch(() => {})
-          obs.disconnect()
-        }
-      },
-      { threshold: 0.5 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [anuncio])
+  useImpresion(ref, anuncio?.id ?? null)
 
   if (!anuncio) return null
 

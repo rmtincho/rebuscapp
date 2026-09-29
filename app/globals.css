@@ -188,3 +188,6 @@ textarea::placeholder {
   /* Formularios que en el celular tienen un ancho máximo propio */
   .sin-limite-web { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 }
+
+/* Carrusel de publicidad: sin barra de scroll visible */
+.carrusel-pista::-webkit-scrollbar { display: none; }
