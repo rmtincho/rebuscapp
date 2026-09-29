@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
@@ -42,7 +41,7 @@ export default async function HomePage() {
     .limit(50)
 
   // No tiene sentido que alguien vea su propio pedido en el feed de
-  // "cerca tuyo" — ya lo tiene arriba, en "Tus publicaciones de trabajo".
+  // "cerca tuyo" — ya lo tiene arriba, en "Tus ofrecimientos de trabajo".
   if (user) {
     query = query.neq('solicitante_id', user.id)
   }
@@ -110,27 +109,13 @@ export default async function HomePage() {
       .from('pedidos')
       .select('id, descripcion, estado, jornada, fecha_creacion, categorias ( nombre )')
       .eq('solicitante_id', user.id)
+      // Solo los que siguen activos: abiertos (buscando a alguien) y en
+      // curso. Los completados, no concretados y eliminados salen del inicio.
+      .in('estado', ['abierto', 'en_curso'])
       .order('fecha_creacion', { ascending: false })
-      .limit(15)
+      .limit(5)
 
-    // "Eliminar pedido" y "No concretado" dejan los dos el estado
-    // 'cancelado'. Se distinguen porque el no concretado tiene su fila en
-    // no_concretados: los que no la tienen fueron eliminados y no se
-    // muestran. (Cliente admin: RLS puede no dejar leer esa tabla, y acá
-    // solo se consultan pedidos propios.)
-    const idsCancelados = (pedidosPropios ?? []).filter((p) => p.estado === 'cancelado').map((p) => p.id)
-    let noConcretados = new Set<string>()
-    if (idsCancelados.length > 0) {
-      const { data: filas } = await createAdminClient()
-        .from('no_concretados')
-        .select('pedido_id')
-        .in('pedido_id', idsCancelados)
-      noConcretados = new Set((filas ?? []).map((f) => f.pedido_id))
-    }
-
-    misPedidos = (pedidosPropios ?? [])
-      .filter((p) => p.estado !== 'cancelado' || noConcretados.has(p.id))
-      .slice(0, 5)
+    misPedidos = pedidosPropios ?? []
 
     for (const p of misPedidos) {
       if (p.estado === 'abierto') {
@@ -418,13 +403,13 @@ export default async function HomePage() {
 
         {misPedidos.length > 0 && (
           <div style={{ padding: '0 20px 16px' }}>
-            <p style={tituloSeccion}>Tus publicaciones de trabajo</p>
+            <p style={tituloSeccion}>Tus ofrecimientos de trabajo</p>
             {misPedidos.map((p) => {
               const postulantesPendientes = postulantesPorPedido[p.id] ?? 0
               const sinLeer = sinLeerPedidoPropio[p.id] ?? 0
 
               const href =
-                sinLeer > 0 && (p.estado === 'en_curso' || p.estado === 'completado')
+                sinLeer > 0 && p.estado === 'en_curso'
                   ? `/pedidos/${p.id}/chat`
                   : `/pedidos/${p.id}`
 
@@ -471,8 +456,6 @@ export default async function HomePage() {
                     )}
                     {p.estado === 'abierto' && <span style={etiqueta(COLORS.tagBlue, COLORS.tagBlueText)}>Abierto</span>}
                     {p.estado === 'en_curso' && <span style={etiqueta(COLORS.greenTint, COLORS.greenDark)}>En curso</span>}
-                    {p.estado === 'completado' && <span style={etiqueta(COLORS.greenTint, COLORS.greenDark)}>✓ Completado</span>}
-                    {p.estado === 'cancelado' && <span style={etiqueta('#EDEDF2', '#4B4B55')}>No concretado</span>}
                   </div>
 
                   {sinLeer > 0 && (
