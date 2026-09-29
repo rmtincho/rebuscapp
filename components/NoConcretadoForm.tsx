@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { COLORS } from '@/lib/theme'
+import { cerrarPedido } from '@/app/actions/pedidos'
 import {
   PantallaBase,
   LinkVolver,
@@ -69,15 +70,14 @@ export default function NoConcretadoForm({
       return
     }
 
-    const { error: errorUpdate } = await supabase
-      .from('pedidos')
-      .update({ estado: 'cancelado' })
-      .eq('id', pedidoId)
+    // Va por el servidor porque también lo puede reportar el trabajador,
+    // y la base solo deja modificar el pedido a quien lo publicó
+    const resultado = await cerrarPedido(pedidoId, 'no_concretado')
 
     setCargando(false)
 
-    if (errorUpdate) {
-      setError('No pudimos actualizar el pedido: ' + errorUpdate.message)
+    if (!resultado.ok) {
+      setError(resultado.error)
       return
     }
 

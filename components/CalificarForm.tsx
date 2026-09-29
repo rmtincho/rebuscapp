@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { COLORS } from '@/lib/theme'
+import { cerrarPedido } from '@/app/actions/pedidos'
 import {
   PantallaBase,
   LinkVolver,
@@ -78,9 +79,15 @@ export default function CalificarForm({
       return
     }
 
-    // Marcamos el pedido como completado (si todavía no lo estaba)
+    // Marcamos el pedido como completado (si todavía no lo estaba). Va
+    // por el servidor porque también lo puede hacer el trabajador.
     if (!pedidoYaCompletado) {
-      await supabase.from('pedidos').update({ estado: 'completado' }).eq('id', pedidoId)
+      const resultado = await cerrarPedido(pedidoId, 'completado')
+      if (!resultado.ok) {
+        setError('Guardamos tu calificación, pero no pudimos cerrar el trabajo: ' + resultado.error)
+        setCargando(false)
+        return
+      }
     }
 
     setCargando(false)
