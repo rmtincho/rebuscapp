@@ -135,8 +135,9 @@ export default function TarjetaPerfil({
           {/* Cada dato entero en su renglón: se corta entre datos, no adentro */}
           {subtitulo.split(SEPARADOR).map((parte, i) => (
             <span key={i}>
-              {i > 0 && <span style={{ opacity: 0.45, padding: '0 6px' }}>|</span>}
-              <span style={{ whiteSpace: 'nowrap' }}>{parte}</span>
+              {/* Los espacios alrededor del "|" son donde puede cortar el renglón */}
+              {i > 0 && <span style={{ opacity: 0.45 }}> | </span>}
+              <span style={{ display: 'inline-block', maxWidth: '100%' }}>{parte}</span>
             </span>
           ))}
         </p>
