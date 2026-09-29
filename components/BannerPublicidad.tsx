@@ -10,7 +10,7 @@ import type { Anuncio } from '@/lib/anuncios'
 // popups ni cosas que tapen. Sin anuncio cargado no se muestra nada.
 
 const PROPORCION = {
-  movil: '3 / 1', // 1080 x 360
+  movil: '5 / 2', // 1200 x 480
   horizontal: '6 / 1', // 1200 x 200
   lateral: '6 / 5', // 600 x 500
 } as const

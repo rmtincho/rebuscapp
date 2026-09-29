@@ -11,12 +11,12 @@
 --      trabajos de ese rubro; sin rubro, sale para todos.
 --
 -- Espacios y medidas de imagen:
---   inicio_movil    Inicio en el celular, debajo de los accesos          1080 x 360  (3:1)
+--   inicio_movil    Inicio en el celular, debajo de los accesos          1200 x 480  (5:2)
 --   inicio_web      Inicio en compu, franja ancha                        1200 x 200  (6:1)
 --   lateral_web     Inicio en compu, debajo de los filtros                600 x 500
---   lista           Dentro de la lista de trabajos ("Patrocinado")        1080 x 360  (3:1)
---   pedido          Final del detalle de un pedido                       1080 x 360  (3:1)
---   notificaciones  Final de la pantalla de notificaciones               1080 x 360  (3:1)
+--   lista           Dentro de la lista de trabajos ("Patrocinado")        1200 x 480  (5:2)
+--   pedido          Final del detalle de un pedido                       1200 x 480  (5:2)
+--   notificaciones  Final de la pantalla de notificaciones               1200 x 480  (5:2)
 --   perfil_web      Perfil público en compu, debajo de la tarjeta         600 x 500
 --
 -- Si un espacio no tiene anuncios, no se muestra nada.
