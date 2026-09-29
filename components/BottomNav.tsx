@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { createClient } from '@/lib/supabase/client'
+import { contarNotificacionesSinLeer } from '@/app/actions/notificacionesLeidas'
 
-// Nav flotante: Inicio a la izquierda, Mensajes y Mi perfil a la derecha
-// (círculos negros, uno por botón) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
+// Nav flotante: Inicio y Mensajes a la izquierda, Notificaciones y Mi perfil
+// a la derecha (círculos negros, uno por botón) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
 // lleva aria-label para lectores de pantalla).
 
 type Tab = { href: string; label: string; icon: (activo: boolean) => React.ReactNode }
@@ -20,16 +21,25 @@ const IZQUIERDA: Tab[] = [
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       </svg>
     ),
-  },
-]
-
-const DERECHA: Tab[] = [
-  {
+  },  {
     href: '/mensajes',
     label: 'Mensajes',
     icon: (activo) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
+      </svg>
+    ),
+  },
+]
+
+const DERECHA: Tab[] = [
+  {
+    href: '/notificaciones',
+    label: 'Notificaciones',
+    icon: (activo) => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill={activo ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.7 21a2 2 0 0 1-3.4 0" fill="none" />
       </svg>
     ),
   },
@@ -87,6 +97,24 @@ function useMensajesSinLeer(pathname: string) {
   return cantidad
 }
 
+// Lo mismo para la campana. Se cuenta por el servidor; se actualiza al
+// cambiar de pantalla.
+function useNotificacionesSinLeer(pathname: string) {
+  const [cantidad, setCantidad] = useState(0)
+  useEffect(() => {
+    let cancelado = false
+    contarNotificacionesSinLeer()
+      .then((n) => {
+        if (!cancelado) setCantidad(n)
+      })
+      .catch(() => {})
+    return () => {
+      cancelado = true
+    }
+  }, [pathname])
+  return cantidad
+}
+
 function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: string; globos?: Record<string, number> }) {
   return (
     <div
@@ -95,7 +123,7 @@ function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: strin
         gap: 4,
         background: COLORS.navBg,
         borderRadius: 100,
-        padding: 6,
+        padding: 5,
         boxShadow: '0 12px 28px rgba(0,0,0,0.28)',
       }}
     >
@@ -108,8 +136,9 @@ function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: strin
             aria-label={tab.label}
             aria-current={activo ? 'page' : undefined}
             style={{
-              width: 46,
-              height: 46,
+              // Más chicos en pantallas angostas, para que entren los cinco
+              width: 'clamp(38px, 11.5vw, 46px)',
+              height: 'clamp(38px, 11.5vw, 46px)',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -125,8 +154,8 @@ function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: strin
                 aria-label={`${globos[tab.href]} sin leer`}
                 style={{
                   position: 'absolute',
-                  top: 2,
-                  right: 0,
+                  top: -4,
+                  right: -6,
                   minWidth: 18,
                   height: 18,
                   padding: '0 5px',
@@ -154,7 +183,9 @@ function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: strin
 export default function BottomNav() {
   const pathname = usePathname()
   const publicarActivo = pathname.startsWith('/publicar')
-  const sinLeer = useMensajesSinLeer(pathname)
+  const mensajesSinLeer = useMensajesSinLeer(pathname)
+  const notificacionesSinLeer = useNotificacionesSinLeer(pathname)
+  const globos = { '/mensajes': mensajesSinLeer, '/notificaciones': notificacionesSinLeer }
 
   return (
     <div
@@ -167,19 +198,22 @@ export default function BottomNav() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 10,
-        padding: '0 20px',
+        gap: 'clamp(6px, 2.5vw, 10px)',
+        padding: '0 12px',
       }}
     >
-      <Capsula tabs={IZQUIERDA} pathname={pathname} />
+      {/* Un círculo por botón */}
+      {IZQUIERDA.map((tab) => (
+        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />
+      ))}
 
       <a
         href="/publicar"
         aria-label="Publicar un trabajo"
         aria-current={publicarActivo ? 'page' : undefined}
         style={{
-          width: 58,
-          height: 58,
+          width: 'clamp(50px, 15vw, 58px)',
+          height: 'clamp(50px, 15vw, 58px)',
           borderRadius: '50%',
           background: COLORS.clay,
           color: COLORS.onClay,
@@ -195,9 +229,8 @@ export default function BottomNav() {
         </svg>
       </a>
 
-      {/* Un círculo por botón, igual que Inicio */}
       {DERECHA.map((tab) => (
-        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={{ '/mensajes': sinLeer }} />
+        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />
       ))}
     </div>
   )
