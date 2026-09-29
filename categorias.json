@@ -1,0 +1,294 @@
+{
+  "categorias": [
+    {
+      "grupo": "Cuidado de personas",
+      "slug_grupo": "cuidado-personas",
+      "items": [
+        { "nombre": "Acompañamiento de adultos mayores", "slug": "acompanamiento-adultos-mayores", "requiere_matricula": false },
+        { "nombre": "Niñera / cuidado de niños", "slug": "ninera-cuidado-ninos", "requiere_matricula": false },
+        { "nombre": "Cuidado con necesidades médicas", "slug": "cuidado-medico", "requiere_matricula": true },
+        { "nombre": "Aplicación de medicación", "slug": "aplicacion-medicacion", "requiere_matricula": true },
+        { "nombre": "Acompañante terapéutico", "slug": "acompanante-terapeutico", "requiere_matricula": true },
+        { "nombre": "Cuidado de personas con discapacidad", "slug": "cuidado-discapacidad", "requiere_matricula": false },
+        { "nombre": "Acompañamiento nocturno", "slug": "acompanamiento-nocturno", "requiere_matricula": false },
+        { "nombre": "Cuidado post-operatorio", "slug": "cuidado-post-operatorio", "requiere_matricula": true }
+      ]
+    },
+    {
+      "grupo": "Limpieza",
+      "slug_grupo": "limpieza",
+      "items": [
+        { "nombre": "Limpieza general del hogar", "slug": "limpieza-general", "requiere_matricula": false },
+        { "nombre": "Limpieza profunda", "slug": "limpieza-profunda", "requiere_matricula": false },
+        { "nombre": "Limpieza post-obra", "slug": "limpieza-post-obra", "requiere_matricula": false },
+        { "nombre": "Limpieza de oficinas/locales", "slug": "limpieza-oficinas", "requiere_matricula": false },
+        { "nombre": "Lavado y planchado", "slug": "lavado-planchado", "requiere_matricula": false },
+        { "nombre": "Limpieza de tapizados y alfombras", "slug": "limpieza-tapizados", "requiere_matricula": false },
+        { "nombre": "Limpieza de vidrios en altura", "slug": "limpieza-vidrios-altura", "requiere_matricula": false },
+        { "nombre": "Limpieza de piletas", "slug": "limpieza-piletas", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Electricidad, gas e instalaciones",
+      "slug_grupo": "electricidad-gas-instalaciones",
+      "items": [
+        { "nombre": "Electricidad domiciliaria", "slug": "electricidad-domiciliaria", "requiere_matricula": false },
+        { "nombre": "Gas", "slug": "gas", "requiere_matricula": true },
+        { "nombre": "Instalación de aires acondicionados", "slug": "instalacion-aires", "requiere_matricula": false },
+        { "nombre": "Service de aire acondicionado", "slug": "service-aire", "requiere_matricula": false },
+        { "nombre": "Instalación de cámaras de seguridad", "slug": "camaras-seguridad", "requiere_matricula": false },
+        { "nombre": "Instalación de portones automáticos", "slug": "portones-automaticos", "requiere_matricula": false },
+        { "nombre": "Redes y wifi domiciliario", "slug": "redes-wifi", "requiere_matricula": false },
+        { "nombre": "Instalación de paneles solares", "slug": "paneles-solares", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Plomería y sanitarios",
+      "slug_grupo": "plomeria",
+      "items": [
+        { "nombre": "Plomería general", "slug": "plomeria-general", "requiere_matricula": false },
+        { "nombre": "Destapaciones", "slug": "destapaciones", "requiere_matricula": false },
+        { "nombre": "Instalación de termotanques", "slug": "termotanques", "requiere_matricula": false },
+        { "nombre": "Impermeabilización de tanques", "slug": "impermeabilizacion-tanques", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Construcción y albañilería",
+      "slug_grupo": "construccion",
+      "items": [
+        { "nombre": "Albañilería general", "slug": "albanileria", "requiere_matricula": false },
+        { "nombre": "Refacciones y ampliaciones", "slug": "refacciones-ampliaciones", "requiere_matricula": false },
+        { "nombre": "Colocación de pisos y cerámicos", "slug": "pisos-ceramicos", "requiere_matricula": false },
+        { "nombre": "Colocación de durlock", "slug": "durlock", "requiere_matricula": false },
+        { "nombre": "Techos e impermeabilización", "slug": "techos-impermeabilizacion", "requiere_matricula": false },
+        { "nombre": "Colocación de canaletas", "slug": "canaletas", "requiere_matricula": false },
+        { "nombre": "Demoliciones menores", "slug": "demoliciones-menores", "requiere_matricula": false },
+        { "nombre": "Colocación de portones y rejas", "slug": "portones-rejas", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Carpintería y madera",
+      "slug_grupo": "carpinteria",
+      "items": [
+        { "nombre": "Arreglos de muebles", "slug": "arreglos-muebles", "requiere_matricula": false },
+        { "nombre": "Fabricación de muebles a medida", "slug": "muebles-a-medida", "requiere_matricula": false },
+        { "nombre": "Colocación de puertas y ventanas", "slug": "puertas-ventanas", "requiere_matricula": false },
+        { "nombre": "Restauración de muebles", "slug": "restauracion-muebles", "requiere_matricula": false },
+        { "nombre": "Armado de muebles (kits)", "slug": "armado-muebles-kits", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Pintura y terminaciones",
+      "slug_grupo": "pintura",
+      "items": [
+        { "nombre": "Pintura de interiores", "slug": "pintura-interiores", "requiere_matricula": false },
+        { "nombre": "Pintura de exteriores/fachadas", "slug": "pintura-exteriores", "requiere_matricula": false },
+        { "nombre": "Empapelado", "slug": "empapelado", "requiere_matricula": false },
+        { "nombre": "Colocación de porcelanato", "slug": "porcelanato", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Herrería y metalúrgica",
+      "slug_grupo": "herreria",
+      "items": [
+        { "nombre": "Herrería general", "slug": "herreria-general", "requiere_matricula": false },
+        { "nombre": "Rejas y portones", "slug": "rejas-portones", "requiere_matricula": false },
+        { "nombre": "Soldadura", "slug": "soldadura", "requiere_matricula": false },
+        { "nombre": "Estructuras metálicas", "slug": "estructuras-metalicas", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Cerrajería",
+      "slug_grupo": "cerrajeria",
+      "items": [
+        { "nombre": "Apertura de puertas", "slug": "apertura-puertas", "requiere_matricula": false },
+        { "nombre": "Cambio de cerraduras", "slug": "cambio-cerraduras", "requiere_matricula": false },
+        { "nombre": "Copias de llaves a domicilio", "slug": "copias-llaves", "requiere_matricula": false },
+        { "nombre": "Cerrajero/a", "slug": "cerrajero", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Jardinería y espacios exteriores",
+      "slug_grupo": "jardineria",
+      "items": [
+        { "nombre": "Jardinería general", "slug": "jardineria-general", "requiere_matricula": false },
+        { "nombre": "Poda de árboles", "slug": "poda-arboles", "requiere_matricula": false },
+        { "nombre": "Diseño de jardines", "slug": "diseno-jardines", "requiere_matricula": false },
+        { "nombre": "Riego automático", "slug": "riego-automatico", "requiere_matricula": false },
+        { "nombre": "Colocación de césped", "slug": "cesped", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Mudanzas y logística",
+      "slug_grupo": "mudanzas",
+      "items": [
+        { "nombre": "Mudanzas", "slug": "mudanzas", "requiere_matricula": false },
+        { "nombre": "Fletes", "slug": "fletes", "requiere_matricula": false },
+        { "nombre": "Embalaje", "slug": "embalaje", "requiere_matricula": false },
+        { "nombre": "Guardamuebles / transporte de objetos grandes", "slug": "guardamuebles", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Mascotas",
+      "slug_grupo": "mascotas",
+      "items": [
+        { "nombre": "Paseador de perros", "slug": "paseador-perros", "requiere_matricula": false },
+        { "nombre": "Pet sitting (cuidado en domicilio)", "slug": "pet-sitting", "requiere_matricula": false },
+        { "nombre": "Peluquería canina", "slug": "peluqueria-canina", "requiere_matricula": false },
+        { "nombre": "Adiestramiento canino", "slug": "adiestramiento-canino", "requiere_matricula": false },
+        { "nombre": "Veterinaria a domicilio", "slug": "veterinaria-domicilio", "requiere_matricula": true },
+        { "nombre": "Veterinario/a", "slug": "veterinario", "requiere_matricula": true }
+      ]
+    },
+    {
+      "grupo": "Belleza y estética a domicilio",
+      "slug_grupo": "belleza-estetica",
+      "items": [
+        { "nombre": "Peluquería a domicilio", "slug": "peluqueria-domicilio", "requiere_matricula": false },
+        { "nombre": "Peluquero/a", "slug": "peluquero", "requiere_matricula": false },
+        { "nombre": "Manicura y pedicura", "slug": "manicura-pedicura", "requiere_matricula": false },
+        { "nombre": "Maquillaje", "slug": "maquillaje", "requiere_matricula": false },
+        { "nombre": "Masajes", "slug": "masajes", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Eventos y gastronomía",
+      "slug_grupo": "eventos",
+      "items": [
+        { "nombre": "Mozo/moza", "slug": "mozo-moza", "requiere_matricula": false },
+        { "nombre": "Bartender", "slug": "bartender", "requiere_matricula": false },
+        { "nombre": "Cocinero/a para eventos", "slug": "cocinero-eventos", "requiere_matricula": false },
+        { "nombre": "Pastelería y repostería", "slug": "pasteleria", "requiere_matricula": false },
+        { "nombre": "Fotografía de eventos", "slug": "fotografia-eventos", "requiere_matricula": false },
+        { "nombre": "Filmación de eventos", "slug": "filmacion-eventos", "requiere_matricula": false },
+        { "nombre": "Animación infantil", "slug": "animacion-infantil", "requiere_matricula": false },
+        { "nombre": "Payasos y magia", "slug": "payasos-magia", "requiere_matricula": false },
+        { "nombre": "Organización completa de eventos", "slug": "organizacion-eventos", "requiere_matricula": false },
+        { "nombre": "DJ / sonido", "slug": "dj-sonido", "requiere_matricula": false },
+        { "nombre": "Decoración de eventos", "slug": "decoracion-eventos", "requiere_matricula": false },
+        { "nombre": "Alquiler de mobiliario para eventos", "slug": "mobiliario-eventos", "requiere_matricula": false },
+        { "nombre": "Alquiler de castillos inflables / juegos", "slug": "juegos-inflables", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Clases y enseñanza",
+      "slug_grupo": "clases",
+      "items": [
+        { "nombre": "Apoyo escolar / clases particulares", "slug": "apoyo-escolar", "requiere_matricula": false },
+        { "nombre": "Clases de idiomas", "slug": "clases-idiomas", "requiere_matricula": false },
+        { "nombre": "Clases de canto", "slug": "clases-canto", "requiere_matricula": false },
+        { "nombre": "Clases de guitarra", "slug": "clases-guitarra", "requiere_matricula": false },
+        { "nombre": "Clases de piano", "slug": "clases-piano", "requiere_matricula": false },
+        { "nombre": "Clases de batería", "slug": "clases-bateria", "requiere_matricula": false },
+        { "nombre": "Clases de otros instrumentos", "slug": "clases-instrumentos", "requiere_matricula": false },
+        { "nombre": "Clases de computación", "slug": "clases-computacion", "requiere_matricula": false },
+        { "nombre": "Clases de manejo", "slug": "clases-manejo", "requiere_matricula": false },
+        { "nombre": "Preparación para exámenes", "slug": "preparacion-examenes", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Servicio técnico",
+      "slug_grupo": "servicio-tecnico",
+      "items": [
+        { "nombre": "Reparación de electrodomésticos", "slug": "reparacion-electrodomesticos", "requiere_matricula": false },
+        { "nombre": "Reparación de computadoras", "slug": "reparacion-computadoras", "requiere_matricula": false },
+        { "nombre": "Reparación de celulares", "slug": "reparacion-celulares", "requiere_matricula": false },
+        { "nombre": "Instalación de software", "slug": "instalacion-software", "requiere_matricula": false },
+        { "nombre": "Soporte técnico a domicilio", "slug": "soporte-tecnico", "requiere_matricula": false },
+        { "nombre": "Técnico/a en soporte informático", "slug": "tecnico-soporte-informatico", "requiere_matricula": false },
+        { "nombre": "Armado de PC", "slug": "armado-pc", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Automotor",
+      "slug_grupo": "automotor",
+      "items": [
+        { "nombre": "Mecánica a domicilio", "slug": "mecanica-domicilio", "requiere_matricula": false },
+        { "nombre": "Mecánico/a", "slug": "mecanico", "requiere_matricula": false },
+        { "nombre": "Lavado de autos", "slug": "lavado-autos", "requiere_matricula": false },
+        { "nombre": "Auxilio mecánico / grúa", "slug": "auxilio-mecanico", "requiere_matricula": false },
+        { "nombre": "Colocación de gomas", "slug": "colocacion-gomas", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Costura y textil",
+      "slug_grupo": "costura",
+      "items": [
+        { "nombre": "Arreglos de costura", "slug": "arreglos-costura", "requiere_matricula": false },
+        { "nombre": "Tapicería", "slug": "tapiceria", "requiere_matricula": false },
+        { "nombre": "Confección a medida", "slug": "confeccion-medida", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Servicios legales",
+      "slug_grupo": "servicios-legales",
+      "advertencia": "La matrícula es un dato autodeclarado por el prestador, sin verificación oficial. Se recomienda al usuario confirmarla en el sitio del Colegio de Abogados de su jurisdicción antes de contratar. El ejercicio de la abogacía sin matrícula habilitante constituye ejercicio ilegal de la profesión.",
+      "items": [
+        { "nombre": "Derecho de familia", "slug": "derecho-familia", "requiere_matricula": true },
+        { "nombre": "Sucesiones", "slug": "sucesiones", "requiere_matricula": true },
+        { "nombre": "Laboral", "slug": "laboral", "requiere_matricula": true },
+        { "nombre": "Defensa del consumidor", "slug": "defensa-consumidor", "requiere_matricula": true },
+        { "nombre": "Civil y comercial", "slug": "civil-comercial", "requiere_matricula": true }
+      ]
+    },
+    {
+      "grupo": "Administrativo y profesional",
+      "slug_grupo": "administrativo-profesional",
+      "items": [
+        { "nombre": "Trámites y gestoría", "slug": "tramites-gestoria", "requiere_matricula": false },
+        { "nombre": "Traducciones", "slug": "traducciones", "requiere_matricula": false },
+        { "nombre": "Contabilidad", "slug": "contabilidad", "requiere_matricula": true },
+        { "nombre": "Atención al público", "slug": "atencion-al-publico", "requiere_matricula": false },
+        { "nombre": "Recepcionista", "slug": "recepcionista", "requiere_matricula": false },
+        { "nombre": "Cajero/a", "slug": "cajero", "requiere_matricula": false },
+        { "nombre": "Vendedor/a", "slug": "vendedor", "requiere_matricula": false },
+        { "nombre": "Call center / telemarketing", "slug": "call-center", "requiere_matricula": false },
+        { "nombre": "Carga de datos (data entry)", "slug": "carga-de-datos", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Diseño",
+      "slug_grupo": "diseno",
+      "items": [
+        { "nombre": "Diseño gráfico", "slug": "diseno-grafico", "requiere_matricula": false },
+        { "nombre": "Diseño de interiores", "slug": "diseno-interiores", "requiere_matricula": false },
+        { "nombre": "Diseño industrial", "slug": "diseno-industrial", "requiere_matricula": false },
+        { "nombre": "Diseño web / UX-UI", "slug": "diseno-web", "requiere_matricula": false },
+        { "nombre": "Diseño de indumentaria", "slug": "diseno-indumentaria", "requiere_matricula": false },
+        { "nombre": "Ilustración", "slug": "ilustracion", "requiere_matricula": false },
+        { "nombre": "Diseño de logos e identidad de marca", "slug": "diseno-identidad", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Hogar",
+      "slug_grupo": "hogar",
+      "items": [
+        { "nombre": "Compras y mandados", "slug": "compras-mandados", "requiere_matricula": false },
+        { "nombre": "Acompañamiento a turnos médicos", "slug": "acompanamiento-turnos", "requiere_matricula": false },
+        { "nombre": "Organización de espacios (orden del hogar)", "slug": "organizacion-espacios", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Petróleo, gas y minería",
+      "slug_grupo": "petroleo-gas-mineria",
+      "items": [
+        { "nombre": "Ingeniero/a de minas", "slug": "ingeniero-minas", "requiere_matricula": true },
+        { "nombre": "Ingeniero/a en petróleo", "slug": "ingeniero-petroleo", "requiere_matricula": true },
+        { "nombre": "Técnico/a en yacimientos", "slug": "tecnico-yacimientos", "requiere_matricula": false },
+        { "nombre": "Operador/a de maquinaria pesada", "slug": "operador-maquinaria-pesada", "requiere_matricula": false },
+        { "nombre": "Perforista", "slug": "perforista", "requiere_matricula": false },
+        { "nombre": "Soldador/a certificado industrial", "slug": "soldador-certificado", "requiere_matricula": false },
+        { "nombre": "Capataz / supervisor de yacimiento", "slug": "capataz-yacimiento", "requiere_matricula": false },
+        { "nombre": "Geólogo/a", "slug": "geologo", "requiere_matricula": true },
+        { "nombre": "Técnico/a en seguridad e higiene", "slug": "tecnico-seguridad-higiene", "requiere_matricula": true }
+      ]
+    },
+    {
+      "grupo": "Otro",
+      "slug_grupo": "otro",
+      "items": [
+        { "nombre": "Otro", "slug": "otro", "requiere_matricula": false }
+      ]
+    }
+  ]
+}

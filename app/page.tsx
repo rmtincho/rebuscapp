@@ -1,69 +1,566 @@
-import Image from "next/image";
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { COLORS } from '@/lib/theme'
+import { formatearFechaCorta } from '@/lib/fechas'
+import BottomNav from '@/components/BottomNav'
+import BannerNotificaciones from '@/components/BannerNotificaciones'
+import FeedPedidos from '@/components/FeedPedidos'
+import type { Trabajador } from '@/components/TrabajadoresList'
 
-export default function Home() {
+const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
+
+export default async function HomePage() {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  let query = supabase
+    .from('pedidos')
+    .select(
+      `
+      id,
+      descripcion,
+      ubicacion_lat,
+      ubicacion_lng,
+      monto_ofrecido,
+      monto_a_convenir,
+      es_comercio,
+      nombre_comercio,
+      categorias ( nombre, grupo_slug ),
+      usuarios!pedidos_solicitante_id_fkey ( nombre )
+    `
+    )
+    .eq('estado', 'abierto')
+    .order('fecha_creacion', { ascending: false })
+    .limit(50)
+
+  // No tiene sentido que alguien vea su propio pedido en el feed de
+  // "cerca tuyo" — ya lo tiene arriba, en "Mis pedidos".
+  if (user) {
+    query = query.neq('solicitante_id', user.id)
+  }
+
+  const { data: pedidos, error } = await query
+
+  const inicial = user?.email?.[0]?.toUpperCase() ?? '?'
+
+  let fotoUsuario: string | null = null
+  let primerNombre: string | null = null
+  if (user) {
+    const { data: usuario } = await supabase
+      .from('usuarios')
+      .select('foto_perfil_url, nombre')
+      .eq('id', user.id)
+      .maybeSingle()
+    fotoUsuario = usuario?.foto_perfil_url ?? null
+    primerNombre = usuario?.nombre ?? null
+  }
+
+  let misPostulaciones: any[] = []
+  const sinLeerPorPedido: Record<string, number> = {}
+
+  if (user) {
+    const { data: postulaciones } = await supabase
+      .from('postulaciones')
+      .select(
+        `
+        id,
+        estado,
+        fecha,
+        pedidos ( id, descripcion, estado, jornada, solicitante_id, categorias ( nombre ) )
+      `
+      )
+      .eq('prestador_id', user.id)
+      .order('fecha', { ascending: false })
+      .limit(5)
+
+    misPostulaciones = postulaciones ?? []
+
+    for (const p of misPostulaciones) {
+      const pedido = p.pedidos as any
+      // El chat ahora puede existir en cualquier momento (antes de
+      // elegir a alguien, para negociar; o después, ya en curso),
+      // así que siempre chequeamos si hay mensajes sin leer.
+      if (pedido) {
+        const { count } = await supabase
+          .from('mensajes')
+          .select('id', { count: 'exact', head: true })
+          .eq('pedido_id', pedido.id)
+          .eq('receptor_id', user.id)
+          .eq('leido', false)
+        sinLeerPorPedido[pedido.id] = count ?? 0
+      }
+    }
+  }
+
+  // Mis pedidos publicados (lado solicitante) — simétrico a "Mis postulaciones"
+  let misPedidos: any[] = []
+  const postulantesPorPedido: Record<string, number> = {}
+  const sinLeerPedidoPropio: Record<string, number> = {}
+
+  if (user) {
+    const { data: pedidosPropios } = await supabase
+      .from('pedidos')
+      .select('id, descripcion, estado, jornada, fecha_creacion, categorias ( nombre )')
+      .eq('solicitante_id', user.id)
+      .order('fecha_creacion', { ascending: false })
+      .limit(5)
+
+    misPedidos = pedidosPropios ?? []
+
+    for (const p of misPedidos) {
+      if (p.estado === 'abierto') {
+        const { count } = await supabase
+          .from('postulaciones')
+          .select('id', { count: 'exact', head: true })
+          .eq('pedido_id', p.id)
+          .eq('estado', 'pendiente')
+        postulantesPorPedido[p.id] = count ?? 0
+      }
+      // Siempre chequeamos mensajes sin leer — el chat puede existir
+      // desde antes de elegir a alguien (para negociar) o después.
+      {
+        const { count } = await supabase
+          .from('mensajes')
+          .select('id', { count: 'exact', head: true })
+          .eq('pedido_id', p.id)
+          .eq('receptor_id', user.id)
+          .eq('leido', false)
+        sinLeerPedidoPropio[p.id] = count ?? 0
+      }
+    }
+  }
+
+  // Trabajadores que eligieron aparecer en el listado. Si la columna
+  // visible_en_listado todavía no existe (falta la migración de
+  // scripts/sql), la consulta falla y la pestaña queda vacía sin romper
+  // el resto del inicio.
+  let trabajadores: Trabajador[] = []
+  {
+    const { data: perfilesVisibles, error: errorVisibles } = await supabase
+      .from('perfiles_prestador')
+      .select('usuario_id, sobre_mi, tipo_busqueda')
+      .eq('visible_en_listado', true)
+      .neq('usuario_id', user.id)
+      .limit(50)
+
+    if (errorVisibles) {
+      console.error('No se pudo cargar el listado de trabajadores:', errorVisibles.message)
+    }
+
+    const ids = (perfilesVisibles ?? []).map((p) => p.usuario_id)
+    if (ids.length > 0) {
+      const [{ data: usuariosVisibles }, { data: categoriasVisibles }] = await Promise.all([
+        supabase.from('usuarios').select('id, nombre, apellido, foto_perfil_url').in('id', ids),
+        supabase
+          .from('prestador_categorias')
+          .select('prestador_id, categorias ( nombre, grupo_slug )')
+          .in('prestador_id', ids),
+      ])
+
+      const usuariosPorId = new Map((usuariosVisibles ?? []).map((u: any) => [u.id, u]))
+      trabajadores = (perfilesVisibles ?? [])
+        .map((p: any) => {
+          const u: any = usuariosPorId.get(p.usuario_id)
+          // Sin nombre no tiene sentido mostrarlo en un listado público
+          if (!u?.nombre) return null
+          return {
+            id: p.usuario_id,
+            nombre: [u.nombre, u.apellido?.[0] ? `${u.apellido[0]}.` : null].filter(Boolean).join(' '),
+            fotoUrl: u.foto_perfil_url ?? null,
+            sobreMi: p.sobre_mi ?? null,
+            tipoBusqueda: p.tipo_busqueda ?? null,
+            categorias: (categoriasVisibles ?? [])
+              .filter((c: any) => c.prestador_id === p.usuario_id && c.categorias)
+              .map((c: any) => ({ nombre: c.categorias.nombre, grupoSlug: c.categorias.grupo_slug ?? null })),
+          }
+        })
+        .filter((t): t is Trabajador => t !== null)
+    }
+  }
+
+  function fechaRelativa(fechaISO: string): string {
+    const ahora = new Date()
+    const fecha = new Date(fechaISO)
+    const diffMs = ahora.getTime() - fecha.getTime()
+    const diffHoras = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDias = Math.floor(diffHoras / 24)
+
+    if (diffHoras < 1) return 'Recién'
+    if (diffHoras < 24) return `Hace ${diffHoras}h`
+    if (diffDias === 1) return 'Ayer'
+    if (diffDias < 7) return `Hace ${diffDias} días`
+    return formatearFechaCorta(fecha)
+  }
+
+  const tituloSeccion: React.CSSProperties = {
+    fontSize: 16,
+    fontWeight: 600,
+    color: COLORS.ink,
+    letterSpacing: '-0.01em',
+    margin: '0 0 12px',
+  }
+
+  const tarjeta: React.CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    background: COLORS.card,
+    borderRadius: 22,
+    padding: 16,
+    marginBottom: 10,
+    textDecoration: 'none',
+    boxShadow: COLORS.cardShadow,
+  }
+
+  const etiqueta = (fondo: string, texto: string): React.CSSProperties => ({
+    display: 'inline-block',
+    fontSize: 11.5,
+    fontWeight: 500,
+    color: texto,
+    background: fondo,
+    padding: '4px 10px',
+    borderRadius: 100,
+  })
+
+  // Cápsula negra chica arriba de cada acceso rápido ("Publicar", "Buscar"...)
+  const pildora: React.CSSProperties = {
+    display: 'inline-block',
+    background: COLORS.dark,
+    color: COLORS.onDark,
+    fontSize: 12,
+    fontWeight: 500,
+    padding: '5px 12px',
+    borderRadius: 100,
+  }
+
+  const circuloIcono = (fondo: string): React.CSSProperties => ({
+    width: 36,
+    height: 36,
+    borderRadius: '50%',
+    background: fondo,
+    color: COLORS.ink,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  })
+
+  const tarjetaAmarilla: React.CSSProperties = {
+    flex: 1,
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: 18,
+    background: `linear-gradient(160deg, #FFD54A 0%, ${COLORS.clay} 100%)`,
+    borderRadius: 24,
+    padding: 14,
+    textDecoration: 'none',
+    color: COLORS.onClay,
+    boxShadow: '0 10px 24px rgba(255, 184, 0, 0.25)',
+  }
+
+  const cantidadTrabajos = pedidos?.length ?? 0
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
+        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha */}
+        <div
+          style={{
+            padding: '20px 20px 4px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <a href="/perfil/prestador" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', minWidth: 0 }}>
+            <span
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                background: COLORS.clayTint,
+                color: COLORS.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 600,
+                fontSize: 16,
+                flexShrink: 0,
+                backgroundImage: fotoUsuario ? `url(${fotoUsuario})` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              {!fotoUsuario && inicial}
+            </span>
+            <span style={{ fontSize: 15, fontWeight: 500, color: COLORS.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {primerNombre ? `Hola, ${primerNombre}` : 'Hola 👋'}
+            </span>
+          </a>
+          <a
+            href="/configuracion/notificaciones"
+            aria-label="Notificaciones"
+            style={{ ...circuloIcono(COLORS.card), width: 44, height: 44, boxShadow: COLORS.cardShadow }}
+          >
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </a>
+        </div>
+
+        <div style={{ padding: '18px 20px 18px' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 34,
+              fontWeight: 500,
+              lineHeight: 1.12,
+              color: COLORS.ink,
+              letterSpacing: '-0.035em',
+            }}
+          >
+            Trabajo
+            <br />
+            cerca tuyo
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        {/* Accesos rápidos: dos tarjetas amarillas + una blanca ancha */}
+        <div style={{ padding: '0 20px 20px' }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+            <a href="/publicar" style={tarjetaAmarilla}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={pildora}>Publicar</span>
+                <span style={circuloIcono('rgba(255,255,255,0.45)')}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+                  </svg>
+                </span>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>Un trabajo</p>
+                <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>Recibí postulaciones</p>
+              </div>
+            </a>
+            <a href="#trabajos" style={tarjetaAmarilla}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={pildora}>Buscar</span>
+                <span style={circuloIcono('rgba(255,255,255,0.45)')}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.3-4.3" />
+                  </svg>
+                </span>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>Trabajos</p>
+                <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>
+                  {cantidadTrabajos} cerca tuyo
+                </p>
+              </div>
+            </a>
+          </div>
+
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/mis-postulaciones"
+            style={{ ...tarjeta, marginBottom: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            <div>
+              <span style={pildora}>Gestionar</span>
+              <p style={{ margin: '14px 0 0', fontSize: 16, fontWeight: 500, color: COLORS.ink, letterSpacing: '-0.01em' }}>
+                Pedidos y postulaciones
+              </p>
+              <p style={{ margin: '3px 0 0', fontSize: 12, color: COLORS.inkSoft }}>
+                {misPedidos.length} pedido{misPedidos.length !== 1 ? 's' : ''} · {misPostulaciones.length}{' '}
+                {misPostulaciones.length !== 1 ? 'postulaciones' : 'postulación'}
+              </p>
+            </div>
+            <span style={circuloIcono(COLORS.clay)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+              </svg>
+            </span>
           </a>
         </div>
-      </main>
+
+        <div style={{ padding: '0 20px' }}>
+          {user && <BannerNotificaciones />}
+        </div>
+
+        {misPedidos.length > 0 && (
+          <div style={{ padding: '0 20px 16px' }}>
+            <p style={tituloSeccion}>Mis pedidos</p>
+            {misPedidos.map((p) => {
+              const postulantesPendientes = postulantesPorPedido[p.id] ?? 0
+              const sinLeer = sinLeerPedidoPropio[p.id] ?? 0
+
+              const href =
+                sinLeer > 0 && (p.estado === 'en_curso' || p.estado === 'completado')
+                  ? `/pedidos/${p.id}/chat`
+                  : `/pedidos/${p.id}`
+
+              const destacar = postulantesPendientes > 0 || sinLeer > 0
+
+              return (
+                <a
+                  key={p.id}
+                  href={href}
+                  style={{
+                    ...tarjeta,
+                    outline: destacar ? `2px solid ${COLORS.clay}` : 'none',
+                    paddingBottom: sinLeer > 0 ? 48 : 16,
+                  }}
+                >
+                  {postulantesPendientes > 0 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 14,
+                        right: 14,
+                        background: COLORS.dark,
+                        color: COLORS.onDark,
+                        borderRadius: 100,
+                        fontSize: 11.5,
+                        fontWeight: 500,
+                        padding: '4px 10px',
+                      }}
+                    >
+                      {postulantesPendientes} postulante{postulantesPendientes > 1 ? 's' : ''}
+                    </div>
+                  )}
+                  <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink, paddingRight: postulantesPendientes > 0 ? 100 : 0 }}>
+                    {p.descripcion}
+                  </p>
+                  <p style={{ margin: '4px 0 10px', fontSize: 12.5, color: COLORS.inkSoft }}>
+                    {fechaRelativa(p.fecha_creacion)}
+                    {p.estado === 'abierto' &&
+                      ` · ${postulantesPendientes} postulante${postulantesPendientes !== 1 ? 's' : ''} interesado${postulantesPendientes !== 1 ? 's' : ''}`}
+                  </p>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {p.categorias?.nombre && (
+                      <span style={etiqueta(COLORS.tagOrange, COLORS.tagOrangeText)}>{p.categorias.nombre}</span>
+                    )}
+                    {p.estado === 'abierto' && <span style={etiqueta(COLORS.tagBlue, COLORS.tagBlueText)}>Abierto</span>}
+                    {p.estado === 'en_curso' && <span style={etiqueta(COLORS.greenTint, COLORS.greenDark)}>En curso</span>}
+                    {p.estado === 'completado' && <span style={etiqueta(COLORS.greenTint, COLORS.greenDark)}>✓ Completado</span>}
+                    {p.estado === 'cancelado' && <span style={etiqueta('#EDEDF2', '#4B4B55')}>No concretado</span>}
+                  </div>
+
+                  {sinLeer > 0 && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: 14,
+                        right: 14,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        background: COLORS.blue,
+                        color: '#FFFFFF',
+                        fontSize: 11.5,
+                        fontWeight: 500,
+                        padding: '5px 11px',
+                        borderRadius: 100,
+                      }}
+                    >
+                      💬 {sinLeer} mensaje{sinLeer > 1 ? 's' : ''} nuevo{sinLeer > 1 ? 's' : ''}
+                    </span>
+                  )}
+                </a>
+              )
+            })}
+          </div>
+        )}
+
+        {misPostulaciones.length > 0 && (
+          <div style={{ padding: '0 20px 16px' }}>
+            <p style={tituloSeccion}>Mis postulaciones</p>
+            {misPostulaciones.map((p) => {
+              const pedido = p.pedidos as any
+              if (!pedido) return null
+              const sinLeer = sinLeerPorPedido[pedido.id] ?? 0
+              // El postulante siempre puede entrar a chatear con el
+              // solicitante, exista o no conversación todavía (el "no
+              // podés escribir primero" se resuelve dentro del chat).
+              const hrefChat = `/pedidos/${pedido.id}/chat/${pedido.solicitante_id}`
+
+              if (sinLeer > 0) {
+                // Destacada en negro — hay algo nuevo para leer
+                return (
+                  <a
+                    key={p.id}
+                    href={hrefChat}
+                    style={{
+                      ...tarjeta,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      background: COLORS.dark,
+                    }}
+                  >
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, color: COLORS.onDark, fontWeight: 500, fontSize: 15 }}>
+                        {sinLeer} mensaje{sinLeer > 1 ? 's' : ''} nuevo{sinLeer > 1 ? 's' : ''}
+                      </p>
+                      <p style={{ margin: '3px 0 0', color: 'rgba(255,255,255,0.65)', fontSize: 12.5 }}>
+                        {pedido.descripcion}
+                      </p>
+                    </div>
+                    <span style={circuloIcono(COLORS.clay)}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                    </span>
+                  </a>
+                )
+              }
+
+              return (
+                <a key={p.id} href={hrefChat} style={tarjeta}>
+                  <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink }}>
+                    {pedido.descripcion}
+                  </p>
+                  <p style={{ margin: '4px 0 10px', fontSize: 12.5, color: COLORS.inkSoft }}>
+                    Te postulaste {fechaRelativa(p.fecha).toLowerCase()}
+                  </p>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {pedido.categorias?.nombre && (
+                      <span style={etiqueta(COLORS.tagOrange, COLORS.tagOrangeText)}>{pedido.categorias.nombre}</span>
+                    )}
+                    {p.estado === 'pendiente' && <span style={etiqueta('#EDEDF2', '#4B4B55')}>Pendiente</span>}
+                    {p.estado === 'aceptada' && <span style={etiqueta(COLORS.greenTint, COLORS.greenDark)}>✓ En chat</span>}
+                    {p.estado === 'rechazada' && <span style={etiqueta(COLORS.redTint, COLORS.redDark)}>Rechazada</span>}
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        )}
+
+        <div style={{ padding: '0 20px 8px' }}>
+          {error && (
+            <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
+              Error trayendo pedidos: {error.message}
+            </p>
+          )}
+        </div>
+
+        <FeedPedidos pedidos={pedidos ?? []} trabajadores={trabajadores} centro={CENTRO_DEFAULT} />
+      </div>
+
+      <BottomNav />
     </div>
-  );
+  )
 }
