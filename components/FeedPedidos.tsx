@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
@@ -23,6 +23,7 @@ export default function FeedPedidos({
   const [vista, setVista] = useState<Vista>('lista')
   // null = "Todas"
   const [grupo, setGrupo] = useState<string | null>(null)
+  const filaPillsRef = useRef<HTMLDivElement>(null)
 
   const pedidosFiltrados = grupo ? pedidos.filter((p) => p.categorias?.grupo_slug === grupo) : pedidos
   const trabajadoresFiltrados = grupo
@@ -89,7 +90,13 @@ export default function FeedPedidos({
               type="button"
               role="tab"
               aria-selected={seccion === s}
-              onClick={() => setSeccion(s)}
+              onClick={() => {
+                // Al cambiar de pestaña el filtro vuelve a "Todas", y la
+                // fila de pills al principio para que se vea
+                setSeccion(s)
+                setGrupo(null)
+                filaPillsRef.current?.scrollTo({ left: 0, behavior: 'smooth' })
+              }}
               style={{
                 ...segmentoBase,
                 background: seccion === s ? COLORS.dark : 'transparent',
@@ -104,6 +111,7 @@ export default function FeedPedidos({
 
       {/* Filtro por categoría: fila deslizable de pills */}
       <div
+        ref={filaPillsRef}
         style={{
           display: 'flex',
           gap: 8,

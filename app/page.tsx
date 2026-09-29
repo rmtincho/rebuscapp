@@ -41,7 +41,7 @@ export default async function HomePage() {
     .limit(50)
 
   // No tiene sentido que alguien vea su propio pedido en el feed de
-  // "cerca tuyo" — ya lo tiene arriba, en "Mis pedidos".
+  // "cerca tuyo" — ya lo tiene arriba, en "Tus publicaciones de trabajo".
   if (user) {
     query = query.neq('solicitante_id', user.id)
   }
@@ -349,7 +349,7 @@ export default async function HomePage() {
                 </span>
               </div>
               <div>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>Un trabajo</p>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>¿Ofrecés un trabajo?</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>Recibí postulaciones</p>
               </div>
             </a>
@@ -364,7 +364,7 @@ export default async function HomePage() {
                 </span>
               </div>
               <div>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>Trabajos</p>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 500, letterSpacing: '-0.01em' }}>¿En busca de trabajo?</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12, color: 'rgba(28,28,30,0.65)' }}>
                   {cantidadTrabajos} cerca tuyo
                 </p>
@@ -400,7 +400,7 @@ export default async function HomePage() {
 
         {misPedidos.length > 0 && (
           <div style={{ padding: '0 20px 16px' }}>
-            <p style={tituloSeccion}>Mis pedidos</p>
+            <p style={tituloSeccion}>Tus publicaciones de trabajo</p>
             {misPedidos.map((p) => {
               const postulantesPendientes = postulantesPorPedido[p.id] ?? 0
               const sinLeer = sinLeerPedidoPropio[p.id] ?? 0

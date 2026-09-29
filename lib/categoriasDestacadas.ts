@@ -12,4 +12,5 @@ export const CATEGORIAS_DESTACADAS = [
   { slug: 'cuidado-personas', label: 'Cuidado de personas' },
   { slug: 'mascotas', label: 'Mascotas' },
   { slug: 'servicio-tecnico', label: 'Servicio técnico' },
+  { slug: 'automotor', label: 'Mecánica' },
 ] as const
