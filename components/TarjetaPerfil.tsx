@@ -3,11 +3,36 @@ import { COLORS } from '@/lib/theme'
 // La tarjeta amarilla de arriba del perfil: foto, nombre, calificación,
 // datos rápidos y un botón. La usan el perfil público y "Tu perfil".
 
-// Debajo del nombre: sus rubros ("Plomería · Gas · Electricidad y 2 más")
-export function textoRubros(rubros: string[]): string | null {
-  if (rubros.length === 0) return null
-  const primeros = rubros.slice(0, 3).join(' · ')
-  return rubros.length > 3 ? `${primeros} y ${rubros.length - 3} más` : primeros
+const SEPARADOR = ' | '
+
+// Línea debajo del nombre: rubro | horario | carnet | idiomas.
+// Solo lo que la persona tiene cargado.
+export function lineaResumen({
+  rubros,
+  horario,
+  tieneCarnet,
+  clasesCarnet,
+  idiomas,
+}: {
+  rubros: string[]
+  horario: string | null | undefined
+  tieneCarnet: string | null | undefined
+  clasesCarnet: string[] | null | undefined
+  idiomas: string[] | null | undefined
+}): string | null {
+  const partes = [
+    rubros.length > 2 ? `${rubros.slice(0, 2).join(', ')} y ${rubros.length - 2} más` : rubros.join(', '),
+    horario,
+    tieneCarnet === 'si'
+      ? (clasesCarnet ?? []).length > 0
+        ? `Carnet ${(clasesCarnet ?? []).join(', ')}`
+        : 'Con carnet'
+      : tieneCarnet === 'no'
+      ? 'Sin carnet'
+      : null,
+    idiomas != null ? ['Español', ...idiomas].join(', ') : null,
+  ].filter(Boolean)
+  return partes.length > 0 ? partes.join(SEPARADOR) : null
 }
 
 const pillClara: React.CSSProperties = {
@@ -42,7 +67,7 @@ export default function TarjetaPerfil({
       style={{
         position: 'relative',
         marginTop: 14,
-        background: COLORS.clay,
+        background: COLORS.clayGradient,
         borderRadius: 28,
         padding: '22px 18px 20px',
         textAlign: 'center',
@@ -106,8 +131,14 @@ export default function TarjetaPerfil({
         {nombre}
       </h1>
       {subtitulo && (
-        <p style={{ fontSize: 13.5, color: 'rgba(28, 28, 30, 0.65)', margin: '3px 0 0', fontWeight: 500 }}>
-          {subtitulo}
+        <p style={{ fontSize: 13.5, color: 'rgba(28, 28, 30, 0.72)', margin: '4px 0 0', fontWeight: 600, lineHeight: 1.5 }}>
+          {/* Cada dato entero en su renglón: se corta entre datos, no adentro */}
+          {subtitulo.split(SEPARADOR).map((parte, i) => (
+            <span key={i}>
+              {i > 0 && <span style={{ opacity: 0.45, padding: '0 6px' }}>|</span>}
+              <span style={{ whiteSpace: 'nowrap' }}>{parte}</span>
+            </span>
+          ))}
         </p>
       )}
 

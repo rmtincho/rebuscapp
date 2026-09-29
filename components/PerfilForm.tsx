@@ -23,7 +23,7 @@ import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
-import TarjetaPerfil, { textoRubros } from '@/components/TarjetaPerfil'
+import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -365,16 +365,20 @@ export default function PerfilForm({
         <TarjetaPerfil
           nombre={`${nombre} ${apellido}`.trim() || 'Tu nombre'}
           fotoUrl={fotoUrl}
-          subtitulo={textoRubros(categoriasInteres.map((c) => c.nombre))}
+          subtitulo={lineaResumen({
+            rubros: categoriasInteres.map((c) => c.nombre),
+            horario: DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
+            tieneCarnet,
+            clasesCarnet: carnetsDeclarados,
+            idiomas: idiomasDeclarados,
+          })}
           pills={
             [
               perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label : null,
-              DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
               NIVELES.find((n) => n.valor === nivelEducativo)?.label,
               estadisticas && estadisticas.trabajosHechos > 0
                 ? `${estadisticas.trabajosHechos} trabajo${estadisticas.trabajosHechos === 1 ? '' : 's'}`
                 : null,
-              tieneCarnet === 'si' ? 'Con carnet' : null,
             ].filter(Boolean) as string[]
           }
           promedio={estadisticas?.promedio ?? null}
