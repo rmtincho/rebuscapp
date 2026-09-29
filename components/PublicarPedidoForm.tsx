@@ -1,5 +1,6 @@
 'use client'
 
+import PanelFormulario from '@/components/PanelFormulario'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -214,10 +215,19 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
 
   return (
     <PantallaBase>
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 100px' }}>
+      <div className="sin-limite-web" style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 100px' }}>
         <LinkVolver href="/" />
+        {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo={'Contá qué necesitás'}
+          texto={'Describí el trabajo y les avisamos al instante a los trabajadores de ese rubro en Comodoro.'}
+          consejos={['Sé concreto: qué hay que hacer, cuándo y dónde.', 'Poné un monto o dejalo a convenir.', 'Si agregás la ubicación, te encuentran los que están cerca.', 'Podés publicar un pedido cada 24 horas.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <TituloPagina>Contá qué necesitás</TituloPagina>
-
+        </div>
         <form onSubmit={handleSubmit} style={{ marginTop: 8 }}>
           {/* Eje principal: cuánto dura el compromiso */}
           <div
@@ -652,6 +662,8 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
             {cargando ? 'Publicando...' : 'Publicar pedido'}
           </BotonPrincipal>
         </form>
+        </div>
+        </div>
       </div>
       <BottomNav />
     </PantallaBase>

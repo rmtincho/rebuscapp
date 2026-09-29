@@ -1,5 +1,6 @@
 'use client'
 
+import PanelFormulario from '@/components/PanelFormulario'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -117,9 +118,18 @@ export default function CalificarForm({
           <LinkVolver href={`/pedidos/${pedidoId}`} />
         </div>
 
+        {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo={'Calificá el trabajo'}
+          texto={'Tu opinión ayuda a que la próxima persona elija con confianza.'}
+          consejos={['Solo califican las dos personas de un trabajo que se hizo.', 'Sé justo: contá cómo fue, sin insultos.', 'La calificación aparece en su perfil.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <TituloPagina>¿Cómo te fue con {otroUsuarioNombre}?</TituloPagina>
         <Subtitulo>{descripcionPedido}</Subtitulo>
-
+        </div>
         <form onSubmit={enviar}>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 26 }}>
             {[1, 2, 3, 4, 5].map((n) => (
@@ -182,6 +192,8 @@ export default function CalificarForm({
             {cargando ? 'Enviando...' : 'Enviar calificación'}
           </BotonPrincipal>
         </form>
+        </div>
+        </div>
       </div>
     </PantallaBase>
   )

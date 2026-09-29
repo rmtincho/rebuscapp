@@ -1,5 +1,6 @@
 'use client'
 
+import PanelFormulario from '@/components/PanelFormulario'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
@@ -73,11 +74,20 @@ export default function CompletarDatosForm({
 
   return (
     <PantallaBase>
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 60px' }}>
+      <div className="sin-limite-web" style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 60px' }}>
         <LinkVolver href={volverA} />
+        {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo={'Completá tus datos'}
+          texto={'Los pedimos una sola vez, para que quien publica sepa que sos una persona real.'}
+          consejos={['Tu edad y tu DNI no se muestran a nadie.', 'Después podés cambiarlos desde tu perfil.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <TituloPagina>Completá tus datos</TituloPagina>
         <Subtitulo>Necesitamos esto para que puedas postularte a trabajos. Es una sola vez.</Subtitulo>
-
+        </div>
         <form onSubmit={guardar} style={{ marginTop: 16 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, marginBottom: 8 }}>
             Nombre
@@ -134,6 +144,8 @@ export default function CompletarDatosForm({
             {cargando ? 'Guardando...' : 'Guardar y continuar'}
           </BotonPrincipal>
         </form>
+        </div>
+        </div>
       </div>
     </PantallaBase>
   )

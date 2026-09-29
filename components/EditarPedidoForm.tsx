@@ -1,5 +1,6 @@
 'use client'
 
+import PanelFormulario from '@/components/PanelFormulario'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -209,10 +210,19 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
 
   return (
     <PantallaBase>
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 100px' }}>
+      <div className="sin-limite-web" style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 100px' }}>
         <LinkVolver href={`/pedidos/${pedido.id}`} />
+        {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo={'Editá tu pedido'}
+          texto={'Corregí lo que necesites. El pedido sigue publicado mientras lo editás.'}
+          consejos={['Los que ya se postularon reciben un aviso del cambio.', 'Si cambia mucho el trabajo, mejor aclaralo en la descripción.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <TituloPagina>Editar pedido</TituloPagina>
-
+        </div>
         <form onSubmit={handleSubmit} style={{ marginTop: 8 }}>
           <div
             style={{
@@ -580,6 +590,8 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
             {cargando ? 'Guardando...' : 'Guardar cambios'}
           </BotonPrincipal>
         </form>
+        </div>
+        </div>
       </div>
       <BottomNav />
     </PantallaBase>

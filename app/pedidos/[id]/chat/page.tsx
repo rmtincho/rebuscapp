@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { COLORS } from '@/lib/theme'
 import ChatVentana from '@/components/ChatVentana'
+import ListaConversaciones from '@/components/ListaConversaciones'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -55,7 +56,7 @@ export default async function ChatPage({
     .order('fecha', { ascending: true })
 
   return (
-    <div style={{ background: '#F5EBD3', minHeight: '100dvh' }}>
+    <div className="fondo-pantalla" style={{ background: '#F5EBD3', minHeight: '100dvh' }}>
       <div
         className="pantalla"
         style={{
@@ -65,7 +66,15 @@ export default async function ChatPage({
           flexDirection: 'column',
         }}
       >
+        {/* En compu: conversaciones a la izquierda y el chat a la derecha.
+            En el celular estas dos cajas no existen (display: contents). */}
+        <div className="chat-grilla chat-envoltura">
+        <aside className="solo-escritorio chat-lista">
+          <ListaConversaciones usuarioId={user.id} activa={`${id}:${otroUsuarioId}`} />
+        </aside>
+        <div className="chat-panel">
         <div
+          data-encabezado-chat
           style={{
             padding: 'calc(16px + env(safe-area-inset-top, 0px)) 20px 16px',
             borderBottom: `1px solid ${COLORS.line}`,
@@ -104,6 +113,8 @@ export default async function ChatPage({
           otroUsuarioId={otroUsuarioId!}
           mensajesIniciales={mensajesIniciales ?? []}
         />
+        </div>
+        </div>
       </div>
     </div>
   )

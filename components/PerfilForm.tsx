@@ -358,6 +358,9 @@ export default function PerfilForm({
       <div style={{ padding: '20px 20px 110px' }}>
         <LinkVolver href="/" />
 
+        {/* En compu: tarjeta y actividad fijas a la izquierda, formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <div className="web-lateral">
         <TituloPagina>Tu perfil</TituloPagina>
         <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
 
@@ -387,6 +390,9 @@ export default function PerfilForm({
         />
 
         {estadisticas && <TusEstadisticas e={estadisticas} />}
+        </div>
+
+        <div style={{ minWidth: 0 }}>
 
         <form onSubmit={guardar}>
           {/* ——— Datos personales ——— */}
@@ -757,6 +763,8 @@ export default function PerfilForm({
           {' · '}
           <a href="/privacidad" style={{ color: 'inherit' }}>Política de privacidad</a>
         </p>
+        </div>
+        </div>
       </div>
       <BottomNav />
     </PantallaBase>

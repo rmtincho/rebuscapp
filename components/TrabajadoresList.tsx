@@ -51,7 +51,8 @@ export default function TrabajadoresList({ trabajadores }: { trabajadores: Traba
   }
 
   return (
-    <div>
+    // En compu, en grilla
+    <div className="web-grilla">
       {trabajadores.map((t) => {
         const visibles = t.categorias.slice(0, MAX_ETIQUETAS)
         const resto = t.categorias.length - visibles.length

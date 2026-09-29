@@ -47,7 +47,7 @@ export default async function MisPostulacionesPage() {
   }
 
   return (
-    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: '20px 20px 100px' }}>
           <Link
@@ -58,6 +58,7 @@ export default async function MisPostulacionesPage() {
           </Link>
 
           <h1
+            className="titulo-pagina"
             style={{
               fontFamily: 'var(--font-display)',
               fontSize: 22,
@@ -85,6 +86,7 @@ export default async function MisPostulacionesPage() {
             </div>
           )}
 
+          <div className="web-grilla">
           {postulaciones?.map((p) => {
             const pedido = p.pedidos as any
             if (!pedido) return null
@@ -157,6 +159,7 @@ export default async function MisPostulacionesPage() {
               </Link>
             )
           })}
+          </div>
         </div>
       </div>
       <BottomNav />

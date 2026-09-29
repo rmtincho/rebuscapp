@@ -122,7 +122,7 @@ export default async function NotificacionesPage() {
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="web-grilla" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {notificaciones.map((n) => {
             const estilo = ESTILO[n.tipo] ?? ESTILO_GENERICO
             const contenido = (

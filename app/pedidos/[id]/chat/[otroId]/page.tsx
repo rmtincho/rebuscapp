@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { COLORS } from '@/lib/theme'
 import ChatVentana from '@/components/ChatVentana'
+import ListaConversaciones from '@/components/ListaConversaciones'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
@@ -80,7 +81,7 @@ export default async function ChatMultiplePage({
   const volverA = esSolicitante ? `/pedidos/${id}` : `/pedidos/${id}`
 
   return (
-    <div style={{ background: '#F5EBD3', minHeight: '100dvh' }}>
+    <div className="fondo-pantalla" style={{ background: '#F5EBD3', minHeight: '100dvh' }}>
       <div
         className="pantalla"
         style={{
@@ -90,7 +91,15 @@ export default async function ChatMultiplePage({
           flexDirection: 'column',
         }}
       >
+        {/* En compu: conversaciones a la izquierda y el chat a la derecha.
+            En el celular estas dos cajas no existen (display: contents). */}
+        <div className="chat-grilla chat-envoltura">
+        <aside className="solo-escritorio chat-lista">
+          <ListaConversaciones usuarioId={user.id} activa={`${id}:${otroId}`} />
+        </aside>
+        <div className="chat-panel">
         <div
+          data-encabezado-chat
           style={{
             padding: 'calc(16px + env(safe-area-inset-top, 0px)) 20px 16px',
             borderBottom: `1px solid ${COLORS.line}`,
@@ -190,6 +199,8 @@ export default async function ChatMultiplePage({
             !puedeEscribir ? 'Todavía no te escribió quien publicó el trabajo. Cuando lo haga, vas a poder responder acá.' : undefined
           }
         />
+        </div>
+        </div>
       </div>
     </div>
   )

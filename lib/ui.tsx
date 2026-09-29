@@ -11,7 +11,7 @@ import React from 'react'
 
 export function PantallaBase({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         {children}
       </div>
@@ -22,6 +22,7 @@ export function PantallaBase({ children }: { children: React.ReactNode }) {
 export function TituloPagina({ children }: { children: React.ReactNode }) {
   return (
     <h1
+      className="titulo-pagina"
       style={{
         fontFamily: 'var(--font-display)',
         fontSize: 26,

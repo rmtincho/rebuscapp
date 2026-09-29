@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import PanelFormulario from '@/components/PanelFormulario'
 import {
   activarNotificaciones,
   desactivarNotificaciones,
@@ -67,8 +68,8 @@ export default function AjustesNotificacionesPage() {
   const activo = permiso === 'granted' && guardada
 
   return (
-    <div style={{ background: COLORS.fondo, minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '100%', maxWidth: 420, padding: '32px 24px' }}>
+    <div style={{ background: COLORS.fondo, minHeight: '100vh' }}>
+      <div className="pantalla" style={{ padding: '32px 24px' }}>
         <Link
           href="/"
           style={{ fontSize: 13, color: COLORS.texto, textDecoration: 'none', fontWeight: 600 }}
@@ -76,6 +77,15 @@ export default function AjustesNotificacionesPage() {
           ← Volver
         </Link>
 
+        {/* En compu: panel amarillo a la izquierda y el interruptor a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo="Avisos al celular"
+          texto="Enterate cuando hay un trabajo de tu rubro cerca, cuando te escriben o cuando te eligen, aunque no tengas la app abierta."
+          consejos={['Se activan por dispositivo: activalos en cada celular o compu que uses.', 'Podés desactivarlos cuando quieras.', 'En iPhone, primero instalá la app en la pantalla de inicio.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <h1
           style={{
             fontFamily: 'var(--font-poppins, sans-serif)',
@@ -90,6 +100,7 @@ export default function AjustesNotificacionesPage() {
         <p style={{ fontSize: 14, color: COLORS.texto, marginBottom: 24, lineHeight: 1.5 }}>
           Enterate cuando hay un pedido cerca, te escriben, o te eligen para un trabajo — aunque no tengas la app abierta.
         </p>
+        </div>
 
         <div
           style={{
@@ -154,6 +165,8 @@ export default function AjustesNotificacionesPage() {
         {mensaje && (
           <p style={{ fontSize: 13, color: COLORS.texto, lineHeight: 1.4 }}>{mensaje}</p>
         )}
+        </div>
+        </div>
       </div>
     </div>
   )

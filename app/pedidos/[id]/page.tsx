@@ -192,7 +192,7 @@ export default async function DetallePedidoPage({
   }
 
   return (
-    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: 20 }}>
           <Link
@@ -202,7 +202,10 @@ export default async function DetallePedidoPage({
             ← Volver
           </Link>
 
+          {/* En compu: detalle y postulantes a la izquierda, acciones fijas a la derecha */}
+          <div className="pedido-grilla">
           <div
+            className="pedido-detalle"
             style={{
               background: COLORS.card,
               border: `1.5px solid ${COLORS.line}`,
@@ -413,7 +416,7 @@ export default async function DetallePedidoPage({
             )}
           </div>
 
-          <div style={{ marginTop: 20 }}>
+          <div className="pedido-acciones" style={{ marginTop: 20 }}>
             {esElDueño && pedido.estado !== 'abierto' && (
               <div>
                 {pedido.estado === 'completado' && (
@@ -638,7 +641,7 @@ export default async function DetallePedidoPage({
           </div>
 
           {esElDueño && pedido.estado === 'abierto' && (
-            <div style={{ marginTop: 28 }}>
+            <div className="pedido-postulantes" style={{ marginTop: 28 }}>
               <p
                 style={{
                   fontSize: 11.5,
@@ -828,6 +831,7 @@ export default async function DetallePedidoPage({
               })}
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

@@ -76,10 +76,47 @@ textarea::placeholder {
   .solo-movil { display: none !important; }
   .solo-escritorio { display: revert !important; }
 
-  /* Pantallas sin diseño propio para compu: un poco más anchas */
-  .pantalla { max-width: 760px; padding-top: 12px; }
-  /* Pantallas con diseño de compu: contenido centrado, ancho máximo */
-  .pantalla-ancha { max-width: 1200px; padding: 12px 24px 0; }
+  /* Todas las pantallas: el mismo ancho que el contenido de la cabecera */
+  .pantalla,
+  .pantalla-ancha { max-width: 1200px; padding: 20px 24px 0; }
+  /* Sin la columna de color distinto a los costados: todo el fondo parejo */
+  .fondo-pantalla { background: #FAF7F2 !important; }
+
+  /* Títulos de página más grandes */
+  .titulo-pagina { font-size: 40px !important; margin-top: 8px !important; }
+
+  /* Dos columnas: lateral fija (título, resumen, tarjeta) + contenido */
+  .web-dos-columnas {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+  .web-dos-columnas.lateral-derecha { grid-template-columns: minmax(0, 1fr) 380px; }
+  .web-lateral {
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 20px);
+  }
+
+  /* Listas de tarjetas (notificaciones, conversaciones, historial...) en grilla */
+  .web-grilla {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px !important;
+    align-items: start;
+  }
+  .web-grilla > * { margin-bottom: 0 !important; }
+
+  /* Dos columnas iguales (secciones de formularios, datos) */
+  .web-columnas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 14px;
+  }
+  .web-columnas > * { margin-top: 0 !important; }
+  .web-ancho-completo { grid-column: 1 / -1; }
 }
 
 /* Inicio en compu: columna izquierda (saludo, accesos, lo tuyo) fija
@@ -111,4 +148,72 @@ textarea::placeholder {
   }
   /* Filtros de rubro: en compu en varias filas en vez de deslizar */
   .feed-pills { flex-wrap: wrap; overflow-x: visible !important; }
+}
+
+@media (min-width: 900px) {
+  /* Datos del perfil público: más columnas */
+  .datos-grilla { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+
+/* En el celular las cajas de la disposición web de los chats no existen:
+   sus hijos quedan directo en la columna del chat, como siempre */
+.chat-envoltura,
+.chat-panel { display: contents; }
+
+@media (min-width: 900px) {
+  /* Mensajes y chats: conversaciones a la izquierda, chat a la derecha */
+  .chat-grilla {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .chat-lista {
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 20px);
+    max-height: calc(100vh - var(--alto-cabecera) - 40px);
+    overflow-y: auto;
+    padding: 2px 4px 12px 2px;
+    scrollbar-width: thin;
+  }
+  /* El chat ocupa el alto de la ventana, con los mensajes que scrollean adentro */
+  .chat-envoltura { display: grid; }
+  .chat-panel {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--alto-cabecera) - 40px);
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 20px);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(80, 60, 20, 0.07);
+    background: #FFFFFF;
+    min-height: 0 !important;
+  }
+  .chat-panel > [data-encabezado-chat] { position: static !important; }
+}
+
+@media (min-width: 900px) {
+  /* Detalle del pedido: detalle y postulantes a la izquierda,
+     acciones (postularse, chat, cerrar) fijas a la derecha */
+  .pedido-grilla {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-areas: "detalle acciones" "postulantes acciones";
+    column-gap: 32px;
+    align-items: start;
+  }
+  .pedido-detalle { grid-area: detalle; }
+  .pedido-acciones {
+    grid-area: acciones;
+    margin-top: 0 !important;
+    position: sticky;
+    top: calc(var(--alto-cabecera) + 20px);
+  }
+  .pedido-postulantes { grid-area: postulantes; }
+}
+
+@media (min-width: 900px) {
+  /* Formularios que en el celular tienen un ancho máximo propio */
+  .sin-limite-web { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 }

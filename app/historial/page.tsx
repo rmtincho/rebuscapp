@@ -126,6 +126,8 @@ export default async function HistorialPage() {
           </div>
         )}
 
+        {/* En compu, las tarjetas en grilla */}
+        <div className="web-grilla">
         {historial.map((p) => {
           const postulaciones = (p.postulaciones ?? []) as Postulacion[]
           const elegida = postulaciones.find((po) => po.prestador_id === p.prestador_asignado_id)
@@ -177,6 +179,7 @@ export default async function HistorialPage() {
             </div>
           )
         })}
+        </div>
       </div>
       <BottomNav />
     </PantallaBase>

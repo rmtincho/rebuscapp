@@ -173,7 +173,7 @@ export default function PerfilPublico({
   }
 
   return (
-    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: '20px 16px 40px' }}>
           <Link
@@ -183,6 +183,9 @@ export default function PerfilPublico({
             ← Volver
           </Link>
 
+          {/* En compu: tarjeta fija a la izquierda, el detalle a la derecha */}
+          <div className="web-dos-columnas">
+          <div className="web-lateral">
           <TarjetaPerfil
             nombre={nombreCompleto ?? ''}
             fotoUrl={usuario.foto_perfil_url}
@@ -199,10 +202,13 @@ export default function PerfilPublico({
             </p>
           )}
 
+          </div>
+
+          <div style={{ minWidth: 0 }}>
           {/* Datos */}
           <div style={tarjeta}>
             <span style={tituloSeccion}>Datos</span>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 14px' }}>
+            <div className="datos-grilla" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 14px' }}>
               {datos.map((d) => (
                 <div key={d.etiqueta}>
                   <p style={{ fontSize: 15, fontWeight: 700, color: COLORS.ink, margin: 0, lineHeight: 1.3 }}>
@@ -216,6 +222,8 @@ export default function PerfilPublico({
             </div>
           </div>
 
+          {/* En compu, rubros / experiencia / sobre mí en dos columnas */}
+          <div className="web-columnas">
           {rubros.length > 0 && (
             <div style={tarjeta}>
               <span style={tituloSeccion}>Le interesa</span>
@@ -243,6 +251,8 @@ export default function PerfilPublico({
             </div>
           )}
 
+          </div>
+
           {calificaciones.length > 0 && (
             <div id="calificaciones" style={{ ...tarjeta, scrollMarginTop: 16 }}>
               <span style={tituloSeccion}>Calificaciones</span>
@@ -264,6 +274,8 @@ export default function PerfilPublico({
               ))}
             </div>
           )}
+          </div>
+          </div>
         </div>
       </div>
     </div>

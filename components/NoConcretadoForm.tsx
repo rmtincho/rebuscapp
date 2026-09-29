@@ -1,5 +1,6 @@
 'use client'
 
+import PanelFormulario from '@/components/PanelFormulario'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -90,9 +91,18 @@ export default function NoConcretadoForm({
       <div style={{ padding: '20px 20px 60px' }}>
         <LinkVolver href={`/pedidos/${pedidoId}`} />
 
+        {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
+        <div className="web-dos-columnas">
+        <PanelFormulario
+          titulo={'¿Qué pasó?'}
+          texto={'Contanos por qué el trabajo no se hizo. Así el pedido queda cerrado y en tu historial.'}
+          consejos={['No afecta tus calificaciones.', 'Si hubo un problema con la otra persona, podés contarlo acá.']}
+        />
+        <div style={{ minWidth: 0 }}>
+        <div className="solo-movil">
         <TituloPagina>¿Qué pasó?</TituloPagina>
         <Subtitulo>{descripcionPedido}</Subtitulo>
-
+        </div>
         <form onSubmit={confirmar}>
           <TituloSeccion>Contanos por qué no se concretó</TituloSeccion>
 
@@ -171,6 +181,8 @@ export default function NoConcretadoForm({
             {cargando ? 'Confirmando...' : 'Confirmar'}
           </BotonPrincipal>
         </form>
+        </div>
+        </div>
       </div>
     </PantallaBase>
   )

@@ -281,7 +281,7 @@ export default async function HomePage() {
   const cantidadTrabajos = pedidos?.length ?? 0
 
   return (
-    <div style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla pantalla-ancha" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
         {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha.
             En compu no va: está la cabecera web. */}
