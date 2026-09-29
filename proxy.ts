@@ -2,7 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Rutas que cualquiera puede ver sin estar logueado
-const RUTAS_PUBLICAS = ['/login', '/terminos', '/privacidad', '/bienvenida']
+// /anuncio/<id> es el clic en un banner: se abre en otra pestaña (o en el
+// navegador, si la app está instalada), donde puede no haber sesión
+const RUTAS_PUBLICAS = ['/login', '/terminos', '/privacidad', '/bienvenida', '/anuncio/']
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
