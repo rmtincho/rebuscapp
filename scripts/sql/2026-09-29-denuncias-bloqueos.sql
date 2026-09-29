@@ -16,9 +16,13 @@ create table if not exists denuncias (
   motivo text not null check (motivo in ('estafa', 'acoso', 'falso', 'ilegal', 'otro')),
   detalle text check (char_length(detalle) <= 500),
   estado text not null default 'pendiente' check (estado in ('pendiente', 'revisada')),
+  resolucion text,  -- qué se decidió (advertencia, suspensión, sin pruebas...), lo completa quien modera
   created_at timestamptz not null default now(),
   check (denunciado_id is not null or pedido_id is not null)
 );
+
+-- Por si la tabla ya existía de una corrida anterior de este archivo
+alter table denuncias add column if not exists resolucion text;
 
 create index if not exists denuncias_pendientes_idx on denuncias (created_at) where estado = 'pendiente';
 
@@ -110,6 +114,11 @@ commit;
 --   Levantar la suspensión:
 --     update auth.users set banned_until = null where id = '<usuario_id>';
 --
---   Marcar la denuncia como revisada:
---     update denuncias set estado = 'revisada' where id = '<denuncia_id>';
+--   Cerrar la denuncia anotando qué se decidió:
+--     update denuncias set estado = 'revisada', resolucion = 'Advertencia por mail'
+--     where id = '<denuncia_id>';
+--
+--   Antecedentes de una persona (denuncias previas y cómo se resolvieron):
+--     select created_at, motivo, estado, resolucion from denuncias
+--     where denunciado_id = '<usuario_id>' order by created_at;
 -- ------------------------------------------------------------------
