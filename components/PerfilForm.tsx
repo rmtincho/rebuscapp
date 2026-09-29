@@ -365,7 +365,7 @@ export default function PerfilForm({
         <TarjetaPerfil
           nombre={`${nombre} ${apellido}`.trim() || 'Tu nombre'}
           fotoUrl={fotoUrl}
-          subtitulo={lineaResumen({
+          resumen={lineaResumen({
             rubros: categoriasInteres.map((c) => c.nombre),
             horario: DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
             tieneCarnet,

@@ -3,9 +3,9 @@ import { COLORS } from '@/lib/theme'
 // La tarjeta amarilla de arriba del perfil: foto, nombre, calificación,
 // datos rápidos y un botón. La usan el perfil público y "Tu perfil".
 
-const SEPARADOR = ' | '
+export type DatoResumen = { tipo: 'rubro' | 'horario' | 'carnet' | 'idiomas'; texto: string }
 
-// Línea debajo del nombre: rubro | horario | carnet | idiomas.
+// Datos debajo del nombre: rubro, horario, carnet e idiomas.
 // Solo lo que la persona tiene cargado.
 export function lineaResumen({
   rubros,
@@ -19,20 +19,65 @@ export function lineaResumen({
   tieneCarnet: string | null | undefined
   clasesCarnet: string[] | null | undefined
   idiomas: string[] | null | undefined
-}): string | null {
-  const partes = [
-    rubros.length > 2 ? `${rubros.slice(0, 2).join(', ')} y ${rubros.length - 2} más` : rubros.join(', '),
-    horario,
-    tieneCarnet === 'si'
-      ? (clasesCarnet ?? []).length > 0
-        ? `Carnet ${(clasesCarnet ?? []).join(', ')}`
-        : 'Con carnet'
-      : tieneCarnet === 'no'
-      ? 'Sin carnet'
+}): DatoResumen[] {
+  const datos: (DatoResumen | null)[] = [
+    rubros.length > 0
+      ? {
+          tipo: 'rubro',
+          texto: rubros.length > 2 ? `${rubros.slice(0, 2).join(', ')} y ${rubros.length - 2} más` : rubros.join(', '),
+        }
       : null,
-    idiomas != null ? ['Español', ...idiomas].join(', ') : null,
-  ].filter(Boolean)
-  return partes.length > 0 ? partes.join(SEPARADOR) : null
+    horario ? { tipo: 'horario', texto: horario } : null,
+    tieneCarnet === 'si'
+      ? {
+          tipo: 'carnet',
+          texto: (clasesCarnet ?? []).length > 0 ? `Carnet ${(clasesCarnet ?? []).join(', ')}` : 'Con carnet',
+        }
+      : tieneCarnet === 'no'
+      ? { tipo: 'carnet', texto: 'Sin carnet' }
+      : null,
+    idiomas != null ? { tipo: 'idiomas', texto: ['Español', ...idiomas].join(', ') } : null,
+  ]
+  return datos.filter((d): d is DatoResumen => d !== null)
+}
+
+// Íconos chicos delante de cada dato (en vez de separadores, que al
+// pasar de renglón quedaban sueltos al principio o al final)
+const trazo = {
+  width: 14,
+  height: 14,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2.2,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+}
+const ICONOS: Record<DatoResumen['tipo'], React.ReactNode> = {
+  rubro: (
+    <svg {...trazo}>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+    </svg>
+  ),
+  horario: (
+    <svg {...trazo}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  ),
+  carnet: (
+    <svg {...trazo}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="9" cy="11" r="2" />
+      <path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M15 10h3M15 13h3" />
+    </svg>
+  ),
+  idiomas: (
+    <svg {...trazo}>
+      <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
+    </svg>
+  ),
 }
 
 const pillClara: React.CSSProperties = {
@@ -48,7 +93,7 @@ const pillClara: React.CSSProperties = {
 export default function TarjetaPerfil({
   nombre,
   fotoUrl,
-  subtitulo,
+  resumen,
   pills,
   promedio,
   cantidadCalificaciones,
@@ -56,7 +101,7 @@ export default function TarjetaPerfil({
 }: {
   nombre: string
   fotoUrl: string | null
-  subtitulo: string | null
+  resumen: DatoResumen[]
   pills: string[]
   promedio: number | null
   cantidadCalificaciones: number
@@ -130,17 +175,27 @@ export default function TarjetaPerfil({
       >
         {nombre}
       </h1>
-      {subtitulo && (
-        <p style={{ fontSize: 13.5, color: 'rgba(28, 28, 30, 0.72)', margin: '4px 0 0', fontWeight: 600, lineHeight: 1.5 }}>
-          {/* Cada dato entero en su renglón: se corta entre datos, no adentro */}
-          {subtitulo.split(SEPARADOR).map((parte, i) => (
-            <span key={i}>
-              {/* Los espacios alrededor del "|" son donde puede cortar el renglón */}
-              {i > 0 && <span style={{ opacity: 0.45 }}> | </span>}
-              <span style={{ display: 'inline-block', maxWidth: '100%' }}>{parte}</span>
+      {resumen.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '4px 14px',
+            margin: '6px 0 0',
+            fontSize: 13.5,
+            fontWeight: 600,
+            lineHeight: 1.4,
+            color: 'rgba(28, 28, 30, 0.75)',
+          }}
+        >
+          {resumen.map((d) => (
+            <span key={d.tipo} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, minWidth: 0, maxWidth: '100%' }}>
+              <span style={{ display: 'inline-flex', flexShrink: 0, opacity: 0.8 }}>{ICONOS[d.tipo]}</span>
+              <span style={{ minWidth: 0 }}>{d.texto}</span>
             </span>
           ))}
-        </p>
+        </div>
       )}
 
       {pills.length > 0 && (

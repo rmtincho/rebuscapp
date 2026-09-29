@@ -123,7 +123,7 @@ export default function PerfilPublico({
       : null
 
   const nombreCompleto = usuario.apellido ? `${usuario.nombre} ${usuario.apellido}` : usuario.nombre
-  const subtitulo = lineaResumen({
+  const resumen = lineaResumen({
     rubros,
     horario: perfil?.disponibilidad_horaria
       ? DISPONIBILIDAD_LABEL[perfil.disponibilidad_horaria] ?? perfil.disponibilidad_horaria
@@ -186,7 +186,7 @@ export default function PerfilPublico({
           <TarjetaPerfil
             nombre={nombreCompleto ?? ''}
             fotoUrl={usuario.foto_perfil_url}
-            subtitulo={subtitulo}
+            resumen={resumen}
             pills={pillsRapidas}
             promedio={promedio}
             cantidadCalificaciones={calificaciones.length}
