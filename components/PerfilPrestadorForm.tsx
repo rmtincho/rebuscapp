@@ -286,7 +286,7 @@ export default function PerfilPrestadorForm({
       <div style={{ padding: '20px 20px 100px' }}>
         <LinkVolver href="/" />
 
-        <TituloPagina>Tu perfil como prestador</TituloPagina>
+        <TituloPagina>Tu perfil como trabajador</TituloPagina>
         <Subtitulo>Todo esto es opcional, pero ayuda a que te elijan mejor.</Subtitulo>
 
         <BarraProgreso porcentaje={porcentajeCompleto} />

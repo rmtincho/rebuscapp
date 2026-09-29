@@ -584,7 +584,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
 
           <TituloSeccion>¿Dónde es? (opcional)</TituloSeccion>
           <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '-4px 0 12px', lineHeight: 1.4 }}>
-            Si todavía no lo sabés, dejalo así nomás — lo podés charlar con el prestador después. Sin ubicación, el pedido no aparece en el mapa, pero sí en la lista.
+            Si todavía no lo sabés, dejalo así nomás — lo podés charlar con el trabajador después. Sin ubicación, el pedido no aparece en el mapa, pero sí en la lista.
           </p>
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>

@@ -144,7 +144,7 @@ export default async function PerfilPrestadorPublicoPage({
               }}
             >
               <p style={{ color: COLORS.inkSoft, fontSize: 13.5, margin: 0 }}>
-                Esta persona todavía no completó su perfil de prestador.
+                Esta persona todavía no completó su perfil de trabajador.
               </p>
             </div>
           )}

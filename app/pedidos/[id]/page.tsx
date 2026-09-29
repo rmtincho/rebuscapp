@@ -163,7 +163,7 @@ export default async function DetallePedidoPage({
       .select('nombre')
       .eq('id', pedido.prestador_asignado_id)
       .maybeSingle()
-    nombrePrestadorAsignado = prestador?.nombre ?? 'un prestador'
+    nombrePrestadorAsignado = prestador?.nombre ?? 'un trabajador'
   }
 
   const botonChatStyle: React.CSSProperties = {
