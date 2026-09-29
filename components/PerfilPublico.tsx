@@ -2,6 +2,7 @@ import { COLORS } from '@/lib/theme'
 import Link from 'next/link'
 import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
 import { formatearFechaCorta } from '@/lib/fechas'
+import TarjetaPerfil from '@/components/TarjetaPerfil'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
@@ -62,16 +63,6 @@ const tarjeta: React.CSSProperties = {
   padding: 18,
   boxShadow: COLORS.cardShadow,
   marginTop: 14,
-}
-
-const pillClara: React.CSSProperties = {
-  display: 'inline-block',
-  fontSize: 12.5,
-  fontWeight: 600,
-  color: COLORS.ink,
-  background: 'rgba(255, 255, 255, 0.55)',
-  padding: '6px 12px',
-  borderRadius: 100,
 }
 
 const chip: React.CSSProperties = {
@@ -187,109 +178,15 @@ export default function PerfilPublico({
             ← Volver
           </Link>
 
-          {/* Tarjeta principal */}
-          <div
-            style={{
-              position: 'relative',
-              marginTop: 14,
-              background: COLORS.clay,
-              borderRadius: 28,
-              padding: '22px 18px 20px',
-              textAlign: 'center',
-            }}
-          >
-            <span
-              style={{
-                position: 'absolute',
-                top: 16,
-                left: 16,
-                background: COLORS.dark,
-                color: COLORS.onDark,
-                fontSize: 12.5,
-                fontWeight: 700,
-                padding: '6px 11px',
-                borderRadius: 100,
-              }}
-            >
-              {promedio !== null ? (
-                <>
-                  ★ {promedio.toLocaleString('es-AR', { maximumFractionDigits: 1 })}
-                  <span style={{ fontWeight: 500, opacity: 0.7 }}> ({calificaciones.length})</span>
-                </>
-              ) : (
-                'Nuevo'
-              )}
-            </span>
-
-            <div
-              style={{
-                width: 96,
-                height: 96,
-                margin: '8px auto 12px',
-                borderRadius: '50%',
-                border: '4px solid rgba(255, 255, 255, 0.7)',
-                background: COLORS.card,
-                backgroundImage: usuario.foto_perfil_url ? `url(${usuario.foto_perfil_url})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 34,
-                fontWeight: 700,
-                color: COLORS.ink,
-              }}
-            >
-              {!usuario.foto_perfil_url && usuario.nombre?.[0]?.toUpperCase()}
-            </div>
-
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 21,
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                color: COLORS.ink,
-                margin: 0,
-              }}
-            >
-              {nombreCompleto}
-            </h1>
-            {subtitulo && (
-              <p style={{ fontSize: 13.5, color: 'rgba(28, 28, 30, 0.65)', margin: '3px 0 0', fontWeight: 500 }}>
-                {subtitulo}
-              </p>
-            )}
-
-            {pillsRapidas.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 6, marginTop: 16 }}>
-                {pillsRapidas.map((p) => (
-                  <span key={p} style={pillClara}>
-                    {p}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {calificaciones.length > 0 && (
-              <a
-                href="#calificaciones"
-                style={{
-                  display: 'block',
-                  marginTop: 18,
-                  padding: 15,
-                  borderRadius: 100,
-                  background: COLORS.dark,
-                  color: COLORS.onDark,
-                  fontSize: 15,
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                }}
-              >
-                Ver calificaciones
-              </a>
-            )}
-          </div>
+          <TarjetaPerfil
+            nombre={nombreCompleto ?? ''}
+            fotoUrl={usuario.foto_perfil_url}
+            subtitulo={subtitulo}
+            pills={pillsRapidas}
+            promedio={promedio}
+            cantidadCalificaciones={calificaciones.length}
+            boton={calificaciones.length > 0 ? { href: '#calificaciones', label: 'Ver calificaciones' } : null}
+          />
 
           {!perfil && (
             <p style={{ color: COLORS.inkSoft, fontSize: 13, textAlign: 'center', margin: '14px 0 0' }}>

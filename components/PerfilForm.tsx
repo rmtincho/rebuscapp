@@ -23,6 +23,7 @@ import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
+import TarjetaPerfil from '@/components/TarjetaPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -359,6 +360,26 @@ export default function PerfilForm({
 
         <TituloPagina>Tu perfil</TituloPagina>
         <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
+
+        {/* La misma tarjeta que ven los demás, con lo que tenés cargado ahora */}
+        <TarjetaPerfil
+          nombre={`${nombre} ${apellido}`.trim() || 'Tu nombre'}
+          fotoUrl={fotoUrl}
+          subtitulo={perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label ?? null : null}
+          pills={
+            [
+              DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
+              NIVELES.find((n) => n.valor === nivelEducativo)?.label,
+              estadisticas && estadisticas.trabajosHechos > 0
+                ? `${estadisticas.trabajosHechos} trabajo${estadisticas.trabajosHechos === 1 ? '' : 's'}`
+                : null,
+              tieneCarnet === 'si' ? 'Con carnet' : null,
+            ].filter(Boolean) as string[]
+          }
+          promedio={estadisticas?.promedio ?? null}
+          cantidadCalificaciones={estadisticas?.cantidadCalificaciones ?? 0}
+          boton={estadisticas ? { href: `/prestadores/${estadisticas.usuarioId}?volver=/perfil`, label: 'Ver cómo me ven' } : null}
+        />
 
         {estadisticas && <TusEstadisticas e={estadisticas} />}
 

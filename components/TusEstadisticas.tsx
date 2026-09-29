@@ -70,34 +70,12 @@ export default function TusEstadisticas({ e }: { e: Estadisticas }) {
         borderRadius: 24,
         padding: 18,
         boxShadow: COLORS.cardShadow,
+        marginTop: 14,
         marginBottom: 28,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-        <span style={pillTitulo}>Tu actividad</span>
-        <span
-          style={{
-            background: COLORS.clay,
-            color: COLORS.onClay,
-            fontSize: 13,
-            fontWeight: 700,
-            padding: '6px 12px',
-            borderRadius: 100,
-          }}
-        >
-          {e.promedio !== null ? (
-            <>
-              ★ {e.promedio.toLocaleString('es-AR', { maximumFractionDigits: 1 })}
-              <span style={{ fontWeight: 500, opacity: 0.7 }}>
-                {' '}
-                ({e.cantidadCalificaciones} {e.cantidadCalificaciones === 1 ? 'calificación' : 'calificaciones'})
-              </span>
-            </>
-          ) : (
-            'Sin calificaciones todavía'
-          )}
-        </span>
-      </div>
+      {/* La calificación está en la tarjeta amarilla de arriba */}
+      <span style={pillTitulo}>Tu actividad</span>
 
       <p style={subtitulo}>Trabajos que ofreciste</p>
       <Grilla
@@ -124,10 +102,7 @@ export default function TusEstadisticas({ e }: { e: Estadisticas }) {
           Historial
         </a>
         <a href="/mis-postulaciones" style={acceso}>
-          Postulaciones
-        </a>
-        <a href={`/prestadores/${e.usuarioId}?volver=/perfil`} style={{ ...acceso, background: COLORS.dark, color: COLORS.onDark, border: 'none' }}>
-          Cómo me ven
+          Mis postulaciones
         </a>
       </div>
     </div>
