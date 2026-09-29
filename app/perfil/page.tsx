@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import PerfilForm from '@/components/PerfilForm'
+import type { Estadisticas } from '@/components/TusEstadisticas'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
@@ -49,6 +50,44 @@ export default async function PerfilPage() {
     .select('categoria_slug, categorias ( nombre )')
     .eq('prestador_id', user.id)
 
+  // Tu actividad: todo filtrado por el usuario de la sesión. Con el
+  // cliente admin para contar también los pedidos que eliminó.
+  const admin = createAdminClient()
+  const [{ data: misPedidos }, { data: misPostulaciones }, { data: misCalificaciones }, { count: trabajosHechos }] =
+    await Promise.all([
+      admin.from('pedidos').select('id, estado').eq('solicitante_id', user.id),
+      admin.from('postulaciones').select('estado').eq('prestador_id', user.id),
+      admin.from('calificaciones').select('estrellas').eq('calificado_id', user.id),
+      admin
+        .from('pedidos')
+        .select('id', { count: 'exact', head: true })
+        .eq('prestador_asignado_id', user.id)
+        .eq('estado', 'completado'),
+    ])
+  const cancelados = (misPedidos ?? []).filter((p) => p.estado === 'cancelado').map((p) => p.id)
+  const { data: noConcretados } =
+    cancelados.length > 0
+      ? await admin.from('no_concretados').select('pedido_id').in('pedido_id', cancelados)
+      : { data: [] as { pedido_id: string }[] }
+  const idsNoConcretados = new Set((noConcretados ?? []).map((n) => n.pedido_id))
+  // "Cancelado" sin fila en no_concretados = lo eliminó: no cuenta como publicado
+  const pedidosVigentes = (misPedidos ?? []).filter((p) => p.estado !== 'cancelado' || idsNoConcretados.has(p.id))
+  const estrellas = (misCalificaciones ?? []).map((c) => Number(c.estrellas) || 0)
+
+  const estadisticas: Estadisticas = {
+    usuarioId: user.id,
+    pedidosPublicados: pedidosVigentes.length,
+    pedidosActivos: pedidosVigentes.filter((p) => p.estado === 'abierto' || p.estado === 'en_curso').length,
+    pedidosCompletados: pedidosVigentes.filter((p) => p.estado === 'completado').length,
+    pedidosNoConcretados: idsNoConcretados.size,
+    postulaciones: (misPostulaciones ?? []).length,
+    postulacionesPendientes: (misPostulaciones ?? []).filter((p) => p.estado === 'pendiente').length,
+    postulacionesAceptadas: (misPostulaciones ?? []).filter((p) => p.estado === 'aceptada').length,
+    trabajosHechos: trabajosHechos ?? 0,
+    promedio: estrellas.length > 0 ? estrellas.reduce((a, b) => a + b, 0) / estrellas.length : null,
+    cantidadCalificaciones: estrellas.length,
+  }
+
   // Traemos también el nombre del grupo de cada categoría de interés, para mostrarlo
   const gruposMapa: Record<string, string> = {}
   ;(grupos ?? []).forEach((g: any) => {
@@ -74,6 +113,7 @@ export default async function PerfilPage() {
       grupos={grupos ?? []}
       categoriasInteresIniciales={categoriasInteresFormateadas}
       visibleEnListadoInicial={visibleEnListado}
+      estadisticas={estadisticas}
     />
   )
 }

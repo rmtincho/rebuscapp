@@ -22,6 +22,7 @@ import BottomNav from '@/components/BottomNav'
 import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
+import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -85,6 +86,7 @@ export default function PerfilForm({
   grupos,
   categoriasInteresIniciales,
   visibleEnListadoInicial,
+  estadisticas,
 }: {
   perfilExistente: Perfil
   fotoActual: string | null
@@ -96,6 +98,7 @@ export default function PerfilForm({
   categoriasInteresIniciales: CategoriaInteres[]
   // null = la columna todavía no existe en la base: no mostramos la opción
   visibleEnListadoInicial: boolean | null
+  estadisticas?: Estadisticas
 }) {
   const supabase = createClient()
 
@@ -356,6 +359,8 @@ export default function PerfilForm({
 
         <TituloPagina>Tu perfil</TituloPagina>
         <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
+
+        {estadisticas && <TusEstadisticas e={estadisticas} />}
 
         <form onSubmit={guardar}>
           {/* ——— Datos personales ——— */}
