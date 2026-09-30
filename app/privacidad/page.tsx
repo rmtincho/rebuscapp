@@ -53,9 +53,9 @@ export default function PrivacidadPage() {
 
       <Seccion titulo="Dónde se guardan">
         <p style={p}>
-          Usamos servicios externos para funcionar: Supabase (base de datos, archivos y mails de ingreso) y
-          Vercel (donde corre la app). Sus servidores pueden estar fuera de Argentina. Tus datos se guardan
-          ahí con acceso restringido.
+          Usamos servicios externos para funcionar: Supabase (base de datos y archivos), Resend (envío
+          de los mails de ingreso) y Vercel (donde corre la app). Sus servidores pueden estar fuera de
+          Argentina. Tus datos se guardan ahí con acceso restringido.
         </p>
       </Seccion>
 
