@@ -4,6 +4,7 @@ import ChatVentana from '@/components/ChatVentana'
 import ListaConversaciones from '@/components/ListaConversaciones'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { idsConBloqueo } from '@/lib/bloqueos'
 
 export default async function ChatPage({
   params,
@@ -45,6 +46,8 @@ export default async function ChatPage({
     .select('nombre')
     .eq('id', otroUsuarioId)
     .maybeSingle()
+
+  const bloqueado = (await idsConBloqueo(user.id)).has(otroUsuarioId!)
 
   const { data: mensajesIniciales } = await supabase
     .from('mensajes')
@@ -103,7 +106,12 @@ export default async function ChatPage({
             {pedido.descripcion}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 600 }}>
-            {otroUsuario?.nombre ?? 'Chat'}
+            <Link
+            href={`/prestadores/${otroUsuarioId}?volver=/pedidos/${id}/chat`}
+            style={{ color: 'inherit', textDecoration: 'underline' }}
+          >
+            {otroUsuario?.nombre ?? 'Ver perfil'}
+          </Link>
           </p>
         </div>
 
@@ -112,6 +120,8 @@ export default async function ChatPage({
           usuarioId={user.id}
           otroUsuarioId={otroUsuarioId!}
           mensajesIniciales={mensajesIniciales ?? []}
+          bloqueado={bloqueado}
+          mensajeSoloLectura={bloqueado ? 'No se pueden enviar mensajes en esta conversación.' : undefined}
         />
         </div>
         </div>

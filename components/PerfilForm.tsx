@@ -24,6 +24,7 @@ import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
+import ListaBloqueados, { type PersonaBloqueada } from '@/components/ListaBloqueados'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -89,6 +90,7 @@ export default function PerfilForm({
   visibleEnListadoInicial,
   estadisticas,
   esAdmin = false,
+  bloqueados = [],
 }: {
   perfilExistente: Perfil
   fotoActual: string | null
@@ -102,6 +104,7 @@ export default function PerfilForm({
   visibleEnListadoInicial: boolean | null
   estadisticas?: Estadisticas
   esAdmin?: boolean
+  bloqueados?: PersonaBloqueada[]
 }) {
   const supabase = createClient()
 
@@ -775,6 +778,8 @@ export default function PerfilForm({
             {cargando ? 'Guardando...' : 'Guardar perfil'}
           </BotonPrincipal>
         </form>
+
+        <ListaBloqueados personas={bloqueados} />
 
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <BotonCerrarSesion />

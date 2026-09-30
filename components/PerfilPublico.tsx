@@ -4,6 +4,7 @@ import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
 import { formatearFechaCorta } from '@/lib/fechas'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import BannerPublicidad from '@/components/BannerPublicidad'
+import DenunciarBloquear from '@/components/DenunciarBloquear'
 import type { Anuncio } from '@/lib/anuncios'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
@@ -109,6 +110,8 @@ export type PerfilPublicoProps = {
   ofrecidosCompletados: number
   volver: string
   anuncio?: Anuncio | null
+  // Denunciar / bloquear: solo si quien mira es otra persona logueada
+  moderacion?: { otroId: string; bloqueado: boolean } | null
 }
 
 export default function PerfilPublico({
@@ -120,6 +123,7 @@ export default function PerfilPublico({
   ofrecidosCompletados,
   volver,
   anuncio = null,
+  moderacion = null,
 }: PerfilPublicoProps) {
   const promedio =
     calificaciones.length > 0
@@ -280,6 +284,10 @@ export default function PerfilPublico({
                 </div>
               ))}
             </div>
+          )}
+
+          {moderacion && (
+            <DenunciarBloquear otroId={moderacion.otroId} nombre={usuario.nombre ?? 'esta persona'} bloqueado={moderacion.bloqueado} />
           )}
           </div>
           </div>

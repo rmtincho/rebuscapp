@@ -3,6 +3,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import PerfilPublico, { type Calificacion } from '@/components/PerfilPublico'
 import { anunciosPara } from '@/lib/anuncios'
+import { loBloqueo } from '@/lib/bloqueos'
+import { COLORS } from '@/lib/theme'
 
 export default async function PerfilPrestadorPublicoPage({
   params,
@@ -14,6 +16,15 @@ export default async function PerfilPrestadorPublicoPage({
   const { id } = await params
   const { volver } = await searchParams
   const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // La cuenta del equipo (MODERADOR_USUARIO_ID) no muestra perfil: ni
+  // foto, ni datos, ni calificaciones
+  if (process.env.MODERADOR_USUARIO_ID && id === process.env.MODERADOR_USUARIO_ID) {
+    return <CuentaOficial volver={volver || '/'} />
+  }
 
   const { data: usuario } = await supabase
     .from('usuarios')
@@ -75,6 +86,9 @@ export default async function PerfilPrestadorPublicoPage({
     return (Array.isArray(cat) ? cat[0]?.nombre : cat?.nombre) ?? c.categoria_slug
   })
 
+  const esOtro = !!user && user.id !== id
+  const bloqueado = esOtro ? await loBloqueo(user.id, id) : false
+
   return (
     <PerfilPublico
       usuario={usuario}
@@ -85,6 +99,39 @@ export default async function PerfilPrestadorPublicoPage({
       ofrecidosCompletados={completadosComoOferente ?? 0}
       volver={volver || '/'}
       anuncio={(await anunciosPara(['perfil_web'])).perfil_web}
+      moderacion={esOtro ? { otroId: id, bloqueado } : null}
     />
+  )
+}
+
+function CuentaOficial({ volver }: { volver: string }) {
+  return (
+    <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+      <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
+        <div style={{ padding: '20px 16px 40px' }}>
+          <Link href={volver} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}>
+            ← Volver
+          </Link>
+          <div
+            style={{
+              maxWidth: 420,
+              margin: '32px auto 0',
+              background: COLORS.card,
+              border: `1.5px solid ${COLORS.line}`,
+              borderRadius: 16,
+              padding: 24,
+              textAlign: 'center',
+            }}
+          >
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
+              Cuenta oficial de Rebuscapp
+            </p>
+            <p style={{ fontSize: 13.5, color: COLORS.inkSoft, lineHeight: 1.5, margin: '8px 0 0' }}>
+              Desde esta cuenta el equipo responde consultas y revisa denuncias.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

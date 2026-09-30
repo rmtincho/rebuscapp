@@ -45,7 +45,7 @@ export default function PrivacidadPage() {
           items={[
             'Los demás usuarios ven tu nombre, apellido, foto, tu perfil de trabajador y tus calificaciones.',
             'Tu edad, DNI y mail no se muestran a nadie.',
-            'Los mensajes del chat los ven solo las dos personas de la conversación.',
+            'Los mensajes del chat los ven solo las dos personas de la conversación, salvo que haya una denuncia: en ese caso podemos revisar la conversación para resolverla.',
             'Solo aparecés en el listado de trabajadores si lo activás en tu perfil.',
           ]}
         />

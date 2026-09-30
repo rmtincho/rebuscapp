@@ -14,6 +14,7 @@ import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
 import { anunciosPara, anunciosDeEspacio, anunciosParaCarrusel, semillaAnuncios } from '@/lib/anuncios'
 import CarruselPublicidad from '@/components/CarruselPublicidad'
 import type { Trabajador } from '@/components/TrabajadoresList'
+import { idsConBloqueo } from '@/lib/bloqueos'
 
 const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
 
@@ -27,6 +28,11 @@ export default async function HomePage() {
   if (!user) {
     redirect('/login')
   }
+
+  // Con quien hay un bloqueo (en cualquier dirección) no se ven los
+  // pedidos ni el perfil del otro. Formato de lista para PostgREST: (a,b)
+  const bloqueados = [...(await idsConBloqueo(user.id))]
+  const listaBloqueados = `(${bloqueados.join(',')})`
 
   let query = supabase
     .from('pedidos')
@@ -59,6 +65,9 @@ export default async function HomePage() {
   // "cerca tuyo" — ya lo tiene arriba, en "Tus ofrecimientos de trabajo".
   if (user) {
     query = query.neq('solicitante_id', user.id)
+  }
+  if (bloqueados.length > 0) {
+    query = query.not('solicitante_id', 'in', listaBloqueados)
   }
 
   const { data: pedidos, error } = await query
@@ -170,12 +179,15 @@ export default async function HomePage() {
   // el resto del inicio.
   let trabajadores: Trabajador[] = []
   {
-    const { data: perfilesVisibles, error: errorVisibles } = await supabase
+    let consultaVisibles = supabase
       .from('perfiles_prestador')
       .select('usuario_id, sobre_mi, tipo_busqueda')
       .eq('visible_en_listado', true)
       .neq('usuario_id', user.id)
-      .limit(50)
+    if (bloqueados.length > 0) {
+      consultaVisibles = consultaVisibles.not('usuario_id', 'in', listaBloqueados)
+    }
+    const { data: perfilesVisibles, error: errorVisibles } = await consultaVisibles.limit(50)
 
     if (errorVisibles) {
       console.error('No se pudo cargar el listado de trabajadores:', errorVisibles.message)

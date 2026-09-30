@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import PerfilForm from '@/components/PerfilForm'
 import { esEmailAdmin } from '@/lib/admin'
 import type { Estadisticas } from '@/components/TusEstadisticas'
+import type { PersonaBloqueada } from '@/components/ListaBloqueados'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
@@ -88,6 +89,16 @@ export default async function PerfilPage() {
     promedio: estrellas.length > 0 ? estrellas.reduce((a, b) => a + b, 0) / estrellas.length : null,
     cantidadCalificaciones: estrellas.length,
   }
+  // A quién bloqueó (si la tabla todavía no existe, la lista queda vacía)
+  const { data: bloqueosData } = await supabase
+    .from('bloqueos')
+    .select('bloqueado_id, usuarios!bloqueos_bloqueado_id_fkey ( nombre, apellido )')
+    .eq('bloqueador_id', user.id)
+    .order('created_at', { ascending: false })
+  const bloqueados: PersonaBloqueada[] = (bloqueosData ?? []).map((b: any) => {
+    const u = Array.isArray(b.usuarios) ? b.usuarios[0] : b.usuarios
+    return { id: b.bloqueado_id, nombre: `${u?.nombre ?? ''} ${u?.apellido ?? ''}`.trim() || 'Usuario' }
+  })
 
   // Traemos también el nombre del grupo de cada categoría de interés, para mostrarlo
   const gruposMapa: Record<string, string> = {}
@@ -116,6 +127,7 @@ export default async function PerfilPage() {
       visibleEnListadoInicial={visibleEnListado}
       estadisticas={estadisticas}
       esAdmin={esEmailAdmin(user.email)}
+      bloqueados={bloqueados}
     />
   )
 }

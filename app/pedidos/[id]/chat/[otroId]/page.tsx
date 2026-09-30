@@ -5,6 +5,7 @@ import ListaConversaciones from '@/components/ListaConversaciones'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
+import { idsConBloqueo } from '@/lib/bloqueos'
 
 export default async function ChatMultiplePage({
   params,
@@ -72,6 +73,7 @@ export default async function ChatMultiplePage({
     .order('fecha', { ascending: true })
 
   const puedeEscribir = esSolicitante
+  const bloqueado = (await idsConBloqueo(user.id)).has(otroId)
 
   // Barra de decisión: solo para el solicitante, en una changa, mientras
   // la postulación de esta persona sigue pendiente.
@@ -128,7 +130,12 @@ export default async function ChatMultiplePage({
             {pedido.descripcion}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 600 }}>
+            <Link
+            href={`/prestadores/${otroId}?volver=/pedidos/${id}/chat/${otroId}`}
+            style={{ color: 'inherit', textDecoration: 'underline' }}
+          >
             {nombreOtro}
+          </Link>
           </p>
         </div>
 
@@ -195,8 +202,13 @@ export default async function ChatMultiplePage({
           otroUsuarioId={otroId}
           mensajesIniciales={mensajesIniciales ?? []}
           puedeEscribir={puedeEscribir}
+          bloqueado={bloqueado}
           mensajeSoloLectura={
-            !puedeEscribir ? 'Todavía no te escribió quien publicó el trabajo. Cuando lo haga, vas a poder responder acá.' : undefined
+            bloqueado
+              ? 'No se pueden enviar mensajes en esta conversación.'
+              : !puedeEscribir
+              ? 'Todavía no te escribió quien publicó el trabajo. Cuando lo haga, vas a poder responder acá.'
+              : undefined
           }
         />
         </div>
