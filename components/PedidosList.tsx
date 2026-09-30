@@ -7,8 +7,9 @@ import { iconoParaCategoria } from '@/lib/categoryIcons'
 type Pedido = {
   id: string
   descripcion: string
-  ubicacion_lat: number
-  ubicacion_lng: number
+  // Puede faltar: sin ubicación no se muestra distancia (null contaría como 0,0)
+  ubicacion_lat: number | null
+  ubicacion_lng: number | null
   monto_ofrecido: number | null
   monto_a_convenir: boolean
   es_comercio: boolean
@@ -25,6 +26,11 @@ function distanciaKm(lat1: number, lng1: number, lat2: number, lng2: number) {
     Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+function distanciaAlPedido(yo: { lat: number; lng: number }, pedido: Pedido) {
+  if (pedido.ubicacion_lat === null || pedido.ubicacion_lng === null) return null
+  return distanciaKm(yo.lat, yo.lng, pedido.ubicacion_lat, pedido.ubicacion_lng)
 }
 
 // `patrocinado`: tarjeta de publicidad que se intercala en la lista
@@ -54,10 +60,10 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
 
   const pedidosOrdenados = useMemo(() => {
     if (orden === 'cercanos' && miUbicacion) {
+      // Los que no tienen ubicación van al final
+      const lejos = Number.MAX_VALUE
       return [...pedidos].sort(
-        (a, b) =>
-          distanciaKm(miUbicacion.lat, miUbicacion.lng, a.ubicacion_lat, a.ubicacion_lng) -
-          distanciaKm(miUbicacion.lat, miUbicacion.lng, b.ubicacion_lat, b.ubicacion_lng)
+        (a, b) => (distanciaAlPedido(miUbicacion, a) ?? lejos) - (distanciaAlPedido(miUbicacion, b) ?? lejos)
       )
     }
     return pedidos
@@ -101,7 +107,7 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
 
         const dist =
           orden === 'cercanos' && miUbicacion
-            ? distanciaKm(miUbicacion.lat, miUbicacion.lng, pedido.ubicacion_lat, pedido.ubicacion_lng)
+            ? distanciaAlPedido(miUbicacion, pedido)
             : null
 
         const conPatrocinado = !!patrocinado && indice === Math.min(8, pedidosOrdenados.length) - 1
