@@ -27,7 +27,7 @@ export default async function ChatPage({
     .single()
 
   if (!pedido) {
-    return <p style={{ padding: 40 }}>Pedido no encontrado.</p>
+    return <p style={{ padding: 40 }}>Trabajo no encontrado.</p>
   }
 
   const esParte =

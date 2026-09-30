@@ -225,7 +225,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
         <PanelFormulario
           titulo={'Contá qué necesitás'}
           texto={'Describí el trabajo y les avisamos al instante a los trabajadores de ese rubro en Comodoro.'}
-          consejos={['Sé concreto: qué hay que hacer, cuándo y dónde.', 'Poné un monto o dejalo a convenir.', 'Si agregás la ubicación, te encuentran los que están cerca.', 'Podés publicar un pedido cada 24 horas.']}
+          consejos={['Sé concreto: qué hay que hacer, cuándo y dónde.', 'Poné un monto o dejalo a convenir.', 'Si agregás la ubicación, te encuentran los que están cerca.', 'Podés publicar un trabajo cada 24 horas.']}
         />
         <div style={{ minWidth: 0 }}>
         <div className="solo-movil">
@@ -613,7 +613,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
 
           <TituloSeccion>¿Dónde es? (opcional)</TituloSeccion>
           <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '-4px 0 12px', lineHeight: 1.4 }}>
-            Si todavía no lo sabés, dejalo así nomás — lo podés charlar con el trabajador después. Sin ubicación, el pedido no aparece en el mapa, pero sí en la lista.
+            Si todavía no lo sabés, dejalo así nomás — lo podés charlar con el trabajador después. Sin ubicación, el trabajo no aparece en el mapa, pero sí en la lista.
           </p>
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>

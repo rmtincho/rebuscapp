@@ -48,7 +48,7 @@ export async function denunciar(datos: {
       .select('id, solicitante_id')
       .eq('id', datos.pedidoId)
       .maybeSingle();
-    if (!pedido) return { ok: false as const, error: 'No encontramos ese pedido.' };
+    if (!pedido) return { ok: false as const, error: 'No encontramos ese trabajo.' };
     pedidoId = pedido.id;
     denunciadoId = pedido.solicitante_id;
   }
@@ -85,7 +85,7 @@ export async function denunciar(datos: {
       usuarioId: moderador,
       tipo: 'denuncia',
       titulo: 'Nueva denuncia',
-      cuerpo: `Motivo: ${datos.motivo}${pedidoId ? ' (pedido)' : ' (usuario)'}`,
+      cuerpo: `Motivo: ${datos.motivo}${pedidoId ? ' (trabajo)' : ' (usuario)'}`,
       urlDestino: pedidoId ? `/pedidos/${pedidoId}` : `/prestadores/${denunciadoId}`,
     }).catch(() => {});
   }

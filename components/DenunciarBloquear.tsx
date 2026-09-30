@@ -9,7 +9,7 @@ import { MensajeError, inputBaseStyle } from '@/lib/ui'
 const MOTIVOS: { valor: MotivoDenuncia; label: string }[] = [
   { valor: 'estafa', label: 'Estafa o me pidió plata por adelantado' },
   { valor: 'acoso', label: 'Acoso, insultos o discriminación' },
-  { valor: 'falso', label: 'Perfil o pedido falso' },
+  { valor: 'falso', label: 'Perfil o trabajo falso' },
   { valor: 'ilegal', label: 'Trabajo ilegal o peligroso' },
   { valor: 'otro', label: 'Otro motivo' },
 ]
@@ -67,7 +67,7 @@ export default function DenunciarBloquear({
     if (!otroId) return
     if (!bloqueado) {
       const ok = window.confirm(
-        `¿Bloquear a ${nombre}? No va a poder escribirte ni postularse a tus pedidos, y no van a ver los pedidos ni el perfil del otro en el inicio. No se le avisa.`
+        `¿Bloquear a ${nombre}? No va a poder escribirte ni postularse a tus trabajos, y no van a ver los trabajos ni el perfil del otro en el inicio. No se le avisa.`
       )
       if (!ok) return
     }

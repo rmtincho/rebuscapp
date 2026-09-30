@@ -205,7 +205,7 @@ export async function notificarPedidoEditado(pedidoId: string) {
       enviarPush({
         usuarioId: p.prestador_id,
         tipo: 'pedido_editado',
-        titulo: 'Un pedido al que te postulaste cambió',
+        titulo: 'Un trabajo al que te postulaste cambió',
         cuerpo: preview,
         urlDestino: `/pedidos/${pedidoId}`,
       })
