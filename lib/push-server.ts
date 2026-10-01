@@ -7,8 +7,8 @@ import { createAdminClient } from '@/lib/supabase/admin'; // cliente con service
 
 webpush.setVapidDetails(
   // Contacto que ven los servicios de push (Google, Apple, Mozilla) si
-  // hay problemas con nuestros envíos. Definir VAPID_SUBJECT en el entorno.
-  process.env.VAPID_SUBJECT ?? 'mailto:soporte@rebuscapp.com',
+  // hay problemas con nuestros envíos. Por defecto la casilla del equipo.
+  process.env.VAPID_SUBJECT ?? 'mailto:contacto@rebuscapp.com',
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!
 );
