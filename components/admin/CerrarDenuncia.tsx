@@ -20,7 +20,15 @@ export default function CerrarDenuncia({ id }: { id: string }) {
   async function cerrar() {
     setError(null)
     setCargando(true)
-    const r = await cerrarDenuncia(id, texto, avisar)
+    // Si hubo un deploy con la página abierta, la acción ya no existe y tira
+    let r: Awaited<ReturnType<typeof cerrarDenuncia>>
+    try {
+      r = await cerrarDenuncia(id, texto, avisar)
+    } catch {
+      setCargando(false)
+      setError('No se pudo guardar. Recargá la página y probá de nuevo.')
+      return
+    }
     setCargando(false)
     if (!r.ok) {
       setError(r.error)
