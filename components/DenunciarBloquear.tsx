@@ -2,17 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { denunciar, bloquear, desbloquear, type MotivoDenuncia } from '@/app/actions/moderacion'
+import { denunciar, bloquear, desbloquear } from '@/app/actions/moderacion'
+import { MOTIVOS_DENUNCIA, type MotivoDenuncia } from '@/lib/denuncias'
 import { COLORS } from '@/lib/theme'
 import { MensajeError, inputBaseStyle } from '@/lib/ui'
 
-const MOTIVOS: { valor: MotivoDenuncia; label: string }[] = [
-  { valor: 'estafa', label: 'Estafa o me pidió plata por adelantado' },
-  { valor: 'acoso', label: 'Acoso, insultos o discriminación' },
-  { valor: 'falso', label: 'Perfil o trabajo falso' },
-  { valor: 'ilegal', label: 'Trabajo ilegal o peligroso' },
-  { valor: 'otro', label: 'Otro motivo' },
-]
 
 const linkStyle: React.CSSProperties = {
   border: 'none',
@@ -91,7 +85,7 @@ export default function DenunciarBloquear({
         !abierto && (
           <div style={{ display: 'inline-flex', gap: 14 }}>
             <button type="button" onClick={() => setAbierto(true)} style={linkStyle}>
-              {pedidoId ? 'Denunciar pedido' : 'Denunciar'}
+              {pedidoId ? 'Denunciar trabajo' : 'Denunciar'}
             </button>
             {otroId && (
               <button type="button" onClick={cambiarBloqueo} disabled={cargando} style={linkStyle}>
@@ -105,12 +99,12 @@ export default function DenunciarBloquear({
       {abierto && (
         <div style={{ padding: 16, borderRadius: 16, background: COLORS.card, boxShadow: COLORS.cardShadow, textAlign: 'left' }}>
           <p style={{ fontSize: 14, fontWeight: 700, color: COLORS.ink, marginBottom: 4 }}>
-            {pedidoId ? 'Denunciar este pedido' : `Denunciar a ${nombre}`}
+            {pedidoId ? 'Denunciar este trabajo' : `Denunciar a ${nombre}`}
           </p>
           <p style={{ fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 12 }}>
             No le avisamos a quién denunciás. ¿Qué pasó?
           </p>
-          {MOTIVOS.map((m) => (
+          {MOTIVOS_DENUNCIA.map((m) => (
             <label
               key={m.valor}
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', fontSize: 13.5, color: COLORS.ink, cursor: 'pointer' }}

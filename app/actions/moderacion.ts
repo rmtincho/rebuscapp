@@ -4,13 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { enviarPush } from '@/lib/push-server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { MOTIVOS_DENUNCIA, etiquetaMotivo, type MotivoDenuncia } from '@/lib/denuncias';
 
 // Denunciar y bloquear. Todo por el servidor con el cliente admin: quien
 // denuncia o bloquea sale de la sesión, nunca de lo que manda el cliente.
 // Necesita scripts/sql/2026-09-29-denuncias-bloqueos.sql.
 
-const MOTIVOS = ['estafa', 'acoso', 'falso', 'ilegal', 'otro'] as const;
-export type MotivoDenuncia = (typeof MOTIVOS)[number];
 
 const ERROR_SESION = 'Tu sesión expiró, volvé a loguearte.';
 
@@ -31,7 +30,7 @@ export async function denunciar(datos: {
   const user = await usuarioActual();
   if (!user) return { ok: false as const, error: ERROR_SESION };
 
-  if (!MOTIVOS.includes(datos.motivo)) return { ok: false as const, error: 'Elegí un motivo.' };
+  if (!MOTIVOS_DENUNCIA.some((m) => m.valor === datos.motivo)) return { ok: false as const, error: 'Elegí un motivo.' };
   const detalle = String(datos.detalle ?? '').trim().slice(0, 500) || null;
   if (datos.motivo === 'otro' && !detalle) {
     return { ok: false as const, error: 'Contanos brevemente qué pasó.' };
@@ -66,15 +65,19 @@ export async function denunciar(datos: {
   const { data: yaExiste } = await repetida.limit(1).maybeSingle();
   if (yaExiste) return { ok: true as const };
 
-  const { error } = await admin.from('denuncias').insert({
-    denunciante_id: user.id,
-    denunciado_id: denunciadoId,
-    pedido_id: pedidoId,
-    motivo: datos.motivo,
-    detalle,
-  });
-  if (error) {
-    console.error('No se pudo guardar la denuncia:', error.message);
+  const { data: nueva, error } = await admin
+    .from('denuncias')
+    .insert({
+      denunciante_id: user.id,
+      denunciado_id: denunciadoId,
+      pedido_id: pedidoId,
+      motivo: datos.motivo,
+      detalle,
+    })
+    .select('id')
+    .single();
+  if (error || !nueva) {
+    console.error('No se pudo guardar la denuncia:', error?.message);
     return { ok: false as const, error: 'No pudimos enviar la denuncia. Probá de nuevo en un rato.' };
   }
 
@@ -85,8 +88,9 @@ export async function denunciar(datos: {
       usuarioId: moderador,
       tipo: 'denuncia',
       titulo: 'Nueva denuncia',
-      cuerpo: `Motivo: ${datos.motivo}${pedidoId ? ' (trabajo)' : ' (usuario)'}`,
-      urlDestino: pedidoId ? `/pedidos/${pedidoId}` : `/prestadores/${denunciadoId}`,
+      cuerpo: `${etiquetaMotivo(datos.motivo)}${pedidoId ? ' (trabajo)' : ' (usuario)'}`,
+      // Al panel, con el detalle y el chat; el ancla abre esta denuncia
+      urlDestino: `/admin/denuncias#d-${nueva.id}`,
     }).catch(() => {});
   }
 

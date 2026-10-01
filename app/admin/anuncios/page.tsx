@@ -71,6 +71,12 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
         <TituloPagina>Anuncios</TituloPagina>
         <Subtitulo>Panel de administración. Solo lo ves vos.</Subtitulo>
 
+        <p style={{ fontSize: 13, margin: '-8px 0 20px' }}>
+          <Link href="/admin/denuncias" style={{ color: COLORS.inkSoft, fontWeight: 600 }}>
+            Ir a denuncias →
+          </Link>
+        </p>
+
         {error && (
           <div style={{ background: COLORS.redTint, color: COLORS.redDark, borderRadius: 16, padding: 16, marginBottom: 20, fontSize: 14 }}>
             No se pudo leer la tabla de anuncios ({error.message}). ¿Ya corriste scripts/sql/2026-09-29-anuncios.sql?

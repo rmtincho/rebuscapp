@@ -397,25 +397,32 @@ export default function PerfilForm({
         {estadisticas && <TusEstadisticas e={estadisticas} />}
 
         {esAdmin && (
-          <a
-            href="/admin/anuncios"
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              background: COLORS.dark,
-              color: COLORS.onDark,
-              borderRadius: 20,
-              padding: '16px 18px',
-              marginBottom: 28,
-              textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: 15,
-            }}
-          >
-            Panel de administración · Anuncios
-            <span style={{ color: COLORS.clay }}>→</span>
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
+            {[
+              { href: '/admin/denuncias', label: 'Panel de administración · Denuncias' },
+              { href: '/admin/anuncios', label: 'Panel de administración · Anuncios' },
+            ].map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  background: COLORS.dark,
+                  color: COLORS.onDark,
+                  borderRadius: 20,
+                  padding: '16px 18px',
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  fontSize: 15,
+                }}
+              >
+                {l.label}
+                <span style={{ color: COLORS.clay }}>→</span>
+              </a>
+            ))}
+          </div>
         )}
         </div>
 
