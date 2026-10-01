@@ -298,7 +298,7 @@ export default function InicioWeb({
               textDecoration: 'none',
             }}
           >
-            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : 'rgba(255,255,255,0.65)', margin: '0 0 4px', fontWeight: 600 }}>
+            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : COLORS.onDark, margin: '0 0 4px', fontWeight: 600 }}>
               {modo === 'ofrezco' ? 'Les avisamos a los del rubro' : '¿Necesitás a alguien?'}
             </p>
             <p style={{ fontSize: 17, fontWeight: 700, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -413,7 +413,7 @@ export default function InicioWeb({
                         fontWeight: 700,
                         letterSpacing: '0.04em',
                         textTransform: 'uppercase',
-                        color: a.sinLeer > 0 ? 'rgba(255,255,255,0.6)' : COLORS.inkSoft,
+                        color: a.sinLeer > 0 ? COLORS.onDark : COLORS.inkSoft,
                       }}
                     >
                       {a.tipo === 'pedido' ? 'Tu pedido' : 'Tu postulación'}
@@ -440,7 +440,7 @@ export default function InicioWeb({
                   >
                     {a.titulo.charAt(0).toUpperCase() + a.titulo.slice(1)}
                   </p>
-                  <p style={{ fontSize: 13, margin: 0, color: a.sinLeer > 0 ? 'rgba(255,255,255,0.65)' : COLORS.inkSoft }}>{a.detalle}</p>
+                  <p style={{ fontSize: 13, margin: 0, color: a.sinLeer > 0 ? COLORS.onDark : COLORS.inkSoft }}>{a.detalle}</p>
                 </a>
               )
             })}

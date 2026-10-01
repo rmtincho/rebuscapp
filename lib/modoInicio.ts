@@ -34,7 +34,8 @@ export const TEMA_MODO = {
     fondo: 'linear-gradient(180deg, #3A3A40 0%, #1C1C1E 100%)',
     fondoBarra: '#1C1C1E',
     texto: '#FFFFFF',
-    textoSuave: 'rgba(255, 255, 255, 0.7)',
+    // Sobre el oscuro, todo el texto en blanco (el gris se leía poco)
+    textoSuave: '#FFFFFF',
     superficie: 'rgba(255, 255, 255, 0.12)',
     activo: '#FFC21A',
     sobreActivo: '#1C1C1E',

@@ -516,7 +516,7 @@ export default async function HomePage() {
                       <p style={{ margin: 0, color: COLORS.onDark, fontWeight: 500, fontSize: 15 }}>
                         {sinLeer} mensaje{sinLeer > 1 ? 's' : ''} nuevo{sinLeer > 1 ? 's' : ''}
                       </p>
-                      <p style={{ margin: '3px 0 0', color: 'rgba(255,255,255,0.65)', fontSize: 12.5 }}>
+                      <p style={{ margin: '3px 0 0', color: COLORS.onDark, fontSize: 12.5 }}>
                         {pedido.descripcion}
                       </p>
                     </div>
