@@ -39,6 +39,11 @@ const ESTILO: Record<string, { color: string; fondo: string; icono: React.ReactN
     fondo: COLORS.greenTint,
     icono: <path d="M20 6L9 17l-5-5" />,
   },
+  denuncia: {
+    color: COLORS.blueDark,
+    fondo: COLORS.blueTint,
+    icono: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+  },
   postulacion_rechazada: {
     color: COLORS.redDark,
     fondo: COLORS.redTint,

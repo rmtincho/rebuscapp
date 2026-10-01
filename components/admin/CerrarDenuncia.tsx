@@ -13,13 +13,14 @@ const RAPIDAS = ['Sin pruebas, se archiva', 'Advertencia por mail', 'Cuenta susp
 export default function CerrarDenuncia({ id }: { id: string }) {
   const router = useRouter()
   const [texto, setTexto] = useState('')
+  const [avisar, setAvisar] = useState(true)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function cerrar() {
     setError(null)
     setCargando(true)
-    const r = await cerrarDenuncia(id, texto)
+    const r = await cerrarDenuncia(id, texto, avisar)
     setCargando(false)
     if (!r.ok) {
       setError(r.error)
@@ -58,6 +59,20 @@ export default function CerrarDenuncia({ id }: { id: string }) {
         rows={2}
         style={{ ...inputBaseStyle, resize: 'vertical', fontFamily: 'inherit', fontSize: 14, marginBottom: 10 }}
       />
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: COLORS.ink, marginBottom: 12, cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          checked={avisar}
+          onChange={(e) => setAvisar(e.target.checked)}
+          style={{ accentColor: COLORS.dark, marginTop: 2 }}
+        />
+        <span>
+          Avisar a quien denunció
+          <span style={{ display: 'block', fontSize: 12, color: COLORS.inkSoft }}>
+            Le llega “Revisamos tu denuncia”, sin decir qué se decidió.
+          </span>
+        </span>
+      </label>
       {error && <MensajeError>{error}</MensajeError>}
       <button
         type="button"
