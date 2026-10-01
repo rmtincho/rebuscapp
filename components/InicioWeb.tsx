@@ -2,7 +2,7 @@
 
 import { Fragment, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { guardarModo, type ModoInicio } from '@/lib/modoInicio'
+import { guardarModo, TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
@@ -122,6 +122,8 @@ export default function InicioWeb({
   const [orden, setOrden] = useState<Orden>('recientes')
   const [soloMios, setSoloMios] = useState(false)
   const seccion = modo === 'busco' ? 'trabajos' : 'trabajadores'
+  // Color del modo: amarillo para "busco trabajo", oscuro para "necesito a alguien"
+  const tema = TEMA_MODO[modo]
   const actividadDelModo = actividad.filter((a) => (modo === 'busco' ? a.tipo === 'postulacion' : a.tipo === 'pedido'))
 
   function cambiarModo(m: ModoInicio) {
@@ -182,10 +184,11 @@ export default function InicioWeb({
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 24px 80px' }}>
-      {/* ——— Bienvenida con buscador ——— */}
+      {/* ——— Bienvenida con buscador, con el color del modo ——— */}
       <section
         style={{
-          background: COLORS.clayGradient,
+          background: tema.fondo,
+          color: tema.texto,
           borderRadius: 32,
           padding: '40px 44px',
           display: 'grid',
@@ -195,7 +198,7 @@ export default function InicioWeb({
         }}
       >
         <div>
-          <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: 'rgba(255,255,255,0.5)', borderRadius: 100, padding: 4, marginBottom: 22 }}>
+          <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: tema.superficie, borderRadius: 100, padding: 4, marginBottom: 22 }}>
             {(
               [
                 ['busco', 'Busco trabajo'],
@@ -212,8 +215,8 @@ export default function InicioWeb({
                   padding: '10px 20px',
                   borderRadius: 100,
                   border: 'none',
-                  background: modo === v ? COLORS.dark : 'transparent',
-                  color: modo === v ? COLORS.onDark : COLORS.ink,
+                  background: modo === v ? tema.activo : 'transparent',
+                  color: modo === v ? tema.sobreActivo : tema.textoSuave,
                   fontSize: 14.5,
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -223,10 +226,10 @@ export default function InicioWeb({
               </button>
             ))}
           </div>
-          <p style={{ fontSize: 16, fontWeight: 600, color: 'rgba(28,28,30,0.7)', margin: '0 0 6px' }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: tema.textoSuave, margin: '0 0 6px' }}>
             {nombre ? `Hola, ${nombre}` : 'Hola'}
           </p>
-          <h1 style={{ fontSize: 46, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, margin: '0 0 24px', color: COLORS.ink }}>
+          <h1 style={{ fontSize: 46, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, margin: '0 0 24px', color: tema.texto }}>
             {modo === 'busco' ? '¿Qué trabajo buscás hoy?' : '¿A quién necesitás?'}
           </h1>
           <form
@@ -278,9 +281,9 @@ export default function InicioWeb({
               { n: pedidos.length, l: pedidos.length === 1 ? 'trabajo abierto' : 'trabajos abiertos' },
               { n: trabajadores.length, l: trabajadores.length === 1 ? 'trabajador' : 'trabajadores' },
             ].map((d) => (
-              <div key={d.l} style={{ background: 'rgba(255,255,255,0.55)', borderRadius: 20, padding: '16px 16px 14px' }}>
-                <p style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', margin: 0, color: COLORS.ink }}>{d.n}</p>
-                <p style={{ fontSize: 13, fontWeight: 600, margin: 0, color: 'rgba(28,28,30,0.7)' }}>{d.l}</p>
+              <div key={d.l} style={{ background: tema.superficie, borderRadius: 20, padding: '16px 16px 14px' }}>
+                <p style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', margin: 0, color: tema.texto }}>{d.n}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, margin: 0, color: tema.textoSuave }}>{d.l}</p>
               </div>
             ))}
           </div>
@@ -288,17 +291,19 @@ export default function InicioWeb({
             href="/publicar"
             style={{
               display: 'block',
-              background: COLORS.dark,
-              color: COLORS.onDark,
+              background: modo === 'ofrezco' ? COLORS.clay : COLORS.dark,
+              color: modo === 'ofrezco' ? COLORS.onClay : COLORS.onDark,
               borderRadius: 20,
               padding: '18px 18px',
               textDecoration: 'none',
             }}
           >
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', margin: '0 0 4px', fontWeight: 600 }}>¿Necesitás a alguien?</p>
+            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : 'rgba(255,255,255,0.65)', margin: '0 0 4px', fontWeight: 600 }}>
+              {modo === 'ofrezco' ? 'Les avisamos a los del rubro' : '¿Necesitás a alguien?'}
+            </p>
             <p style={{ fontSize: 17, fontWeight: 700, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               Publicá un trabajo
-              <span style={{ color: COLORS.clay, fontSize: 20 }}>→</span>
+              <span style={{ color: modo === 'ofrezco' ? COLORS.onClay : COLORS.clay, fontSize: 20 }}>→</span>
             </p>
           </a>
         </div>
@@ -449,11 +454,26 @@ export default function InicioWeb({
       {/* ——— Resultados: filtros a la izquierda, grilla o mapa a la derecha ——— */}
       <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 'calc(var(--alto-cabecera) + 16px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
-          <h2 style={tituloSeccion}>
-            {seccion === 'trabajos' ? 'Trabajos cerca tuyo' : 'Trabajadores'}
-            <span style={{ color: COLORS.inkSoft, fontWeight: 500 }}>
-              {' '}
-              · {seccion === 'trabajos' ? filtrados.length : trabajadoresFiltrados.length}
+          <h2 style={{ ...tituloSeccion, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: 0,
+                background: tema.fondoBarra,
+                color: tema.texto,
+                padding: '6px 12px',
+                borderRadius: 100,
+              }}
+            >
+              {tema.nombre}
+            </span>
+            <span>
+              {seccion === 'trabajos' ? 'Trabajos cerca tuyo' : 'Trabajadores'}
+              <span style={{ color: COLORS.inkSoft, fontWeight: 500 }}>
+                {' '}
+                · {seccion === 'trabajos' ? filtrados.length : trabajadoresFiltrados.length}
+              </span>
             </span>
           </h2>
           <div style={{ display: 'flex', gap: 10 }}>

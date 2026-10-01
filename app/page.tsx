@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { cumpleRequisitos, type PerfilParaRequisitos } from '@/lib/requisitos'
 import { COOKIE_MODO, esModo, type ModoInicio } from '@/lib/modoInicio'
 import SelectorModo from '@/components/SelectorModo'
+import CabeceraModo from '@/components/CabeceraModo'
 import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
 import BottomNav from '@/components/BottomNav'
@@ -379,122 +380,17 @@ export default async function HomePage() {
 
       {/* En el celular: el inicio de siempre */}
       <div className="pantalla solo-movil" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
-        {/* Encabezado: avatar + saludo a la izquierda, botón redondo a la derecha */}
-        <div
-          style={{
-            padding: '20px 20px 4px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          <a href="/perfil" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', minWidth: 0 }}>
-            <span
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                background: COLORS.clayTint,
-                color: COLORS.ink,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 600,
-                fontSize: 16,
-                flexShrink: 0,
-                backgroundImage: fotoUsuario ? `url(${fotoUsuario})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              {!fotoUsuario && inicial}
-            </span>
-            <span style={{ fontSize: 15, fontWeight: 500, color: COLORS.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {primerNombre ? `Hola, ${primerNombre}` : 'Hola 👋'}
-            </span>
-          </a>
-          <a
-            href="/configuracion/notificaciones"
-            aria-label="Notificaciones"
-            style={{ ...circuloIcono(COLORS.card), width: 44, height: 44, boxShadow: COLORS.cardShadow }}
-          >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </a>
-        </div>
-
-        <div style={{ padding: '18px 20px 18px' }}>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 34,
-              fontWeight: 500,
-              lineHeight: 1.12,
-              color: COLORS.ink,
-              letterSpacing: '-0.035em',
-            }}
-          >
-            {modo === 'busco' ? (
-              <>
-                Trabajo
-                <br />
-                cerca tuyo
-              </>
-            ) : (
-              <>
-                ¿A quién
-                <br />
-                necesitás?
-              </>
-            )}
-          </h1>
-        </div>
-
-        {/* Modo: busco trabajo / necesito a alguien. El resto del inicio
-            muestra solo lo de ese modo, para no mezclar todo. */}
-        <div style={{ padding: '0 20px 20px' }}>
-          <SelectorModo modo={modo} cantidadTrabajos={cantidadTrabajos} />
-
-          {modo === 'ofrezco' && (
-            <a
-              href="/publicar"
-              style={{
-                marginTop: 10,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 12,
-                padding: '16px 18px',
-                borderRadius: 22,
-                background: COLORS.dark,
-                color: COLORS.onDark,
-                textDecoration: 'none',
-              }}
-            >
-              <span>
-                <span style={{ display: 'block', fontSize: 16, fontWeight: 600 }}>Publicar un trabajo</span>
-                <span style={{ display: 'block', fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
-                  Les avisamos a los trabajadores del rubro
-                </span>
-              </span>
-              <span style={circuloIcono(COLORS.clay)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-              </span>
-            </a>
-          )}
-        </div>
-
-        {/* Publicidad: debajo de los accesos. Con varios anuncios, carrusel */}
-        <CarruselPublicidad anuncios={anunciosInicioMovil} formato="movil" style={{ padding: '0 20px 20px' }} />
-
-        <div style={{ padding: '0 20px' }}>
-          {user && <BannerNotificaciones />}
-        </div>
+        {/* Encabezado y barra de modo con el color del modo: amarillo para
+            "busco trabajo", oscuro para "necesito a alguien". La barra queda
+            fija arriba al bajar. El resto muestra solo lo de ese modo. */}
+        <CabeceraModo
+          modo={modo}
+          nombre={primerNombre}
+          foto={fotoUsuario}
+          inicial={inicial}
+          cantidadTrabajos={cantidadTrabajos}
+        />
+        <SelectorModo modo={modo} />
 
         {modo === 'ofrezco' && (misPedidos.length > 0 || tieneHistorial) && (
           <div style={{ padding: '0 20px 16px' }}>
@@ -654,6 +550,15 @@ export default async function HomePage() {
             })}
           </div>
         )}
+
+        {/* Publicidad: después de lo propio del modo (ofrecimientos o
+            postulaciones), así lo primero que se ve es distinto en cada uno.
+            Con varios anuncios, carrusel */}
+        <CarruselPublicidad anuncios={anunciosInicioMovil} formato="movil" style={{ padding: '0 20px 20px' }} />
+
+        <div style={{ padding: '0 20px' }}>
+          {user && <BannerNotificaciones />}
+        </div>
 
         <div style={{ padding: '0 20px 8px' }}>
           {error && (

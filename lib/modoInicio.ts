@@ -13,3 +13,30 @@ export function esModo(v: unknown): v is ModoInicio {
 export function guardarModo(modo: ModoInicio) {
   document.cookie = `${COOKIE_MODO}=${modo}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`
 }
+
+// Cada modo tiene su color, para que se note en qué lado estás sin leer
+// nada: "busco" en el amarillo de la marca, "ofrezco" en oscuro con
+// detalles amarillos. Son los dos colores de la marca: verde, rojo, azul y
+// rosa ya significan otra cosa (lib/theme.ts).
+export const TEMA_MODO = {
+  busco: {
+    nombre: 'Busco trabajo',
+    fondo: 'linear-gradient(180deg, #FFE07A 0%, #FFC21A 100%)',
+    fondoBarra: '#FFC21A',
+    texto: '#1C1C1E',
+    textoSuave: 'rgba(28, 28, 30, 0.7)',
+    superficie: 'rgba(255, 255, 255, 0.5)',
+    activo: '#1C1C1E',
+    sobreActivo: '#FFFFFF',
+  },
+  ofrezco: {
+    nombre: 'Necesito a alguien',
+    fondo: 'linear-gradient(180deg, #3A3A40 0%, #1C1C1E 100%)',
+    fondoBarra: '#1C1C1E',
+    texto: '#FFFFFF',
+    textoSuave: 'rgba(255, 255, 255, 0.7)',
+    superficie: 'rgba(255, 255, 255, 0.12)',
+    activo: '#FFC21A',
+    sobreActivo: '#1C1C1E',
+  },
+} as const
