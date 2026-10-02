@@ -19,7 +19,7 @@ const BUSQUEDA_LABEL: Record<string, string> = {
 const MAX_ETIQUETAS = 3
 
 const etiqueta = (fondo: string, texto: string): React.CSSProperties => ({
-  fontSize: 11.5,
+  fontSize: 12.5,
   fontWeight: 500,
   color: texto,
   background: fondo,
@@ -95,7 +95,7 @@ export default function TrabajadoresList({ trabajadores }: { trabajadores: Traba
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink, letterSpacing: '-0.01em' }}>
+                <p style={{ margin: 0, fontWeight: 500, fontSize: 16, color: COLORS.ink, letterSpacing: '-0.01em' }}>
                   {t.nombre}
                 </p>
                 <span
@@ -122,7 +122,7 @@ export default function TrabajadoresList({ trabajadores }: { trabajadores: Traba
                 <p
                   style={{
                     margin: '3px 0 0',
-                    fontSize: 12.5,
+                    fontSize: 13.5,
                     color: COLORS.inkSoft,
                     lineHeight: 1.4,
                     display: '-webkit-box',

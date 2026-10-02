@@ -63,7 +63,7 @@ export default async function HomePage() {
     .limit(50)
 
   // No tiene sentido que alguien vea su propio pedido en el feed de
-  // "cerca tuyo" — ya lo tiene arriba, en "Tus ofrecimientos de trabajo".
+  // "cerca tuyo" — ya lo tiene arriba, en "Trabajos que publicaste".
   if (user) {
     query = query.neq('solicitante_id', user.id)
   }
@@ -260,7 +260,7 @@ export default async function HomePage() {
 
   const etiqueta = (fondo: string, texto: string): React.CSSProperties => ({
     display: 'inline-block',
-    fontSize: 11.5,
+    fontSize: 12.5,
     fontWeight: 500,
     color: texto,
     background: fondo,
@@ -285,7 +285,7 @@ export default async function HomePage() {
   const cantidadTrabajos = pedidos?.length ?? 0
 
   // Modo del inicio: el último elegido (cookie). La primera vez, si publicó
-  // pedidos y nunca se postuló, "necesito a alguien"; si no, "busco trabajo".
+  // pedidos y nunca se postuló, "busco contratar"; si no, "busco trabajo".
   const modoGuardado = (await cookies()).get(COOKIE_MODO)?.value
   const modo: ModoInicio = esModo(modoGuardado)
     ? modoGuardado
@@ -381,7 +381,7 @@ export default async function HomePage() {
       {/* En el celular: el inicio de siempre */}
       <div className="pantalla solo-movil" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
         {/* Encabezado y barra de modo con el color del modo: amarillo para
-            "busco trabajo", oscuro para "necesito a alguien". La barra queda
+            "busco trabajo", oscuro para "busco contratar". La barra queda
             fija arriba al bajar. El resto muestra solo lo de ese modo. */}
         <CabeceraModo
           modo={modo}
@@ -395,7 +395,7 @@ export default async function HomePage() {
         {modo === 'ofrezco' && (misPedidos.length > 0 || tieneHistorial) && (
           <div style={{ padding: '0 20px 16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
-              <p style={tituloSeccion}>Tus ofrecimientos de trabajo</p>
+              <p style={tituloSeccion}>Trabajos que publicaste</p>
               {tieneHistorial && (
                 <a href="/historial" style={{ fontSize: 13, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none', flexShrink: 0 }}>
                   Historial →
@@ -435,7 +435,7 @@ export default async function HomePage() {
                         background: COLORS.dark,
                         color: COLORS.onDark,
                         borderRadius: 100,
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         fontWeight: 500,
                         padding: '4px 10px',
                       }}
@@ -443,10 +443,10 @@ export default async function HomePage() {
                       {postulantesPendientes} postulante{postulantesPendientes > 1 ? 's' : ''}
                     </div>
                   )}
-                  <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink, paddingRight: postulantesPendientes > 0 ? 100 : 0 }}>
+                  <p style={{ margin: 0, fontWeight: 500, fontSize: 16, color: COLORS.ink, paddingRight: postulantesPendientes > 0 ? 100 : 0 }}>
                     {p.descripcion}
                   </p>
-                  <p style={{ margin: '4px 0 10px', fontSize: 12.5, color: COLORS.inkSoft }}>
+                  <p style={{ margin: '4px 0 10px', fontSize: 13.5, color: COLORS.inkSoft }}>
                     {fechaRelativa(p.fecha_creacion)}
                     {p.estado === 'abierto' &&
                       ` · ${postulantesPendientes} postulante${postulantesPendientes !== 1 ? 's' : ''} interesado${postulantesPendientes !== 1 ? 's' : ''}`}
@@ -470,7 +470,7 @@ export default async function HomePage() {
                         gap: 4,
                         background: COLORS.blue,
                         color: '#FFFFFF',
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         fontWeight: 500,
                         padding: '5px 11px',
                         borderRadius: 100,
@@ -513,10 +513,10 @@ export default async function HomePage() {
                     }}
                   >
                     <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: 0, color: COLORS.onDark, fontWeight: 500, fontSize: 15 }}>
+                      <p style={{ margin: 0, color: COLORS.onDark, fontWeight: 500, fontSize: 16 }}>
                         {sinLeer} mensaje{sinLeer > 1 ? 's' : ''} nuevo{sinLeer > 1 ? 's' : ''}
                       </p>
-                      <p style={{ margin: '3px 0 0', color: COLORS.onDark, fontSize: 12.5 }}>
+                      <p style={{ margin: '3px 0 0', color: COLORS.onDark, fontSize: 13.5 }}>
                         {pedido.descripcion}
                       </p>
                     </div>
@@ -531,10 +531,10 @@ export default async function HomePage() {
 
               return (
                 <a key={p.id} href={hrefChat} style={tarjeta}>
-                  <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink }}>
+                  <p style={{ margin: 0, fontWeight: 500, fontSize: 16, color: COLORS.ink }}>
                     {pedido.descripcion}
                   </p>
-                  <p style={{ margin: '4px 0 10px', fontSize: 12.5, color: COLORS.inkSoft }}>
+                  <p style={{ margin: '4px 0 10px', fontSize: 13.5, color: COLORS.inkSoft }}>
                     Te postulaste {fechaRelativa(p.fecha).toLowerCase()}
                   </p>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

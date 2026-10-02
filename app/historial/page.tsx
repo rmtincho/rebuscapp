@@ -108,7 +108,7 @@ export default async function HistorialPage() {
       <div style={{ padding: '20px 20px 110px' }}>
         <LinkVolver href="/" />
         <TituloPagina>Historial</TituloPagina>
-        <Subtitulo>Tus ofrecimientos de trabajo ya cerrados, con quién los hizo y quiénes se postularon.</Subtitulo>
+        <Subtitulo>Los trabajos que publicaste y ya se cerraron, con quién los hizo y quiénes se postularon.</Subtitulo>
 
         {historial.length === 0 && (
           <div

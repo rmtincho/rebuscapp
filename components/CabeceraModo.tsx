@@ -2,7 +2,7 @@ import { COLORS } from '@/lib/theme'
 import { TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
 
 // Encabezado del inicio (celular) con el color del modo: amarillo para
-// "busco trabajo", oscuro para "necesito a alguien". Debajo va pegada la
+// "busco trabajo", oscuro para "busco contratar". Debajo va pegada la
 // barra de modo (SelectorModo), del mismo color.
 export default function CabeceraModo({
   modo,

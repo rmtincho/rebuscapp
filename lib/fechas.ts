@@ -39,3 +39,15 @@ export function formatearCuando(fecha: string | Date): string {
   const prefijo = dia(d) === dia(hoy) ? 'hoy' : dia(d) === dia(manana) ? 'mañana' : dia(d)
   return `${prefijo} a las ${formatearHora(d)}`
 }
+
+/** "Recién", "Hace 3 h", "Ayer", "Hace 4 días" o, pasada una semana, "28 sept" */
+export function haceCuanto(fecha: string | Date): string {
+  const d = new Date(fecha)
+  const horas = Math.floor((Date.now() - d.getTime()) / 3_600_000)
+  if (horas < 1) return 'Recién'
+  if (horas < 24) return `Hace ${horas} h`
+  const dias = Math.floor(horas / 24)
+  if (dias === 1) return 'Ayer'
+  if (dias < 7) return `Hace ${dias} días`
+  return formatearFechaCorta(d)
+}

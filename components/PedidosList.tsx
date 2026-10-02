@@ -3,6 +3,7 @@
 import { Fragment, useState, useMemo } from 'react'
 import { COLORS } from '@/lib/theme'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
+import { haceCuanto } from '@/lib/fechas'
 
 type Pedido = {
   id: string
@@ -12,6 +13,7 @@ type Pedido = {
   ubicacion_lng: number | null
   monto_ofrecido: number | null
   monto_a_convenir: boolean
+  fecha_creacion: string
   es_comercio: boolean
   nombre_comercio: string | null
   categorias: { nombre: string } | null
@@ -145,16 +147,16 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <p style={{ margin: 0, fontWeight: 500, fontSize: 15, color: COLORS.ink, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
+                <p style={{ margin: 0, fontWeight: 500, fontSize: 16, color: COLORS.ink, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
                   {pedido.descripcion}
                 </p>
                 {precio && (
                   <span
                     style={{
                       flexShrink: 0,
-                      background: COLORS.dark,
-                      color: COLORS.onDark,
-                      fontSize: 12.5,
+                      background: COLORS.blue,
+                      color: '#FFFFFF',
+                      fontSize: 13.5,
                       fontWeight: 600,
                       padding: '5px 10px',
                       borderRadius: 100,
@@ -165,16 +167,18 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
                   </span>
                 )}
               </div>
-              <p style={{ margin: '4px 0 10px', fontSize: 12.5, color: COLORS.inkSoft }}>
+              <p style={{ margin: '4px 0 10px', fontSize: 13.5, color: COLORS.inkSoft }}>
                 {nombrePublicador}
                 {pedido.es_comercio && ' 🏢'}
+                {' · '}
+                {haceCuanto(pedido.fecha_creacion)}
               </p>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 11.5, fontWeight: 500, color: COLORS.tagOrangeText, background: COLORS.tagOrange, padding: '4px 10px', borderRadius: 100 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 500, color: COLORS.tagOrangeText, background: COLORS.tagOrange, padding: '4px 10px', borderRadius: 100 }}>
                   {nombreCategoria}
                 </span>
                 {dist !== null && (
-                  <span style={{ fontSize: 11.5, fontWeight: 500, color: COLORS.tagBlueText, background: COLORS.tagBlue, padding: '4px 10px', borderRadius: 100 }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 500, color: COLORS.tagBlueText, background: COLORS.tagBlue, padding: '4px 10px', borderRadius: 100 }}>
                     {dist.toFixed(1)} km
                   </span>
                 )}

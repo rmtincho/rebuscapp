@@ -6,6 +6,7 @@ import { guardarModo, TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
+import { haceCuanto } from '@/lib/fechas'
 import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
@@ -68,15 +69,6 @@ function tagDe(nombre: string) {
   return TAGS[h % TAGS.length]
 }
 
-function hace(fecha?: string | null) {
-  if (!fecha) return ''
-  const horas = Math.floor((Date.now() - new Date(fecha).getTime()) / 3_600_000)
-  if (horas < 1) return 'Recién'
-  if (horas < 24) return `Hace ${horas} h`
-  const dias = Math.floor(horas / 24)
-  return dias === 1 ? 'Ayer' : `Hace ${dias} días`
-}
-
 const tituloSeccion: React.CSSProperties = {
   fontSize: 22,
   fontWeight: 700,
@@ -109,7 +101,7 @@ export default function InicioWeb({
   anuncioLateral: Anuncio | null
   anunciosLista: Anuncio[]
   semilla: number
-  // Busco trabajo → trabajos; necesito a alguien → trabajadores y tus pedidos
+  // Busco trabajo → trabajos; busco contratar → trabajadores y tus pedidos
   modo: ModoInicio
   // Rubros del perfil de trabajador, para "Coinciden con mis habilidades"
   misCategorias: string[]
@@ -122,7 +114,7 @@ export default function InicioWeb({
   const [orden, setOrden] = useState<Orden>('recientes')
   const [soloMios, setSoloMios] = useState(false)
   const seccion = modo === 'busco' ? 'trabajos' : 'trabajadores'
-  // Color del modo: amarillo para "busco trabajo", oscuro para "necesito a alguien"
+  // Color del modo: amarillo para "busco trabajo", oscuro para "busco contratar"
   const tema = TEMA_MODO[modo]
   const actividadDelModo = actividad.filter((a) => (modo === 'busco' ? a.tipo === 'postulacion' : a.tipo === 'pedido'))
 
@@ -202,7 +194,7 @@ export default function InicioWeb({
             {(
               [
                 ['busco', 'Busco trabajo'],
-                ['ofrezco', 'Necesito a alguien'],
+                ['ofrezco', 'Busco contratar'],
               ] as const
             ).map(([v, l]) => (
               <button
@@ -409,7 +401,7 @@ export default function InicioWeb({
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                     <span
                       style={{
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         fontWeight: 700,
                         letterSpacing: '0.04em',
                         textTransform: 'uppercase',
@@ -419,18 +411,18 @@ export default function InicioWeb({
                       {a.tipo === 'pedido' ? 'Tu pedido' : 'Tu postulación'}
                     </span>
                     {a.sinLeer > 0 ? (
-                      <span style={{ fontSize: 12, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 100 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 100 }}>
                         {a.sinLeer} mensaje{a.sinLeer > 1 ? 's' : ''} nuevo{a.sinLeer > 1 ? 's' : ''}
                       </span>
                     ) : (
-                      <span style={{ fontSize: 12, fontWeight: 600, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 100 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 100 }}>
                         {a.estado}
                       </span>
                     )}
                   </div>
                   <p
                     style={{
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: 700,
                       margin: '0 0 4px',
                       overflow: 'hidden',
@@ -440,7 +432,7 @@ export default function InicioWeb({
                   >
                     {a.titulo.charAt(0).toUpperCase() + a.titulo.slice(1)}
                   </p>
-                  <p style={{ fontSize: 13, margin: 0, color: a.sinLeer > 0 ? COLORS.onDark : COLORS.inkSoft }}>{a.detalle}</p>
+                  <p style={{ fontSize: 14, margin: 0, color: a.sinLeer > 0 ? COLORS.onDark : COLORS.inkSoft }}>{a.detalle}</p>
                 </a>
               )
             })}
@@ -630,13 +622,13 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         >
           {iconoParaCategoria(cat)}
         </span>
-        <span style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 600 }}>{hace(p.fecha_creacion)}</span>
+        <span style={{ fontSize: 13, color: COLORS.inkSoft, fontWeight: 600 }}>{p.fecha_creacion ? haceCuanto(p.fecha_creacion) : ''}</span>
       </div>
       <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: tag.texto }}>{cat}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: tag.texto }}>{cat}</span>
         <p
           style={{
-            fontSize: 16.5,
+            fontSize: 17.5,
             fontWeight: 700,
             lineHeight: 1.3,
             margin: '4px 0 0',
@@ -650,11 +642,11 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         </p>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 13, color: COLORS.inkSoft, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 14, color: COLORS.inkSoft, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {quien ?? ''}
         </span>
         {precio && (
-          <span style={{ flexShrink: 0, fontSize: 13, fontWeight: 700, background: COLORS.dark, color: COLORS.onDark, padding: '5px 11px', borderRadius: 100 }}>
+          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blue, color: '#FFFFFF', padding: '5px 11px', borderRadius: 100 }}>
             {precio}
           </span>
         )}

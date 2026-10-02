@@ -1,4 +1,4 @@
-// Modo del inicio: "busco" (busco trabajo) o "ofrezco" (necesito a alguien).
+// Modo del inicio: "busco" (busco trabajo) o "ofrezco" (busco contratar).
 // Se guarda en una cookie para que el servidor arme el inicio ya en ese
 // modo, y la próxima vez arranque en el último que se usó.
 
@@ -30,7 +30,7 @@ export const TEMA_MODO = {
     sobreActivo: '#FFFFFF',
   },
   ofrezco: {
-    nombre: 'Necesito a alguien',
+    nombre: 'Busco contratar',
     fondo: 'linear-gradient(180deg, #3A3A40 0%, #1C1C1E 100%)',
     fondoBarra: '#1C1C1E',
     texto: '#FFFFFF',
