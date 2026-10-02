@@ -21,6 +21,24 @@ async function usuarioActual() {
   return user;
 }
 
+// Para denunciar hay que tener los datos personales completos (foto,
+// nombre, apellido, edad y DNI): frena las denuncias de cuentas vacías.
+// Edad y DNI solo se leen desde el servidor.
+async function perfilCompleto(userId: string) {
+  const { data } = await createAdminClient()
+    .from('usuarios')
+    .select('nombre, apellido, edad, dni, foto_perfil_url')
+    .eq('id', userId)
+    .maybeSingle();
+  return !!(data?.nombre && data.apellido && data.edad && data.dni && data.foto_perfil_url);
+}
+
+export async function puedoDenunciar() {
+  const user = await usuarioActual();
+  if (!user) return { ok: false as const, error: ERROR_SESION };
+  return { ok: true as const, perfilCompleto: await perfilCompleto(user.id) };
+}
+
 export async function denunciar(datos: {
   denunciadoId?: string;
   pedidoId?: string;
@@ -29,6 +47,9 @@ export async function denunciar(datos: {
 }) {
   const user = await usuarioActual();
   if (!user) return { ok: false as const, error: ERROR_SESION };
+  if (!(await perfilCompleto(user.id))) {
+    return { ok: false as const, error: 'Para denunciar tenés que completar tu perfil.' };
+  }
 
   if (!MOTIVOS_DENUNCIA.some((m) => m.valor === datos.motivo)) return { ok: false as const, error: 'Elegí un motivo.' };
   const detalle = String(datos.detalle ?? '').trim().slice(0, 500) || null;

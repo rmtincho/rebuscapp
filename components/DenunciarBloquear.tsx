@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { denunciar, bloquear, desbloquear } from '@/app/actions/moderacion'
+import { denunciar, puedoDenunciar, bloquear, desbloquear } from '@/app/actions/moderacion'
 import { MOTIVOS_DENUNCIA, type MotivoDenuncia } from '@/lib/denuncias'
 import { COLORS } from '@/lib/theme'
 import { MensajeError, inputBaseStyle } from '@/lib/ui'
@@ -42,6 +42,21 @@ export default function DenunciarBloquear({
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [enviada, setEnviada] = useState(false)
+  const [faltaPerfil, setFaltaPerfil] = useState(false)
+
+  // Solo con el perfil completo se puede denunciar; si falta, en vez
+  // del formulario mostramos el aviso con el link al perfil.
+  async function abrirDenuncia() {
+    setCargando(true)
+    const resultado = await puedoDenunciar()
+    setCargando(false)
+    if (!resultado.ok) {
+      alert(resultado.error)
+      return
+    }
+    if (resultado.perfilCompleto) setAbierto(true)
+    else setFaltaPerfil(true)
+  }
 
   async function enviarDenuncia() {
     if (!motivo) return
@@ -82,9 +97,9 @@ export default function DenunciarBloquear({
           ✓ Recibimos tu denuncia. La vamos a revisar.
         </p>
       ) : (
-        !abierto && (
+        !abierto && !faltaPerfil && (
           <div style={{ display: 'inline-flex', gap: 14 }}>
-            <button type="button" onClick={() => setAbierto(true)} style={linkStyle}>
+            <button type="button" onClick={abrirDenuncia} disabled={cargando} style={linkStyle}>
               {pedidoId ? 'Denunciar trabajo' : 'Denunciar'}
             </button>
             {otroId && (
@@ -94,6 +109,30 @@ export default function DenunciarBloquear({
             )}
           </div>
         )
+      )}
+
+      {faltaPerfil && (
+        <div style={{ padding: 16, borderRadius: 16, background: COLORS.card, boxShadow: COLORS.cardShadow, textAlign: 'left' }}>
+          <p style={{ fontSize: 14, fontWeight: 700, color: COLORS.ink, marginBottom: 4 }}>Completá tu perfil para denunciar</p>
+          <p style={{ fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 12 }}>
+            Necesitamos tu foto, nombre, apellido, edad y DNI. Así evitamos denuncias de cuentas falsas.
+          </p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => setFaltaPerfil(false)}
+              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+            >
+              Cancelar
+            </button>
+            <a
+              href="/perfil"
+              style={{ flex: 1, padding: 12, borderRadius: 100, background: COLORS.dark, color: COLORS.onDark, fontSize: 13, fontWeight: 700, textAlign: 'center', textDecoration: 'none' }}
+            >
+              Completar perfil
+            </a>
+          </div>
+        </div>
       )}
 
       {abierto && (
