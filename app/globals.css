@@ -24,6 +24,17 @@ body {
 /* Los controles de formulario no heredan la fuente solos */
 button, input, textarea, select { font-family: inherit; }
 
+/* Sin el anillo azul del navegador en los campos: al enfocarlos se marca
+   el borde en oscuro (el buscador del inicio, que no tiene borde, marca
+   la caja entera) */
+input:not([type='checkbox']):not([type='radio']):not([type='file']):focus,
+select:focus,
+textarea:focus { outline: none; }
+input:not([type='checkbox']):not([type='radio']):not([type='file']):focus-visible,
+select:focus-visible,
+textarea:focus-visible { border-color: #1C1C1E !important; }
+.buscador-inicio:focus-within { box-shadow: 0 0 0 2px #1C1C1E, 0 12px 30px rgba(80, 60, 20, 0.15) !important; }
+
 h1, h2, h3 {
   font-family: var(--font-display), sans-serif;
   letter-spacing: -0.02em; /* en tamaños grandes se ve mejor un poco más apretada */

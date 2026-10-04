@@ -156,6 +156,8 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
         })}
       </nav>
 
+      {/* En el inicio en "Busco trabajo" no va: ahí se buscan trabajos, no se publican */}
+      {sobre !== 'busco' && (
       <EnlaceConCarga
         href="/publicar"
         style={{
@@ -177,6 +179,7 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
         </svg>
         Publicar trabajo
       </EnlaceConCarga>
+      )}
     </div>
   )
 }

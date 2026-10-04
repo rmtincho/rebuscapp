@@ -252,7 +252,7 @@ export default function InicioWeb({
         style={{
           maxWidth: 1200,
           margin: '0 auto',
-          padding: '36px 24px 64px',
+          padding: '36px 24px 34px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -294,6 +294,7 @@ export default function InicioWeb({
           </h1>
           <form
             onSubmit={buscar}
+            className="buscador-inicio"
             style={{
               display: 'flex',
               alignItems: 'center',
