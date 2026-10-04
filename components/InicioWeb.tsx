@@ -730,8 +730,11 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, textAlign: 'right' }}>
         {precio && <span style={{ ...etiqueta, fontSize: 14, background: COLORS.blueTint, color: COLORS.blueDark, padding: '4px 9px' }}>{precio}</span>}
         {quien && (
-          <span style={{ fontSize: 13, color: COLORS.inkSoft, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {quien}
+          <span style={{ fontSize: 12.5, color: COLORS.inkSoft, maxWidth: '100%', lineHeight: 1.35 }}>
+            Publicado por
+            <span style={{ display: 'block', fontSize: 13.5, color: COLORS.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {quien}
+            </span>
           </span>
         )}
       </div>
