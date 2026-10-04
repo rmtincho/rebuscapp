@@ -77,6 +77,10 @@ const tarjeta: React.CSSProperties = {
 // para que se distingan de la tarjeta
 const inputEnTarjeta: React.CSSProperties = { ...inputBaseStyle, background: COLORS.paper }
 
+// Mínimo para "Experiencia" y "Sobre vos"
+const MIN_CARACTERES = 60
+const MIN_PALABRAS = 9
+
 const ayuda: React.CSSProperties = { fontSize: 12, color: COLORS.inkSoft, lineHeight: 1.45 }
 
 export default function PerfilForm({
@@ -142,9 +146,9 @@ export default function PerfilForm({
 
   function pareceTextoReal(texto: string): boolean {
     const limpio = texto.trim()
-    if (limpio.length < 100) return false
+    if (limpio.length < MIN_CARACTERES) return false
     const palabras = limpio.split(/\s+/).filter(Boolean)
-    if (palabras.length < 15) return false
+    if (palabras.length < MIN_PALABRAS) return false
     const promedioLargoPalabra = limpio.replace(/\s/g, '').length / palabras.length
     if (promedioLargoPalabra > 12) return false
     return true
@@ -872,14 +876,14 @@ function TituloBloque({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Contador debajo de "Experiencia" y "Sobre vos": pide al menos 100
+// Contador debajo de "Experiencia" y "Sobre vos": pide al menos 60
 // caracteres y que parezca texto real, no relleno
 function ContadorTexto({ texto, completo }: { texto: string; completo: boolean }) {
   const largo = texto.trim().length
   return (
     <p style={{ fontSize: 12, color: completo ? COLORS.green : COLORS.inkSoft, marginBottom: 22, fontWeight: 500 }}>
-      {largo < 100
-        ? `${largo} / 100 caracteres mínimo`
+      {largo < MIN_CARACTERES
+        ? `${largo} / ${MIN_CARACTERES} caracteres mínimo`
         : completo
         ? '✓ Se ve como una descripción real'
         : 'Necesitamos algo más descriptivo, con varias palabras'}
