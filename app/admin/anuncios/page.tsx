@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { usuarioAdmin } from '@/lib/admin'
-import { ESPACIOS_ANUNCIOS } from '@/lib/espaciosAnuncios'
+import { ESPACIOS_ANUNCIOS, FORMATOS_ANUNCIO, formatosPara } from '@/lib/espaciosAnuncios'
+import { describirEnlace } from '@/lib/enlaceAnuncio'
 import { COLORS } from '@/lib/theme'
 import { PantallaBase, TituloPagina, Subtitulo } from '@/lib/ui'
 import BottomNav from '@/components/BottomNav'
@@ -14,10 +15,12 @@ import AccionesAnuncio from '@/components/admin/AccionesAnuncio'
 
 type Fila = {
   id: string
-  anunciante: string
-  espacio: string
+  anunciante: string | null
+  espacios: string[]
   rubro: string | null
-  imagen_url: string
+  imagen_url: string | null
+  imagen_horizontal_url: string | null
+  imagen_lateral_url: string | null
   enlace: string | null
   texto_alternativo: string | null
   activo: boolean
@@ -52,10 +55,14 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
   const [{ data, error }, { data: rubros }] = await Promise.all([
     admin
       .from('anuncios')
-      .select('id, anunciante, espacio, rubro, imagen_url, enlace, texto_alternativo, activo, desde, hasta, impresiones, clics')
+      .select(
+        'id, anunciante, espacios, rubro, imagen_url, imagen_horizontal_url, imagen_lateral_url, enlace, texto_alternativo, activo, desde, hasta, impresiones, clics'
+      )
       .order('created_at', { ascending: false }),
     admin.from('categorias_grupo').select('slug, nombre').order('nombre'),
   ])
+  // Sin la migración de ubicaciones las columnas nuevas no existen
+  const faltaMigracion = !!error && /espacios|imagen_(horizontal|lateral)_url/.test(error.message)
   const anuncios = (data ?? []) as Fila[]
   const hoy = new Date().toISOString().slice(0, 10)
   const enEdicion = editar ? anuncios.find((a) => a.id === editar) : undefined
@@ -78,8 +85,10 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
         </p>
 
         {error && (
-          <div style={{ background: COLORS.redTint, color: COLORS.redDark, borderRadius: 16, padding: 16, marginBottom: 20, fontSize: 14 }}>
-            No se pudo leer la tabla de anuncios ({error.message}). ¿Ya corriste scripts/sql/2026-09-29-anuncios.sql?
+          <div style={{ background: COLORS.redTint, color: COLORS.redDark, borderRadius: 10, padding: 16, marginBottom: 20, fontSize: 14 }}>
+            {faltaMigracion
+              ? 'Falta correr scripts/sql/2026-10-04-anuncios-ubicaciones.sql en Supabase (SQL Editor). Hasta entonces la app sigue mostrando los anuncios viejos, pero acá no se pueden ver ni cargar.'
+              : `No se pudo leer la tabla de anuncios (${error.message}). ¿Ya corriste scripts/sql/2026-09-29-anuncios.sql?`}
           </div>
         )}
 
@@ -114,7 +123,9 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
             )}
 
             {anuncios.map((a) => {
-              const espacio = ESPACIOS_ANUNCIOS.find((e) => e.valor === a.espacio)
+              const ubicaciones = ESPACIOS_ANUNCIOS.filter((e) => a.espacios.includes(e.valor))
+              const imagenes = FORMATOS_ANUNCIO.filter((f) => a[f.columna])
+              const faltan = formatosPara(a.espacios).filter((f) => !a[f.columna])
               const estado = estadoDe(a, hoy)
               const ctr = a.impresiones ? `${((100 * Number(a.clics)) / Number(a.impresiones)).toFixed(1)}%` : '—'
               return (
@@ -127,27 +138,42 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
                     boxShadow: COLORS.cardShadow,
                     display: 'grid',
                     gridTemplateColumns: 'minmax(0, 200px) minmax(0, 1fr)',
+                    alignItems: 'start',
                     gap: 16,
                     opacity: estado.texto === 'Pausado' || estado.texto === 'Vencido' ? 0.7 : 1,
                     outline: enEdicion?.id === a.id ? `2px solid ${COLORS.dark}` : 'none',
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage */}
-                  <img
-                    src={a.imagen_url}
-                    alt={a.anunciante}
-                    style={{ width: '100%', aspectRatio: espacio?.proporcion ?? '3 / 1', objectFit: 'cover', borderRadius: 14, alignSelf: 'start' }}
-                  />
+                  {/* Una imagen por formato */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {imagenes.map((f) => (
+                      // eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage
+                      <img
+                        key={f.valor}
+                        src={a[f.columna]!}
+                        alt={`${f.label} de ${a.anunciante ?? 'anuncio'}`}
+                        title={`${f.label} (${f.medida})`}
+                        style={{ width: '100%', aspectRatio: f.proporcion, objectFit: 'cover', borderRadius: 8, display: 'block' }}
+                      />
+                    ))}
+                  </div>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' }}>
                       <div style={{ minWidth: 0 }}>
-                        <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{a.anunciante}</p>
-                        <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '2px 0 0' }}>
-                          {espacio?.label ?? a.espacio}
-                          {a.rubro && ` · ${nombreRubro.get(a.rubro) ?? a.rubro}`}
+                        <p style={{ fontSize: 16, fontWeight: 700, margin: 0, color: a.anunciante ? COLORS.ink : COLORS.inkSoft }}>
+                          {a.anunciante ?? 'Sin nombre'}
                         </p>
+                        <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '2px 0 0', lineHeight: 1.45 }}>
+                          {ubicaciones.map((u) => `${u.label} (${u.dispositivo.toLowerCase()})`).join(' · ')}
+                          {a.rubro && ` · Rubro: ${nombreRubro.get(a.rubro) ?? a.rubro}`}
+                        </p>
+                        {faltan.length > 0 && (
+                          <p style={{ fontSize: 12.5, color: COLORS.redDark, margin: '4px 0 0' }}>
+                            Falta la imagen {faltan.map((f) => f.label.toLowerCase()).join(' y ')}: ahí no sale.
+                          </p>
+                        )}
                       </div>
-                      <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 700, background: estado.fondo, color: estado.color, padding: '4px 10px', borderRadius: 100 }}>
+                      <span style={{ flexShrink: 0, fontSize: 12, background: estado.fondo, color: estado.color, padding: '4px 9px', borderRadius: 6 }}>
                         {estado.texto}
                       </span>
                     </div>
@@ -170,13 +196,7 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
                         ? `Del ${a.desde ? a.desde.split('-').reverse().join('/') : 'inicio'} al ${a.hasta ? a.hasta.split('-').reverse().join('/') : 'sin fecha de fin'}`
                         : 'Sin fechas'}
                       {' · '}
-                      {a.enlace ? (
-                        <a href={a.enlace} target="_blank" rel="noopener" style={{ color: COLORS.clayDark }}>
-                          {a.enlace.replace(/^https?:\/\//, '')}
-                        </a>
-                      ) : (
-                        'Sin enlace (no se puede tocar)'
-                      )}
+                      {describirEnlace(a.enlace)}
                     </p>
 
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -194,7 +214,7 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
                       >
                         Editar
                       </Link>
-                      <AccionesAnuncio id={a.id} activo={a.activo} anunciante={a.anunciante} />
+                      <AccionesAnuncio id={a.id} activo={a.activo} anunciante={a.anunciante ?? 'este anuncio'} />
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { COLORS } from '@/lib/theme'
 import type { Anuncio } from '@/lib/anuncios'
-import BannerPublicidad, { PROPORCION, useImpresion } from '@/components/BannerPublicidad'
+import BannerPublicidad, { PROPORCION, useImpresion, enlaceAnuncio, textoAlternativo } from '@/components/BannerPublicidad'
 
 // Varios anuncios en el mismo espacio: carrusel que se desliza con el dedo
 // y pasa solo cada 6 segundos (se frena mientras lo tocan y no se mueve
@@ -118,15 +118,13 @@ function Placa({ anuncio, formato }: { anuncio: Anuncio; formato: keyof typeof P
   return (
     <a
       ref={ref}
-      href={anuncio.con_enlace ? `/anuncio/${anuncio.id}` : undefined}
-      target={anuncio.con_enlace ? '_blank' : undefined}
-      rel={anuncio.con_enlace ? 'sponsored noopener' : undefined}
+      {...enlaceAnuncio(anuncio)}
       style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio: PROPORCION[formato], display: 'block' }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}
       <img
         src={anuncio.imagen_url}
-        alt={anuncio.texto_alternativo ?? `Publicidad de ${anuncio.anunciante}`}
+        alt={textoAlternativo(anuncio)}
         loading="lazy"
         draggable={false}
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}

@@ -9,10 +9,10 @@ import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { haceCuanto } from '@/lib/fechas'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
+import CarruselWeb from '@/components/CarruselWeb'
 import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import type { Anuncio } from '@/lib/anuncios'
 import { elegirAnuncio } from '@/lib/elegirAnuncio'
-import EnlaceConCarga from '@/components/EnlaceConCarga'
 import { MenuWeb } from '@/components/CabeceraWeb'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
@@ -88,23 +88,22 @@ const tituloSeccion: React.CSSProperties = {
 }
 
 export default function InicioWeb({
-  nombre,
   pedidos,
   trabajadores,
   actividad,
   tieneHistorial,
-  anuncioHorizontal,
+  anunciosCarrusel,
   anuncioLateral,
   anunciosLista,
   semilla,
   misCategorias,
 }: {
-  nombre: string | null
   pedidos: PedidoWeb[]
   trabajadores: Trabajador[]
   actividad: ActividadWeb[]
   tieneHistorial: boolean
-  anuncioHorizontal: Anuncio | null
+  // Carrusel de publicidad debajo del hero
+  anunciosCarrusel: Anuncio[]
   anuncioLateral: Anuncio | null
   anunciosLista: Anuncio[]
   semilla: number
@@ -187,14 +186,15 @@ export default function InicioWeb({
         style={{
           maxWidth: 1200,
           margin: '0 auto',
-          padding: '28px 24px 52px',
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) 300px',
-          gap: 40,
+          padding: '36px 24px 64px',
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
+          textAlign: 'center',
         }}
       >
-        <div>
+        {/* Centrado: modo, pregunta y buscador, nada más */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: tema.superficie, borderRadius: 10, padding: 4, marginBottom: 22 }}>
             {(
               [
@@ -214,7 +214,7 @@ export default function InicioWeb({
                   border: 'none',
                   background: modo === v ? tema.activo : 'transparent',
                   color: modo === v ? tema.sobreActivo : tema.textoSuave,
-                  fontSize: 14.5,
+                  fontSize: 13.5,
                   fontWeight: 700,
                   cursor: 'pointer',
                 }}
@@ -223,10 +223,7 @@ export default function InicioWeb({
               </button>
             ))}
           </div>
-          <p style={{ fontSize: 16, fontWeight: 500, color: tema.textoSuave, margin: '0 0 6px' }}>
-            {nombre ? `Hola, ${nombre}` : 'Hola'}
-          </p>
-          <h1 style={{ fontSize: 46, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, margin: '0 0 24px', color: tema.texto }}>
+          <h1 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05, margin: '0 0 22px', color: tema.texto }}>
             {modo === 'busco' ? '¿Qué trabajo buscás hoy?' : '¿A quién necesitás?'}
           </h1>
           <form
@@ -239,7 +236,9 @@ export default function InicioWeb({
               borderRadius: 10,
               padding: 6,
               boxShadow: '0 12px 30px rgba(80, 60, 20, 0.15)',
+              width: '100%',
               maxWidth: 640,
+              textAlign: 'left',
             }}
           >
             <span style={{ paddingLeft: 14, color: COLORS.inkSoft, display: 'flex' }}>
@@ -252,7 +251,7 @@ export default function InicioWeb({
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
               placeholder={modo === 'busco' ? 'Plomería, limpieza, flete, pintar una pieza...' : 'Plomero, electricista, pintor, cuidado de personas...'}
-              style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', fontSize: 16, padding: '12px 4px', background: 'transparent', color: COLORS.ink }}
+              style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', fontSize: 15, padding: '12px 4px', background: 'transparent', color: COLORS.ink }}
             />
             <button
               type="submit"
@@ -262,7 +261,7 @@ export default function InicioWeb({
                 border: 'none',
                 background: COLORS.dark,
                 color: COLORS.onDark,
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: 700,
                 cursor: 'pointer',
               }}
@@ -271,41 +270,11 @@ export default function InicioWeb({
             </button>
           </form>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            {[
-              { n: pedidos.length, l: pedidos.length === 1 ? 'trabajo abierto' : 'trabajos abiertos' },
-              { n: trabajadores.length, l: trabajadores.length === 1 ? 'trabajador' : 'trabajadores' },
-            ].map((d) => (
-              <div key={d.l} style={{ background: tema.superficie, borderRadius: 10, padding: '16px 16px 14px' }}>
-                <p style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', margin: 0, color: tema.texto }}>{d.n}</p>
-                <p style={{ fontSize: 13, fontWeight: 500, margin: 0, color: tema.textoSuave }}>{d.l}</p>
-              </div>
-            ))}
-          </div>
-          <EnlaceConCarga
-            href="/publicar"
-            style={{
-              display: 'block',
-              background: modo === 'ofrezco' ? COLORS.clay : COLORS.dark,
-              color: modo === 'ofrezco' ? COLORS.onClay : COLORS.onDark,
-              borderRadius: 10,
-              padding: '18px 18px',
-              textDecoration: 'none',
-            }}
-          >
-            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : COLORS.onDark, margin: '0 0 4px', fontWeight: 500 }}>
-              {modo === 'ofrezco' ? 'Les avisamos a los del rubro' : '¿Necesitás a alguien?'}
-            </p>
-            <p style={{ fontSize: 17, fontWeight: 700, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              Publicá un trabajo
-              <span style={{ color: modo === 'ofrezco' ? COLORS.onClay : COLORS.clay, fontSize: 20 }}>→</span>
-            </p>
-          </EnlaceConCarga>
-        </div>
       </div>
       </section>
+
+      {/* ——— Publicidad: carrusel con el activo al centro ——— */}
+      <CarruselWeb anuncios={anunciosCarrusel} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
       {/* ——— Rubros ——— */}
@@ -459,7 +428,6 @@ export default function InicioWeb({
       )}
 
       {/* ——— Publicidad: franja ancha fija ——— */}
-      <BannerPublicidad anuncio={anuncioHorizontal} formato="horizontal" style={{ marginTop: 40 }} />
 
       {/* ——— Resultados: filtros a la izquierda, la grilla a la derecha ——— */}
       <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 16 }}>

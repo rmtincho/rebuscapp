@@ -282,10 +282,11 @@ export default async function HomePage() {
     : misPedidos.length > 0 && misPostulaciones.length === 0
     ? 'ofrezco'
     : 'busco'
-  const [anuncios, anunciosLista, anunciosInicioMovil] = await Promise.all([
-    anunciosPara(['inicio_web', 'lateral_web']),
+  const [anuncios, anunciosLista, anunciosInicioMovil, anunciosInicioWeb] = await Promise.all([
+    anunciosPara(['lateral_web']),
     anunciosDeEspacio('lista'),
     anunciosParaCarrusel('inicio_movil'),
+    anunciosParaCarrusel('inicio_web'),
   ])
   const semilla = semillaAnuncios()
 
@@ -354,12 +355,11 @@ export default async function HomePage() {
       {/* En compu: un inicio propio de web (components/InicioWeb) */}
       <div className="solo-escritorio">
         <InicioWeb
-          nombre={primerNombre}
           pedidos={pedidosConRequisitos as never}
           trabajadores={trabajadores}
           actividad={actividad}
           tieneHistorial={tieneHistorial}
-          anuncioHorizontal={anuncios.inicio_web}
+          anunciosCarrusel={anunciosInicioWeb}
           anuncioLateral={anuncios.lateral_web}
           anunciosLista={anunciosLista}
           semilla={semilla}

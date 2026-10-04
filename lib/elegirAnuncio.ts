@@ -5,12 +5,16 @@
 
 export type AnuncioElegible = {
   id: string
-  anunciante: string
+  // Nombre del negocio (opcional)
+  anunciante: string | null
+  // La imagen del formato de la ubicación donde se muestra
   imagen_url: string
   texto_alternativo: string | null
   rubro: string | null
   // Sin enlace, el banner es solo una imagen (no se puede tocar)
   con_enlace: boolean
+  // Página o WhatsApp abren en otra pestaña; una llamada, no
+  nueva_pestana: boolean
 }
 
 export function elegirAnuncio<A extends AnuncioElegible>(candidatos: A[], rubro: string | null, semilla: number): A | null {

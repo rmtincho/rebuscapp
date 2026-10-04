@@ -36,6 +36,21 @@ export function useImpresion(ref: React.RefObject<HTMLElement | null>, anuncioId
   }, [ref, anuncioId])
 }
 
+// Link del anuncio: pasa por /anuncio/[id] para contar el clic. Página y
+// WhatsApp abren en otra pestaña; una llamada, no.
+export function enlaceAnuncio(anuncio: Anuncio) {
+  if (!anuncio.con_enlace) return {}
+  return {
+    href: `/anuncio/${anuncio.id}`,
+    target: anuncio.nueva_pestana ? '_blank' : undefined,
+    rel: 'sponsored noopener',
+  }
+}
+
+export function textoAlternativo(anuncio: Anuncio) {
+  return anuncio.texto_alternativo ?? (anuncio.anunciante ? `Publicidad de ${anuncio.anunciante}` : 'Publicidad')
+}
+
 export default function BannerPublicidad({
   anuncio,
   formato,
@@ -70,15 +85,13 @@ export default function BannerPublicidad({
         {etiqueta}
       </p>
       <a
-        href={anuncio.con_enlace ? `/anuncio/${anuncio.id}` : undefined}
-        target={anuncio.con_enlace ? '_blank' : undefined}
-        rel={anuncio.con_enlace ? 'sponsored noopener' : undefined}
+        {...enlaceAnuncio(anuncio)}
         style={{ display: 'block', borderRadius: 20, overflow: 'hidden', boxShadow: COLORS.cardShadow, aspectRatio: PROPORCION[formato] }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- imagen del anunciante en el storage de Supabase */}
         <img
           src={anuncio.imagen_url}
-          alt={anuncio.texto_alternativo ?? `Publicidad de ${anuncio.anunciante}`}
+          alt={textoAlternativo(anuncio)}
           loading="lazy"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
