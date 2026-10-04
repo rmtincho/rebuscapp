@@ -3,11 +3,12 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import CabeceraWeb from '@/components/CabeceraWeb'
 
-// Una sola familia (Inter, fuente variable) para títulos y texto: estética
-// neutra y limpia. Las dos variables se mantienen para no tocar el CSS.
+// Fuente: Helvetica Neue World, de Adobe Fonts (proyecto web iym1qdq,
+// pesos 400 y 700), para títulos y texto. Inter queda de respaldo por si
+// el CSS de Adobe no carga; --font-body y --font-display se arman en globals.css.
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-body',
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
@@ -39,8 +40,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
-      <body className={inter.variable}>
+    <html lang="es" className={inter.variable}>
+      <head>
+        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
+        <link rel="stylesheet" href="https://use.typekit.net/iym1qdq.css" />
+      </head>
+      <body>
         <CabeceraWeb />
         {children}
       </body>

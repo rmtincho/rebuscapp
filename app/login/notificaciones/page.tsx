@@ -100,7 +100,7 @@ export default function NotificacionesRegistroPage() {
 
         <h1
           style={{
-            fontFamily: 'var(--font-poppins, sans-serif)',
+            fontFamily: 'var(--font-display)',
             fontWeight: 500,
             fontSize: 25,
             lineHeight: 1.3,
@@ -232,7 +232,7 @@ function ItemNotificacion({
         {icono}
       </div>
       <div>
-        <p style={{ fontFamily: 'var(--font-poppins, sans-serif)', fontSize: 14, fontWeight: 500, marginBottom: 2 }}>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 500, marginBottom: 2 }}>
           {titulo}
         </p>
         <p style={{ fontSize: 13, lineHeight: 1.4 }}>{texto}</p>

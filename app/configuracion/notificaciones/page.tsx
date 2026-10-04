@@ -88,7 +88,7 @@ export default function AjustesNotificacionesPage() {
         <div className="solo-movil">
         <h1
           style={{
-            fontFamily: 'var(--font-poppins, sans-serif)',
+            fontFamily: 'var(--font-display)',
             fontSize: 22,
             fontWeight: 500,
             margin: '20px 0 8px',

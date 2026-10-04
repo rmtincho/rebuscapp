@@ -10,7 +10,10 @@ body {
 }
 
 body {
-  --font-display: var(--font-body); /* títulos y texto usan la misma familia (Inter) */
+  /* Títulos y texto: Helvetica Neue World (Adobe Fonts, se carga en
+     app/layout.tsx), con Inter de respaldo */
+  --font-body: 'helvetica-neue-world', var(--font-inter), 'Helvetica Neue', Arial;
+  --font-display: var(--font-body);
   font-family: var(--font-body), sans-serif;
   -webkit-font-smoothing: antialiased;
   color-scheme: light; /* inputs, selects y scrollbars nativos se ven claros solos */
@@ -18,9 +21,12 @@ body {
   background: #FAF7F2;
 }
 
+/* Los controles de formulario no heredan la fuente solos */
+button, input, textarea, select { font-family: inherit; }
+
 h1, h2, h3 {
   font-family: var(--font-display), sans-serif;
-  letter-spacing: -0.02em; /* Inter en tamaños grandes se ve mejor un poco más apretada */
+  letter-spacing: -0.02em; /* en tamaños grandes se ve mejor un poco más apretada */
   color: #1C1C1E; /* red de seguridad: si algún título no fija su color, no queda invisible */
 }
 
