@@ -52,10 +52,10 @@ const NIVEL: Record<string, string> = {
 // Características del trabajo para las etiquetas de cada fila
 // Cada tipo de dato con su color: tipo de trabajo en naranja, comercio en
 // rosa y requisitos en amarillo (verde y rojo quedan para "cumplís / no")
-// Colores llenos y vivos. Texto oscuro sobre los claros (naranja,
-// amarillo) y blanco sobre los fuertes, para que se lean
+// Colores llenos y vivos. Texto oscuro sobre el amarillo y blanco sobre
+// el resto, para que se lean
 export const COLOR_CARACTERISTICA = {
-  jornada: { fondo: '#FF9900', texto: '#1C1C1E' },
+  jornada: { fondo: '#FF6600', texto: '#FFFFFF' },
   comercio: { fondo: '#E6195E', texto: '#FFFFFF' },
   requisito: { fondo: '#FFD000', texto: '#1C1C1E' },
 }
