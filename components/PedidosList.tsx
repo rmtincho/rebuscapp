@@ -145,7 +145,7 @@ export default function PedidosList({
                       <span aria-hidden style={{ margin: '0 5px' }}>›</span>
                     </>
                   )}
-                  <span style={{ color: tag.texto }}>{nombreCategoria}</span>
+                  <span style={{ color: COLORS.blue }}>{nombreCategoria}</span>
                   {' · '}
                   {haceCuanto(pedido.fecha_creacion)}
                 </p>

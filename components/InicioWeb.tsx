@@ -631,7 +631,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
               <span aria-hidden style={{ margin: '0 6px' }}>›</span>
             </>
           )}
-          <span style={{ color: tag.texto }}>{cat}</span>
+          <span style={{ color: COLORS.blue }}>{cat}</span>
           {p.fecha_creacion && <span> · {haceCuanto(p.fecha_creacion)}</span>}
         </p>
         {p.descripcion && (
