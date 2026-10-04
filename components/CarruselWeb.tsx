@@ -19,8 +19,11 @@ const ANCHO = 70 // % del ancho que ocupa el activo
 const SEPARACION = 2 // % entre placas
 
 export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
-  // Con dos anuncios no alcanza para tener uno a cada lado: se repiten
-  const placas = anuncios.length === 2 ? [...anuncios, ...anuncios] : anuncios
+  // Se repite la lista hasta tener al menos 5 placas: así la que da la
+  // vuelta de un costado al otro lo hace fuera de la vista (con 3, saltaba
+  // de la izquierda a la derecha delante de todos)
+  const repeticiones = anuncios.length > 1 ? Math.ceil(5 / anuncios.length) : 1
+  const placas = Array.from({ length: repeticiones }, () => anuncios).flat()
   const n = placas.length
   // El activo y el de antes: con el de antes se sabe qué placa dio la
   // vuelta de un costado al otro, que salta sin animación (si no, cruzaría
@@ -208,7 +211,14 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
                 key={a.id}
                 type="button"
                 aria-label={`Anuncio ${i + 1} de ${anuncios.length}`}
-                onClick={() => irA(i)}
+                onClick={() => {
+                  // La copia de ese anuncio más cercana a la actual
+                  let mejor = i
+                  for (let j = i; j < n; j += anuncios.length) {
+                    if (Math.abs(posicion(j, actual)) < Math.abs(posicion(mejor, actual))) mejor = j
+                  }
+                  irA(mejor)
+                }}
                 style={{
                   width: activo ? 18 : 7,
                   height: 7,
