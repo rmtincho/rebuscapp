@@ -359,7 +359,6 @@ export default async function HomePage() {
           trabajadores={trabajadores}
           actividad={actividad}
           tieneHistorial={tieneHistorial}
-          centro={CENTRO_DEFAULT}
           anuncioHorizontal={anuncios.inicio_web}
           anuncioLateral={anuncios.lateral_web}
           anunciosLista={anunciosLista}

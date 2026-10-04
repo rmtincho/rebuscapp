@@ -7,7 +7,6 @@ import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { haceCuanto } from '@/lib/fechas'
-import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import InterruptorHabilidades from '@/components/InterruptorHabilidades'
@@ -19,7 +18,7 @@ import { MenuWeb } from '@/components/CabeceraWeb'
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
 // fila, y los trabajos como un sitio de avisos (filtros a la izquierda,
-// grilla o mapa grande a la derecha). En el celular se usa el inicio de siempre.
+// la grilla a la derecha). En el celular se usa el inicio de siempre.
 
 export type PedidoWeb = {
   id: string
@@ -94,7 +93,6 @@ export default function InicioWeb({
   trabajadores,
   actividad,
   tieneHistorial,
-  centro,
   anuncioHorizontal,
   anuncioLateral,
   anunciosLista,
@@ -106,7 +104,6 @@ export default function InicioWeb({
   trabajadores: Trabajador[]
   actividad: ActividadWeb[]
   tieneHistorial: boolean
-  centro: [number, number]
   anuncioHorizontal: Anuncio | null
   anuncioLateral: Anuncio | null
   anunciosLista: Anuncio[]
@@ -134,7 +131,6 @@ export default function InicioWeb({
     setTexto('')
     setGrupo(null)
   }
-  const [vista, setVista] = useState<'grilla' | 'mapa'>('grilla')
 
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase()
@@ -163,8 +159,6 @@ export default function InicioWeb({
   // Tarjeta "Patrocinado" en la grilla: del rubro filtrado si hay, si no general
   const patrocinado = elegirAnuncio(anunciosLista, grupo, semilla)
   const posicionPatrocinado = Math.min(6, filtrados.length)
-
-  const conUbicacion = filtrados.filter((p) => p.ubicacion_lat !== null && p.ubicacion_lng !== null)
 
   function buscar(e: React.FormEvent) {
     e.preventDefault()
@@ -467,7 +461,7 @@ export default function InicioWeb({
       {/* ——— Publicidad: franja ancha fija ——— */}
       <BannerPublicidad anuncio={anuncioHorizontal} formato="horizontal" style={{ marginTop: 40 }} />
 
-      {/* ——— Resultados: filtros a la izquierda, grilla o mapa a la derecha ——— */}
+      {/* ——— Resultados: filtros a la izquierda, la grilla a la derecha ——— */}
       <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
           <h2 style={{ ...tituloSeccion, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -492,18 +486,6 @@ export default function InicioWeb({
               </span>
             </span>
           </h2>
-          <div style={{ display: 'flex', gap: 10 }}>
-            {seccion === 'trabajos' && (
-              <Segmento
-                opciones={[
-                  { valor: 'grilla', label: 'Grilla' },
-                  { valor: 'mapa', label: 'Mapa' },
-                ]}
-                valor={vista}
-                onChange={(v) => setVista(v as 'grilla' | 'mapa')}
-              />
-            )}
-          </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '250px minmax(0, 1fr)', gap: 28, alignItems: 'start' }}>
@@ -580,10 +562,6 @@ export default function InicioWeb({
               )
             ) : filtrados.length === 0 ? (
               <Vacio texto={hayFiltros ? 'No hay trabajos con esos filtros.' : 'Todavía no hay trabajos publicados. Sé el primero.'} />
-            ) : vista === 'mapa' ? (
-              <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
-                <MapaPedidosWrapper pedidos={conUbicacion as never} centro={centro} alto="calc(100vh - 140px)" />
-              </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
                 {filtrados.map((p, i) => (
@@ -670,40 +648,6 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         )}
       </div>
     </a>
-  )
-}
-
-function Segmento({
-  opciones,
-  valor,
-  onChange,
-}: {
-  opciones: { valor: string; label: string }[]
-  valor: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <div style={{ display: 'flex', background: COLORS.card, borderRadius: 10, padding: 4, boxShadow: COLORS.cardShadow }}>
-      {opciones.map((o) => (
-        <button
-          key={o.valor}
-          type="button"
-          onClick={() => onChange(o.valor)}
-          style={{
-            padding: '9px 18px',
-            borderRadius: 7,
-            border: 'none',
-            background: valor === o.valor ? COLORS.dark : 'transparent',
-            color: valor === o.valor ? COLORS.onDark : COLORS.inkSoft,
-            fontSize: 14,
-            fontWeight: 500,
-            cursor: 'pointer',
-          }}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
   )
 }
 
