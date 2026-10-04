@@ -429,11 +429,11 @@ export default function InicioWeb({
                       {a.tipo === 'pedido' ? 'Tu pedido' : 'Tu postulación'}
                     </span>
                     {a.sinLeer > 0 ? (
-                      <span style={{ fontSize: 13, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 5 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 100 }}>
                         {a.sinLeer} mensaje{a.sinLeer > 1 ? 's' : ''} nuevo{a.sinLeer > 1 ? 's' : ''}
                       </span>
                     ) : (
-                      <span style={{ fontSize: 13, fontWeight: 500, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 5 }}>
+                      <span style={{ fontSize: 13, fontWeight: 500, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 100 }}>
                         {a.estado}
                       </span>
                     )}
@@ -642,7 +642,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
           {quien ?? ''}
         </span>
         {precio && (
-          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blue, color: '#FFFFFF', padding: '5px 11px', borderRadius: 5 }}>
+          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blue, color: '#FFFFFF', padding: '5px 11px', borderRadius: 100 }}>
             {precio}
           </span>
         )}
