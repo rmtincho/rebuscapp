@@ -283,12 +283,15 @@ export default async function HomePage() {
     : misPedidos.length > 0 && misPostulaciones.length === 0
     ? 'ofrezco'
     : 'busco'
-  const [anuncios, anunciosLista, anunciosInicioMovil, anunciosInicioWeb] = await Promise.all([
+  const [anuncios, anunciosLista, anunciosInicioMovil, anunciosInicioWeb, { data: gruposData }] = await Promise.all([
     anunciosPara(['lateral_web']),
     anunciosDeEspacio('lista'),
     anunciosParaCarrusel('inicio_movil'),
     anunciosParaCarrusel('inicio_web'),
+    // Nombre de cada rubro, para el "Rubro › Categoría" de las filas web
+    supabase.from('categorias_grupo').select('slug, nombre'),
   ])
+  const nombresRubro: Record<string, string> = Object.fromEntries((gruposData ?? []).map((g) => [g.slug, g.nombre]))
   const semilla = semillaAnuncios()
 
   // Mis rubros (perfil de trabajador), para "Coinciden con mis habilidades"
@@ -365,6 +368,7 @@ export default async function HomePage() {
           anunciosLista={anunciosLista}
           semilla={semilla}
           misCategorias={misCategorias}
+          nombresRubro={nombresRubro}
         />
       </div>
 

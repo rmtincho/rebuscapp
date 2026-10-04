@@ -319,6 +319,6 @@ textarea::placeholder {
   .boton-principal { border-radius: 10px !important; }
 }
 
-/* Inicio web: fila de un trabajo, con un fondo suave al pasar el mouse */
-.fila-trabajo { transition: background 0.15s; }
-.fila-trabajo:hover { background: rgba(255, 255, 255, 0.7); }
+/* Inicio web: tarjeta de un trabajo, se marca un poco al pasar el mouse */
+.fila-trabajo { transition: box-shadow 0.15s; }
+.fila-trabajo:hover { box-shadow: 0 0 0 1.5px #ECE5D8, 0 8px 24px rgba(80, 60, 20, 0.1) !important; }

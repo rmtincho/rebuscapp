@@ -83,6 +83,20 @@ function caracteristicas(p: PedidoWeb): string[] {
   ].filter((x): x is string => !!x)
 }
 
+// Los trabajos no tienen título: se usa la primera oración de la
+// descripción (si es muy larga, se corta en una palabra) y el resto va abajo
+function tituloYResto(descripcion: string): { titulo: string; resto: string } {
+  const texto = descripcion.trim().replace(/\s+/g, ' ')
+  const corte = texto.search(/[.!?](\s|$)/)
+  let titulo = corte >= 0 ? texto.slice(0, corte + 1) : texto
+  if (titulo.length > 110) {
+    const espacio = titulo.lastIndexOf(' ', 100)
+    titulo = `${titulo.slice(0, espacio > 40 ? espacio : 100)}…`
+    return { titulo, resto: texto }
+  }
+  return { titulo, resto: texto.slice(titulo.length).trim() }
+}
+
 function tieneRequisitos(p: PedidoWeb) {
   return !!(p.edad_minima || p.requisito_nivel_educativo || p.requiere_carnet_conducir || p.idioma_requerido)
 }
@@ -134,6 +148,7 @@ export default function InicioWeb({
   anunciosLista,
   semilla,
   misCategorias,
+  nombresRubro,
 }: {
   pedidos: PedidoWeb[]
   trabajadores: Trabajador[]
@@ -146,6 +161,8 @@ export default function InicioWeb({
   semilla: number
   // Rubros del perfil de trabajador, para "Coinciden con mis habilidades"
   misCategorias: string[]
+  // slug → nombre de cada rubro, para el "Rubro › Categoría" de las filas
+  nombresRubro: Record<string, string>
 }) {
   // Busco trabajo → trabajos; busco contratar → trabajadores y tus pedidos
   const { modo, cambiarModo: cambiarModoContexto } = useModo()
@@ -599,14 +616,12 @@ export default function InicioWeb({
             ) : filtrados.length === 0 ? (
               <Vacio texto={hayFiltros ? 'No hay trabajos con esos filtros.' : 'Todavía no hay trabajos publicados. Sé el primero.'} />
             ) : (
-              <div style={{ borderTop: `1px solid ${COLORS.line}` }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {filtrados.map((p, i) => (
                   <Fragment key={p.id}>
-                    <FilaTrabajo p={p} />
+                    <FilaTrabajo p={p} rubro={p.categorias?.grupo_slug ? nombresRubro[p.categorias.grupo_slug] : undefined} />
                     {patrocinado && i === posicionPatrocinado - 1 && (
-                      <div style={{ padding: '20px 0', borderBottom: `1px solid ${COLORS.line}` }}>
-                        <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ maxWidth: 560 }} />
-                      </div>
+                      <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ maxWidth: 560, margin: '10px 0' }} />
                     )}
                   </Fragment>
                 ))}
@@ -620,16 +635,18 @@ export default function InicioWeb({
   )
 }
 
-// Un trabajo como fila (como un sitio de avisos): rubro y cuándo arriba,
-// buena parte de la descripción, y abajo las características como
-// etiquetas; a la derecha el pago y quién lo publica.
-function FilaTrabajo({ p }: { p: PedidoWeb }) {
+// Un trabajo como fila (como un sitio de avisos), en una tarjeta blanca:
+// título (la primera oración), debajo "Rubro › Categoría" y cuándo, el
+// resto de la descripción y las características como etiquetas; a la
+// derecha el pago y quién lo publica.
+function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const cat = p.categorias?.nombre ?? 'Trabajo'
   const tag = tagDe(cat)
   const quien = p.es_comercio ? p.nombre_comercio : p.usuarios?.nombre
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
   const etiquetas = caracteristicas(p)
-  const etiqueta: React.CSSProperties = { fontSize: 13, padding: '4px 9px', borderRadius: 6, whiteSpace: 'nowrap' }
+  const { titulo, resto } = tituloYResto(p.descripcion)
+  const etiqueta: React.CSSProperties = { fontSize: 12, padding: '3px 8px', borderRadius: 5, whiteSpace: 'nowrap' }
   return (
     <a
       href={`/pedidos/${p.id}`}
@@ -638,8 +655,10 @@ function FilaTrabajo({ p }: { p: PedidoWeb }) {
         display: 'grid',
         gridTemplateColumns: '44px minmax(0, 1fr) 170px',
         gap: 18,
-        padding: '20px 12px',
-        borderBottom: `1px solid ${COLORS.line}`,
+        padding: '18px 20px',
+        background: COLORS.card,
+        borderRadius: 8,
+        boxShadow: COLORS.cardShadow,
         textDecoration: 'none',
         color: COLORS.ink,
       }}
@@ -660,25 +679,35 @@ function FilaTrabajo({ p }: { p: PedidoWeb }) {
       </span>
 
       <div style={{ minWidth: 0 }}>
-        <p style={{ fontSize: 13.5, color: COLORS.inkSoft, margin: '0 0 4px' }}>
+        <p style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.35, margin: 0 }}>{titulo}</p>
+        <p style={{ fontSize: 13.5, color: COLORS.inkSoft, margin: '3px 0 0' }}>
+          {rubro && rubro !== cat && (
+            <>
+              {rubro}
+              <span aria-hidden style={{ margin: '0 6px' }}>›</span>
+            </>
+          )}
           <span style={{ color: tag.texto }}>{cat}</span>
-          {p.fecha_creacion && ` · ${haceCuanto(p.fecha_creacion)}`}
+          {p.fecha_creacion && <span> · {haceCuanto(p.fecha_creacion)}</span>}
         </p>
-        <p
-          style={{
-            fontSize: 16,
-            lineHeight: 1.5,
-            margin: 0,
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {p.descripcion}
-        </p>
+        {resto && (
+          <p
+            style={{
+              fontSize: 15,
+              lineHeight: 1.5,
+              color: '#3F3F46',
+              margin: '10px 0 0',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {resto}
+          </p>
+        )}
         {(etiquetas.length > 0 || tieneRequisitos(p)) && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 12 }}>
             {etiquetas.map((e) => (
               <span key={e} style={{ ...etiqueta, background: '#EDEDF2', color: '#4B4B55' }}>
                 {e}
@@ -700,9 +729,9 @@ function FilaTrabajo({ p }: { p: PedidoWeb }) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, textAlign: 'right' }}>
-        {precio && <span style={{ ...etiqueta, fontSize: 15, background: COLORS.blueTint, color: COLORS.blueDark, padding: '5px 10px' }}>{precio}</span>}
+        {precio && <span style={{ ...etiqueta, fontSize: 14, background: COLORS.blueTint, color: COLORS.blueDark, padding: '4px 9px' }}>{precio}</span>}
         {quien && (
-          <span style={{ fontSize: 13.5, color: COLORS.inkSoft, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 13, color: COLORS.inkSoft, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {quien}
           </span>
         )}
