@@ -14,6 +14,7 @@ import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import type { Anuncio } from '@/lib/anuncios'
 import { elegirAnuncio } from '@/lib/elegirAnuncio'
 import EnlaceConCarga from '@/components/EnlaceConCarga'
+import { MenuWeb } from '@/components/CabeceraWeb'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
@@ -186,11 +187,13 @@ export default function InicioWeb({
       {/* ——— Bienvenida con buscador, con el color del modo: de lado a lado,
           pegada a la cabecera; el contenido con el mismo ancho que el resto ——— */}
       <section style={{ background: tema.fondo, color: tema.texto }}>
+      {/* El menú de la cabecera va acá adentro, transparente sobre el color */}
+      <MenuWeb sobre={modo} />
       <div
         style={{
           maxWidth: 1200,
           margin: '0 auto',
-          padding: '44px 24px 48px',
+          padding: '28px 24px 52px',
           display: 'grid',
           gridTemplateColumns: 'minmax(0, 1fr) 300px',
           gap: 40,
@@ -465,7 +468,7 @@ export default function InicioWeb({
       <BannerPublicidad anuncio={anuncioHorizontal} formato="horizontal" style={{ marginTop: 40 }} />
 
       {/* ——— Resultados: filtros a la izquierda, grilla o mapa a la derecha ——— */}
-      <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 'calc(var(--alto-cabecera) + 16px)' }}>
+      <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
           <h2 style={{ ...tituloSeccion, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span
@@ -579,7 +582,7 @@ export default function InicioWeb({
               <Vacio texto={hayFiltros ? 'No hay trabajos con esos filtros.' : 'Todavía no hay trabajos publicados. Sé el primero.'} />
             ) : vista === 'mapa' ? (
               <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
-                <MapaPedidosWrapper pedidos={conUbicacion as never} centro={centro} alto="calc(100vh - var(--alto-cabecera) - 140px)" />
+                <MapaPedidosWrapper pedidos={conUbicacion as never} centro={centro} alto="calc(100vh - 140px)" />
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>

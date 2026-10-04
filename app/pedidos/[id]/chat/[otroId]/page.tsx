@@ -107,7 +107,7 @@ export default async function ChatMultiplePage({
             borderBottom: `1px solid ${COLORS.line}`,
             background: COLORS.card,
             position: 'sticky',
-            top: 'var(--alto-cabecera)',
+            top: 0,
             zIndex: 10,
           }}
         >
