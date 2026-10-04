@@ -61,20 +61,8 @@ export default function CabeceraModo({
         </a>
       </div>
 
-      <h1 style={{ margin: '22px 0 0', color: tema.texto, fontSize: 34, fontWeight: 500, lineHeight: 1.12, letterSpacing: '-0.035em' }}>
-        {modo === 'busco' ? (
-          <>
-            Trabajo
-            <br />
-            cerca tuyo
-          </>
-        ) : (
-          <>
-            ¿A quién
-            <br />
-            necesitás?
-          </>
-        )}
+      <h1 style={{ margin: '18px 0 0', color: tema.texto, fontSize: 24, fontWeight: 600, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+        {modo === 'busco' ? 'Trabajo cerca tuyo' : '¿A quién necesitás?'}
       </h1>
 
       {modo === 'busco' ? (
