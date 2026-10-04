@@ -18,6 +18,7 @@ export default function FeedPedidos({
   anunciosLista = [],
   semilla = 0,
   misCategorias = [],
+  nombresRubro = {},
 }: {
   pedidos: any[]
   trabajadores: Trabajador[]
@@ -25,6 +26,8 @@ export default function FeedPedidos({
   semilla?: number
   // Rubros del perfil de trabajador, para el filtro rápido
   misCategorias?: string[]
+  // slug → nombre de cada rubro, para el "Rubro › Categoría" de las tarjetas
+  nombresRubro?: Record<string, string>
 }) {
   // Dentro del inicio con modo, solo la sección de ese modo y sin las pestañas
   const modoInicio = useModoOpcional()
@@ -259,6 +262,7 @@ export default function FeedPedidos({
               <PedidosList
                 pedidos={pedidosFiltrados as any}
                 cercaDe={orden === 'cercanos' ? miUbicacion : null}
+                nombresRubro={nombresRubro}
                 patrocinado={
                   patrocinado ? <BannerPublicidad anuncio={patrocinado} formato="movil" /> : undefined
                 }

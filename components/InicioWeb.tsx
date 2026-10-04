@@ -8,6 +8,17 @@ import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { haceCuanto } from '@/lib/fechas'
+import {
+  caracteristicas,
+  tieneRequisitos,
+  tituloDe,
+  tagDe,
+  COLOR_CARACTERISTICA,
+  COLOR_CUMPLE,
+  COLOR_NO_CUMPLE,
+  COLOR_PRECIO,
+  ESTILO_ETIQUETA,
+} from '@/lib/tarjetaTrabajo'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import CarruselWeb from '@/components/CarruselWeb'
@@ -62,63 +73,6 @@ type Tipo = 'todos' | 'puntual' | 'fijo'
 
 const HORAS_PUBLICADO: Record<Exclude<Publicado, 'cualquiera'>, number> = { '1d': 24, '3d': 72, '1w': 168 }
 
-const JORNADA: Record<string, string> = { changa: 'Trabajo puntual', fulltime: 'Full time', parttime: 'Part time' }
-
-const NIVEL: Record<string, string> = {
-  primario: 'Primario completo',
-  secundario: 'Secundario completo',
-  terciario: 'Terciario',
-  universitario: 'Universitario',
-  posgrado: 'Posgrado',
-}
-
-// Características del trabajo para las etiquetas de cada fila
-// Cada tipo de dato con su color: tipo de trabajo en naranja, comercio en
-// rosa y requisitos en amarillo (verde y rojo quedan para "cumplís / no")
-// Colores llenos y vivos. Texto oscuro sobre los claros (naranja,
-// amarillo) y blanco sobre los fuertes, para que se lean
-const COLOR_CARACTERISTICA = {
-  jornada: { fondo: '#FF9900', texto: '#1C1C1E' },
-  comercio: { fondo: '#E6195E', texto: '#FFFFFF' },
-  requisito: { fondo: '#FFD000', texto: '#1C1C1E' },
-}
-const COLOR_CUMPLE = { fondo: '#12873C', texto: '#FFFFFF' }
-const COLOR_NO_CUMPLE = { fondo: '#D92D20', texto: '#FFFFFF' }
-const COLOR_PRECIO = { fondo: '#2563EB', texto: '#FFFFFF' }
-
-function caracteristicas(p: PedidoWeb): { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA }[] {
-  const lista: ({ texto: string | null | undefined; tipo: keyof typeof COLOR_CARACTERISTICA })[] = [
-    { texto: p.jornada ? JORNADA[p.jornada] : null, tipo: 'jornada' },
-    { texto: p.es_comercio ? 'Comercio' : null, tipo: 'comercio' },
-    { texto: p.edad_minima ? `Desde ${p.edad_minima} años` : null, tipo: 'requisito' },
-    { texto: p.requisito_nivel_educativo ? NIVEL[p.requisito_nivel_educativo] ?? p.requisito_nivel_educativo : null, tipo: 'requisito' },
-    {
-      texto: p.requiere_carnet_conducir ? (p.categoria_carnet_requerida ? `Carnet ${p.categoria_carnet_requerida}` : 'Con carnet') : null,
-      tipo: 'requisito',
-    },
-    { texto: p.idioma_requerido, tipo: 'requisito' },
-  ]
-  return lista.filter((c): c is { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA } => !!c.texto)
-}
-
-// Los trabajos no tienen título: se usa la primera oración de la
-// descripción, cortada en una palabra si es larga. Debajo va siempre la
-// descripción completa, así nunca queda una tarjeta sin el detalle.
-function tituloDe(descripcion: string): string {
-  const texto = descripcion.trim().replace(/\s+/g, ' ')
-  const corte = texto.search(/[.!?](\s|$)/)
-  let oracion = corte >= 0 ? texto.slice(0, corte) : texto
-  if (oracion.length > 80) {
-    const espacio = oracion.lastIndexOf(' ', 76)
-    oracion = `${oracion.slice(0, espacio > 30 ? espacio : 76).replace(/[,;:\s]+$/, '')}…`
-  }
-  // Con mayúscula inicial, aunque la descripción arranque en minúscula
-  return oracion.charAt(0).toUpperCase() + oracion.slice(1)
-}
-
-function tieneRequisitos(p: PedidoWeb) {
-  return !!(p.edad_minima || p.requisito_nivel_educativo || p.requiere_carnet_conducir || p.idioma_requerido)
-}
 
 const COLORES_ESTADO: Record<ActividadWeb['colorEstado'], { fondo: string; texto: string }> = {
   amarillo: { fondo: COLORS.clayTint, texto: COLORS.clayDark },
@@ -128,17 +82,6 @@ const COLORES_ESTADO: Record<ActividadWeb['colorEstado'], { fondo: string; texto
   azul: { fondo: COLORS.blueTint, texto: COLORS.blueDark },
 }
 
-const TAGS = [
-  { fondo: COLORS.tagBlue, texto: COLORS.tagBlueText },
-  { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
-  { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
-]
-
-function tagDe(nombre: string) {
-  let h = 0
-  for (const c of nombre) h = (h * 31 + c.charCodeAt(0)) >>> 0
-  return TAGS[h % TAGS.length]
-}
 
 const tituloSeccion: React.CSSProperties = {
   fontSize: 22,
@@ -647,17 +590,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
   const etiquetas = caracteristicas(p)
   const titulo = tituloDe(p.descripcion)
-  // Etiquetas: Inter en mayúsculas, peso 600
-  const etiqueta: React.CSSProperties = {
-    fontFamily: 'var(--font-inter), sans-serif',
-    fontSize: 11,
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: 0,
-    padding: '4px 8px',
-    borderRadius: 5,
-    whiteSpace: 'nowrap',
-  }
+  const etiqueta = ESTILO_ETIQUETA
   return (
     <a
       href={`/pedidos/${p.id}`}

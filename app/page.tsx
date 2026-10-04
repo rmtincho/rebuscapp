@@ -577,6 +577,7 @@ export default async function HomePage() {
           anunciosLista={anunciosLista}
           semilla={semilla}
           misCategorias={misCategorias}
+          nombresRubro={nombresRubro}
         />
       </div>
 
