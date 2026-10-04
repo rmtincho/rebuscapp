@@ -621,13 +621,15 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         <span style={{ fontSize: 13, color: COLORS.inkSoft, fontWeight: 500 }}>{p.fecha_creacion ? haceCuanto(p.fecha_creacion) : ''}</span>
       </div>
       <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: tag.texto }}>{cat}</span>
+        <span style={{ display: 'inline-block', fontSize: 13, color: tag.texto, background: tag.fondo, padding: '4px 9px', borderRadius: 6 }}>
+          {cat}
+        </span>
         <p
           style={{
             fontSize: 17.5,
             fontWeight: 700,
             lineHeight: 1.3,
-            margin: '4px 0 0',
+            margin: '10px 0 0',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',

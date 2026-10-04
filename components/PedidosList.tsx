@@ -174,11 +174,11 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
                 {haceCuanto(pedido.fecha_creacion)}
               </p>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 12.5, fontWeight: 500, color: COLORS.tagOrangeText, background: COLORS.tagOrange, padding: '4px 10px', borderRadius: 100 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 400, color: COLORS.tagOrangeText, background: COLORS.tagOrange, padding: '4px 9px', borderRadius: 6 }}>
                   {nombreCategoria}
                 </span>
                 {dist !== null && (
-                  <span style={{ fontSize: 12.5, fontWeight: 500, color: COLORS.tagBlueText, background: COLORS.tagBlue, padding: '4px 10px', borderRadius: 100 }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 400, color: COLORS.tagBlueText, background: COLORS.tagBlue, padding: '4px 9px', borderRadius: 6 }}>
                     {dist.toFixed(1)} km
                   </span>
                 )}
