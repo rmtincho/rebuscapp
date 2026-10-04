@@ -68,7 +68,9 @@ export default function CabeceraWeb() {
           <Image src="/logo-color.png" alt="Rebuscapp" width={132} height={40} priority />
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1 }}>
+        {/* Menú a la derecha, junto a "Publicar trabajo". El activo se marca
+            con una raya amarilla al pie de la cabecera, no con una cápsula */}
+        <nav style={{ display: 'flex', alignSelf: 'stretch', gap: 28, marginLeft: 'auto' }}>
           {LINKS.map((l) => {
             const activo = l.href === '/' ? pathname === '/' : pathname.startsWith(l.href)
             const globo = globos[l.href] ?? 0
@@ -81,13 +83,13 @@ export default function CabeceraWeb() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 7,
-                  padding: '9px 14px',
-                  borderRadius: 8,
+                  padding: '0 2px',
+                  borderTop: '3px solid transparent',
+                  borderBottom: `3px solid ${activo ? COLORS.clay : 'transparent'}`,
                   fontSize: 14.5,
                   fontWeight: 500,
                   textDecoration: 'none',
-                  color: activo ? COLORS.onDark : COLORS.ink,
-                  background: activo ? COLORS.dark : 'transparent',
+                  color: activo ? COLORS.ink : COLORS.inkSoft,
                 }}
               >
                 {l.label}
