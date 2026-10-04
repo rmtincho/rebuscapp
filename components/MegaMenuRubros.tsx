@@ -71,7 +71,7 @@ export default function MegaMenuRubros({
           borderTop: '3px solid transparent',
           borderBottom: `3px solid ${abierto ? colores.raya : 'transparent'}`,
           background: 'none',
-          fontSize: 14,
+          fontSize: 13,
           color: abierto ? colores.texto : colores.textoSuave,
           cursor: 'pointer',
         }}

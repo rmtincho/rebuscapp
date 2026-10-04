@@ -107,12 +107,12 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
       }}
     >
       <Link href="/" aria-label="Rebuscapp, inicio" style={{ display: 'flex', flexShrink: 0 }}>
-        <Image src={e.logo} alt="Rebuscapp" width={140} height={37} priority />
+        <Image src={e.logo} alt="Rebuscapp" width={122} height={32} priority />
       </Link>
 
       {/* Menú a la derecha, junto a "Publicar trabajo". El activo se marca
           con una raya al pie, no con una cápsula */}
-      <nav style={{ display: 'flex', alignSelf: 'stretch', gap: 28, marginLeft: 'auto' }}>
+      <nav style={{ display: 'flex', alignSelf: 'stretch', gap: 24, marginLeft: 'auto' }}>
         <MegaMenuRubros colores={{ texto: e.texto, textoSuave: e.textoSuave, raya: e.raya }} />
         {LINKS.map((l) => {
           const activo = l.href === '/' ? pathname === '/' : pathname.startsWith(l.href)
@@ -129,7 +129,7 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
                 padding: '0 2px',
                 borderTop: '3px solid transparent',
                 borderBottom: `3px solid ${activo ? e.raya : 'transparent'}`,
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 400,
                 textDecoration: 'none',
                 color: activo ? e.texto : e.textoSuave,
@@ -168,17 +168,17 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
           display: 'inline-flex',
           alignItems: 'center',
           gap: 8,
-          padding: '11px 20px',
+          padding: '8px 16px',
           borderRadius: 8,
           background: e.boton,
           color: e.sobreBoton,
-          fontSize: 14.5,
+          fontSize: 13.5,
           fontWeight: 700,
           textDecoration: 'none',
           flexShrink: 0,
         }}
       >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
         </svg>
         Publicar trabajo

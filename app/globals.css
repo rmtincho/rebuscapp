@@ -89,8 +89,8 @@ textarea::placeholder {
 .pantalla { max-width: 480px; margin: 0 auto; }
 
 @media (min-width: 900px) {
-  /* Cabecera = franja de anunciantes (36) + menú (68) */
-  :root { --alto-menu: 68px; --alto-franja: 36px; --alto-cabecera: calc(var(--alto-menu) + var(--alto-franja)); }
+  /* Cabecera = franja de anunciantes (36) + menú (56) */
+  :root { --alto-menu: 56px; --alto-franja: 36px; --alto-cabecera: calc(var(--alto-menu) + var(--alto-franja)); }
   .solo-movil { display: none !important; }
   .solo-escritorio { display: revert !important; }
 
