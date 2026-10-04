@@ -8,7 +8,6 @@ import {
   caracteristicas,
   tieneRequisitos,
   tituloDe,
-  tagDe,
   COLOR_CARACTERISTICA,
   COLOR_CUMPLE,
   COLOR_NO_CUMPLE,
@@ -87,7 +86,6 @@ export default function PedidosList({
         const nombreCategoria = pedido.categorias?.nombre ?? 'Sin categoría'
         const grupoSlug = pedido.categorias?.grupo_slug
         const rubro = grupoSlug ? nombresRubro[grupoSlug] : undefined
-        const tag = tagDe(nombreCategoria)
         const titulo = tituloDe(pedido.descripcion)
         const etiquetas = caracteristicas(pedido)
 
@@ -126,8 +124,8 @@ export default function PedidosList({
                   width: 40,
                   height: 40,
                   borderRadius: '50%',
-                  background: tag.fondo,
-                  color: tag.texto,
+                  background: COLORS.clay,
+                  color: COLORS.ink,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

@@ -1,8 +1,6 @@
-import { COLORS } from '@/lib/theme'
-
 // Lo que comparten las tarjetas de trabajo del celular (PedidosList) y de
-// la web (InicioWeb): el título, las etiquetas de características con sus
-// colores y el color del ícono según la categoría.
+// la web (InicioWeb): el título y las etiquetas de características con sus
+// colores.
 
 export type DatosTrabajo = {
   es_comercio: boolean
@@ -24,19 +22,6 @@ export const ESTILO_ETIQUETA: React.CSSProperties = {
   padding: '4px 8px',
   borderRadius: 5,
   whiteSpace: 'nowrap',
-}
-
-// Color del ícono de la categoría (siempre el mismo para el mismo nombre)
-const TAGS = [
-  { fondo: COLORS.tagBlue, texto: COLORS.tagBlueText },
-  { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
-  { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
-]
-
-export function tagDe(nombre: string) {
-  let h = 0
-  for (const c of nombre) h = (h * 31 + c.charCodeAt(0)) >>> 0
-  return TAGS[h % TAGS.length]
 }
 
 const JORNADA: Record<string, string> = { changa: 'Trabajo puntual', fulltime: 'Full time', parttime: 'Part time' }

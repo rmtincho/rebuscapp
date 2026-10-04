@@ -12,7 +12,6 @@ import {
   caracteristicas,
   tieneRequisitos,
   tituloDe,
-  tagDe,
   COLOR_CARACTERISTICA,
   COLOR_CUMPLE,
   COLOR_NO_CUMPLE,
@@ -585,7 +584,6 @@ export default function InicioWeb({
 // derecha el pago y quién lo publica.
 function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const cat = p.categorias?.nombre ?? 'Trabajo'
-  const tag = tagDe(cat)
   const quien = p.es_comercio ? p.nombre_comercio : p.usuarios?.nombre
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
   const etiquetas = caracteristicas(p)
@@ -612,8 +610,8 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
           width: 44,
           height: 44,
           borderRadius: '50%',
-          background: tag.fondo,
-          color: tag.texto,
+          background: COLORS.clay,
+          color: COLORS.ink,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
