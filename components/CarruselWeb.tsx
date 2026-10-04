@@ -139,7 +139,7 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
                 width: `${ANCHO}%`,
                 transform: `translateX(calc(${p * (100 + (SEPARACION * 100) / ANCHO)}% + ${arrastre}px))`,
                 transition: salta || arrastrando ? 'none' : 'transform 0.5s ease, opacity 0.5s ease',
-                opacity: p === 0 ? 1 : visible ? 0.55 : 0,
+                opacity: visible ? 1 : 0,
                 pointerEvents: visible ? 'auto' : 'none',
               }}
               alTocarCostado={p !== 0 ? () => irA(i) : undefined}
