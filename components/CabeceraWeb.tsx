@@ -9,6 +9,7 @@ import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadore
 import EnlaceConCarga from '@/components/EnlaceConCarga'
 import { LEGAL } from '@/lib/legal'
 import MegaMenuRubros from '@/components/MegaMenuRubros'
+import { useSinContrasena } from '@/lib/useContrasena'
 
 // Cabecera de la versión web (desde 900 px): de lado a lado, con el logo,
 // el menú y el botón de publicar. No queda fija: se va con el scroll.
@@ -90,6 +91,8 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
   const mensajes = useMensajesSinLeer(pathname)
   const notificaciones = useNotificacionesSinLeer(pathname)
   const globos: Record<string, number> = { '/mensajes': mensajes, '/notificaciones': notificaciones }
+  // Punto en "Mi perfil" mientras la cuenta no tenga contraseña
+  const sinContrasena = useSinContrasena()
   const e = ESTILOS[sobre ?? 'blanco']
 
   return (
@@ -136,6 +139,13 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
               }}
             >
               {l.label}
+              {l.href === '/perfil' && sinContrasena && (
+                <span
+                  title="Te falta crear tu contraseña"
+                  aria-label="Te falta crear tu contraseña"
+                  style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS.red, flexShrink: 0 }}
+                />
+              )}
               {globo > 0 && (
                 <span
                   style={{

@@ -87,7 +87,7 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
         {error && (
           <div style={{ background: COLORS.redTint, color: COLORS.redDark, borderRadius: 10, padding: 16, marginBottom: 20, fontSize: 14 }}>
             {faltaMigracion
-              ? 'Falta correr scripts/sql/2026-10-04-anuncios-ubicaciones.sql en Supabase (SQL Editor). Hasta entonces la app sigue mostrando los anuncios viejos, pero acá no se pueden ver ni cargar.'
+              ? `Falta correr scripts/sql/2026-10-04-anuncios-ubicaciones.sql en Supabase (SQL Editor). Hasta entonces la app sigue mostrando los anuncios viejos, pero acá no se pueden ver ni cargar. Si ya la corriste, corré también: notify pgrst, 'reload schema'; (Error de la base: ${error.message})`
               : `No se pudo leer la tabla de anuncios (${error.message}). ¿Ya corriste scripts/sql/2026-09-29-anuncios.sql?`}
           </div>
         )}

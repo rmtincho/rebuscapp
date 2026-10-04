@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadores'
+import { useSinContrasena } from '@/lib/useContrasena'
 import EnlaceConCarga from '@/components/EnlaceConCarga'
 
 // Nav flotante: Inicio y Mensajes a la izquierda, Notificaciones y Mi perfil
@@ -54,7 +55,18 @@ const DERECHA: Tab[] = [
   },
 ]
 
-function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: string; globos?: Record<string, number> }) {
+function Capsula({
+  tabs,
+  pathname,
+  globos = {},
+  avisos = {},
+}: {
+  tabs: Tab[]
+  pathname: string
+  globos?: Record<string, number>
+  // Punto sin número (ej. en Mi perfil si falta crear la contraseña)
+  avisos?: Record<string, string>
+}) {
   return (
     <div
       style={{
@@ -88,6 +100,21 @@ function Capsula({ tabs, pathname, globos = {} }: { tabs: Tab[]; pathname: strin
             }}
           >
             {tab.icon(activo)}
+            {avisos[tab.href] && !(globos[tab.href] ?? 0) && (
+              <span
+                aria-label={avisos[tab.href]}
+                style={{
+                  position: 'absolute',
+                  top: -1,
+                  right: -1,
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  background: COLORS.red,
+                  border: `2px solid ${COLORS.navBg}`,
+                }}
+              />
+            )}
             {(globos[tab.href] ?? 0) > 0 && (
               <span
                 aria-label={`${globos[tab.href]} sin leer`}
@@ -125,6 +152,8 @@ export default function BottomNav() {
   const mensajesSinLeer = useMensajesSinLeer(pathname)
   const notificacionesSinLeer = useNotificacionesSinLeer(pathname)
   const globos = { '/mensajes': mensajesSinLeer, '/notificaciones': notificacionesSinLeer }
+  const sinContrasena = useSinContrasena()
+  const avisos: Record<string, string> = sinContrasena ? { '/perfil': 'Te falta crear tu contraseña' } : {}
 
   return (
     <div
@@ -144,7 +173,7 @@ export default function BottomNav() {
     >
       {/* Un círculo por botón */}
       {IZQUIERDA.map((tab) => (
-        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />
+        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} avisos={avisos} />
       ))}
 
       <EnlaceConCarga
@@ -170,7 +199,7 @@ export default function BottomNav() {
       </EnlaceConCarga>
 
       {DERECHA.map((tab) => (
-        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />
+        <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} avisos={avisos} />
       ))}
     </div>
   )

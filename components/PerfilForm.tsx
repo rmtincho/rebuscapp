@@ -25,6 +25,7 @@ import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import ListaBloqueados, { type PersonaBloqueada } from '@/components/ListaBloqueados'
 import ContrasenaCuenta from '@/components/ContrasenaCuenta'
+import { useSinContrasena } from '@/lib/useContrasena'
 import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
@@ -134,6 +135,12 @@ export default function PerfilForm({
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [guardado, setGuardado] = useState(false)
+
+  // Sin contraseña: "Creá tu contraseña" va primero. Una vez arriba queda
+  // ahí (aunque la cree), para que vea el "✓ guardada" en el mismo lugar.
+  const sinContrasena = useSinContrasena()
+  const [contrasenaArriba, setContrasenaArriba] = useState(false)
+  if (sinContrasena && !contrasenaArriba) setContrasenaArriba(true)
 
   // Carnet de conducir: '' = nunca contestó, 'si' / 'no' = respuesta explícita
   const [tieneCarnet, setTieneCarnet] = useState<'si' | 'no' | ''>(perfilExistente?.tiene_carnet ?? '')
@@ -467,6 +474,8 @@ export default function PerfilForm({
         </div>
 
         <div style={{ minWidth: 0 }}>
+
+        {contrasenaArriba && <ContrasenaCuenta destacado />}
 
         <form onSubmit={guardar} className="perfil-form">
           {/* ——— Datos personales ——— */}
@@ -833,7 +842,7 @@ export default function PerfilForm({
           </BotonPrincipal>
         </form>
 
-        <ContrasenaCuenta />
+        {!contrasenaArriba && <ContrasenaCuenta />}
 
         <ListaBloqueados personas={bloqueados} />
 

@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { COLORS } from '@/lib/theme'
+import { avisarContrasenaCreada } from '@/lib/useContrasena'
 
 // En el perfil: crear o cambiar la contraseña, para entrar con email y
 // contraseña sin esperar el código por mail. La cuenta se crea siempre con
 // el código; la contraseña es un atajo para los que ya están dados de alta.
 // Supabase no dice si la cuenta ya tiene contraseña, así que el texto sirve
-// para los dos casos.
-export default function ContrasenaCuenta() {
-  const [abierto, setAbierto] = useState(false)
+// para los dos casos. Con `destacado` (la cuenta todavía no tiene: lo dice
+// useSinContrasena) va primero en el perfil, en amarillo y ya abierto.
+export default function ContrasenaCuenta({ destacado = false }: { destacado?: boolean }) {
+  const [abierto, setAbierto] = useState(destacado)
   const [nueva, setNueva] = useState('')
   const [repetida, setRepetida] = useState('')
   const [cargando, setCargando] = useState(false)
@@ -51,6 +53,7 @@ export default function ContrasenaCuenta() {
     setRepetida('')
     setAbierto(false)
     setListo(true)
+    avisarContrasenaCreada()
   }
 
   const campo: React.CSSProperties = {
@@ -66,11 +69,29 @@ export default function ContrasenaCuenta() {
   }
 
   return (
-    <div style={{ marginTop: 28 }}>
-      <p style={{ fontSize: 11.5, fontWeight: 700, color: COLORS.inkSoft, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-        Contraseña
-      </p>
-      <div style={{ background: COLORS.card, borderRadius: 16, boxShadow: COLORS.cardShadow, padding: '14px 16px' }}>
+    <div style={{ marginTop: destacado ? 0 : 28, marginBottom: destacado ? 28 : 0 }}>
+      {!destacado && (
+        <p style={{ fontSize: 11.5, fontWeight: 700, color: COLORS.inkSoft, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+          Contraseña
+        </p>
+      )}
+      <div
+        style={{
+          background: destacado ? COLORS.clayTint : COLORS.card,
+          border: destacado ? `1.5px solid ${COLORS.clay}` : 'none',
+          borderRadius: destacado ? 10 : 16,
+          boxShadow: destacado ? 'none' : COLORS.cardShadow,
+          padding: destacado ? '16px 18px' : '14px 16px',
+        }}
+      >
+        {destacado && !listo && (
+          <>
+            <p style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: COLORS.ink }}>Creá tu contraseña</p>
+            <p style={{ fontSize: 13.5, margin: '0 0 14px', color: COLORS.ink, lineHeight: 1.45 }}>
+              Todavía entrás con el código que te mandamos por mail. Con una contraseña entrás directo, sin esperarlo.
+            </p>
+          </>
+        )}
         {!abierto ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <span style={{ fontSize: 13.5, color: COLORS.ink, lineHeight: 1.4 }}>
