@@ -5,6 +5,7 @@ import PerfilForm from '@/components/PerfilForm'
 import { esEmailAdmin } from '@/lib/admin'
 import type { Estadisticas } from '@/components/TusEstadisticas'
 import type { PersonaBloqueada } from '@/components/ListaBloqueados'
+import type { Publicacion } from '@/components/TusPublicaciones'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
@@ -57,7 +58,11 @@ export default async function PerfilPage() {
   const admin = createAdminClient()
   const [{ data: misPedidos }, { data: misPostulaciones }, { data: misCalificaciones }, { count: trabajosHechos }] =
     await Promise.all([
-      admin.from('pedidos').select('id, estado').eq('solicitante_id', user.id),
+      admin
+        .from('pedidos')
+        .select('id, estado, descripcion, fecha_creacion, categorias ( nombre )')
+        .eq('solicitante_id', user.id)
+        .order('fecha_creacion', { ascending: false }),
       admin.from('postulaciones').select('estado').eq('prestador_id', user.id),
       admin.from('calificaciones').select('estrellas').eq('calificado_id', user.id),
       admin
@@ -75,6 +80,27 @@ export default async function PerfilPage() {
   // "Cancelado" sin fila en no_concretados = lo eliminó: no cuenta como publicado
   const pedidosVigentes = (misPedidos ?? []).filter((p) => p.estado !== 'cancelado' || idsNoConcretados.has(p.id))
   const estrellas = (misCalificaciones ?? []).map((c) => Number(c.estrellas) || 0)
+
+  // Tus trabajos publicados: todos los activos y los últimos 3 cerrados,
+  // con las postulaciones que esperan respuesta en los abiertos
+  const activos = pedidosVigentes.filter((p) => p.estado === 'abierto' || p.estado === 'en_curso')
+  const cerrados = pedidosVigentes.filter((p) => p.estado !== 'abierto' && p.estado !== 'en_curso')
+  const idsAbiertos = activos.filter((p) => p.estado === 'abierto').map((p) => p.id)
+  const { data: pendientes } =
+    idsAbiertos.length > 0
+      ? await admin.from('postulaciones').select('pedido_id').in('pedido_id', idsAbiertos).eq('estado', 'pendiente')
+      : { data: [] as { pedido_id: string }[] }
+  const pendientesPorPedido: Record<string, number> = {}
+  for (const { pedido_id } of pendientes ?? []) pendientesPorPedido[pedido_id] = (pendientesPorPedido[pedido_id] ?? 0) + 1
+  const publicaciones: Publicacion[] = [...activos, ...cerrados.slice(0, 3)].map((p) => ({
+    id: p.id,
+    descripcion: p.descripcion ?? '',
+    categoria: (p.categorias as { nombre?: string } | null)?.nombre ?? null,
+    estado: p.estado,
+    noConcretado: idsNoConcretados.has(p.id),
+    fecha: p.fecha_creacion ?? null,
+    postulantes: pendientesPorPedido[p.id] ?? 0,
+  }))
 
   const estadisticas: Estadisticas = {
     usuarioId: user.id,
@@ -126,6 +152,8 @@ export default async function PerfilPage() {
       categoriasInteresIniciales={categoriasInteresFormateadas}
       visibleEnListadoInicial={visibleEnListado}
       estadisticas={estadisticas}
+      publicaciones={publicaciones}
+      cerradosEnTotal={cerrados.length}
       esAdmin={esEmailAdmin(user.email)}
       bloqueados={bloqueados}
     />

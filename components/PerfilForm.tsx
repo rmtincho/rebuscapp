@@ -22,6 +22,7 @@ import CategoriaPicker from '@/components/CategoriaPicker'
 import BotonCerrarSesion from '@/components/BotonCerrarSesion'
 import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
+import TusPublicaciones, { type Publicacion } from '@/components/TusPublicaciones'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import ListaBloqueados, { type PersonaBloqueada } from '@/components/ListaBloqueados'
 import ContrasenaCuenta from '@/components/ContrasenaCuenta'
@@ -95,6 +96,8 @@ export default function PerfilForm({
   categoriasInteresIniciales,
   visibleEnListadoInicial,
   estadisticas,
+  publicaciones = [],
+  cerradosEnTotal = 0,
   esAdmin = false,
   bloqueados = [],
 }: {
@@ -109,6 +112,8 @@ export default function PerfilForm({
   // null = la columna todavía no existe en la base: no mostramos la opción
   visibleEnListadoInicial: boolean | null
   estadisticas?: Estadisticas
+  publicaciones?: Publicacion[]
+  cerradosEnTotal?: number
   esAdmin?: boolean
   bloqueados?: PersonaBloqueada[]
 }) {
@@ -442,6 +447,8 @@ export default function PerfilForm({
         </div>
 
         {estadisticas && <TusEstadisticas e={estadisticas} />}
+
+        <TusPublicaciones publicaciones={publicaciones} cerradosEnTotal={cerradosEnTotal} />
 
         {esAdmin && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
