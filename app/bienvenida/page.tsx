@@ -150,7 +150,7 @@ export default function BienvenidaPage() {
     <div style={{ background: COLORS.paper, minHeight: '100vh', color: COLORS.ink, overflowX: 'hidden' }}>
       {/* Encabezado */}
       <header style={{ ...contenedor, display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 18, paddingBottom: 18 }}>
-        <Image src="/logo-color.png" alt="Rebuscapp" width={150} height={46} priority />
+        <Image src="/logo_color.png" alt="Rebuscapp" width={150} height={39} priority />
         <a
           href="/login"
           style={{
@@ -435,7 +435,7 @@ export default function BienvenidaPage() {
       {/* Cierre */}
       <section style={{ ...contenedor, paddingBottom: 48 }}>
         <div style={{ background: COLORS.dark, borderRadius: 32, padding: 'clamp(28px, 6vw, 48px) 24px', textAlign: 'center' }}>
-          <Image src="/logo-blanco.png" alt="Rebuscapp" width={170} height={52} style={{ margin: '0 auto 18px', display: 'block' }} />
+          <Image src="/logo_blanco.png" alt="Rebuscapp" width={170} height={45} style={{ margin: '0 auto 18px', display: 'block' }} />
           <h2 style={{ ...tituloSeccion, color: COLORS.onDark, margin: '0 0 10px' }}>Instalala en tu celular.</h2>
           <p style={{ fontSize: 15.5, color: 'rgba(255, 255, 255, 0.7)', margin: '0 auto 24px', maxWidth: 420, lineHeight: 1.5 }}>
             Queda en tu pantalla de inicio como cualquier app, y te avisa cuando hay algo para vos.

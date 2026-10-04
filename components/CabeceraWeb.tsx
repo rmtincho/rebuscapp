@@ -31,7 +31,7 @@ const LINKS = [
 // transparente sobre el hero amarillo ("busco") u oscuro ("ofrezco")
 const ESTILOS = {
   blanco: {
-    logo: '/logo-color.png',
+    logo: '/logo_color.png',
     texto: COLORS.ink,
     textoSuave: COLORS.inkSoft,
     raya: COLORS.clay,
@@ -39,7 +39,7 @@ const ESTILOS = {
     sobreBoton: COLORS.onClay,
   },
   busco: {
-    logo: '/logo-negro.png',
+    logo: '/logo_negro.png',
     texto: COLORS.ink,
     textoSuave: 'rgba(28, 28, 30, 0.68)',
     raya: COLORS.ink,
@@ -47,7 +47,7 @@ const ESTILOS = {
     sobreBoton: COLORS.onDark,
   },
   ofrezco: {
-    logo: '/logo-color.png',
+    logo: '/logo_color.png',
     texto: '#FFFFFF',
     textoSuave: 'rgba(255, 255, 255, 0.7)',
     raya: COLORS.clay,
@@ -107,7 +107,7 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
       }}
     >
       <Link href="/" aria-label="Rebuscapp, inicio" style={{ display: 'flex', flexShrink: 0 }}>
-        <Image src={e.logo} alt="Rebuscapp" width={132} height={40} priority />
+        <Image src={e.logo} alt="Rebuscapp" width={140} height={37} priority />
       </Link>
 
       {/* Menú a la derecha, junto a "Publicar trabajo". El activo se marca
@@ -129,7 +129,7 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
                 padding: '0 2px',
                 borderTop: '3px solid transparent',
                 borderBottom: `3px solid ${activo ? e.raya : 'transparent'}`,
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: 400,
                 textDecoration: 'none',
                 color: activo ? e.texto : e.textoSuave,

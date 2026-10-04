@@ -71,7 +71,7 @@ export default function MegaMenuRubros({
           borderTop: '3px solid transparent',
           borderBottom: `3px solid ${abierto ? colores.raya : 'transparent'}`,
           background: 'none',
-          fontSize: 15,
+          fontSize: 14,
           color: abierto ? colores.texto : colores.textoSuave,
           cursor: 'pointer',
         }}
@@ -103,7 +103,7 @@ export default function MegaMenuRubros({
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 18 }}>
-            <p style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Rubros</p>
+            <p style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Rubros</p>
             <Link href="/#resultados" onClick={() => setAbierto(false)} style={{ fontSize: 14, color: COLORS.inkSoft }}>
               Ver todos →
             </Link>
@@ -123,7 +123,7 @@ export default function MegaMenuRubros({
                       href={enlaceRubro(r.slug)}
                       onClick={() => setAbierto(false)}
                       className="megamenu-rubro"
-                      style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 700, color: COLORS.ink, textDecoration: 'none', marginBottom: 6 }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 700, color: COLORS.ink, textDecoration: 'none', marginBottom: 6 }}
                     >
                       <span style={{ display: 'flex', color: COLORS.clayDark, flexShrink: 0 }}>{iconoParaCategoria(r.nombre)}</span>
                       {r.nombre}
@@ -135,7 +135,7 @@ export default function MegaMenuRubros({
                             href={enlaceRubro(r.slug, c.slug)}
                             onClick={() => setAbierto(false)}
                             className="megamenu-categoria"
-                            style={{ display: 'block', padding: '3px 0', fontSize: 14, color: COLORS.inkSoft, textDecoration: 'none' }}
+                            style={{ display: 'block', padding: '3px 0', fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none' }}
                           >
                             {c.nombre}
                           </Link>
@@ -146,7 +146,7 @@ export default function MegaMenuRubros({
                           <Link
                             href={enlaceRubro(r.slug)}
                             onClick={() => setAbierto(false)}
-                            style={{ display: 'block', padding: '3px 0', fontSize: 13.5, color: COLORS.clayDark }}
+                            style={{ display: 'block', padding: '3px 0', fontSize: 12.5, color: COLORS.clayDark }}
                           >
                             y {extra} más →
                           </Link>
