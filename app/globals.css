@@ -210,12 +210,6 @@ textarea::placeholder {
 /* Carrusel de publicidad: sin barra de scroll visible */
 .carrusel-pista::-webkit-scrollbar { display: none; }
 
-/* Rubros del inicio web: el círculo sube un poco al pasar el mouse */
-.rubro-disco { transition: transform 0.18s ease; }
-.rubro-circulo:hover .rubro-disco { transform: translateY(-3px); }
-.rubro-circulo:focus-visible { outline: none; }
-.rubro-circulo:focus-visible .rubro-disco { outline: 2px solid #1C1C1E; outline-offset: 4px; }
-
 /* Franja "Anunciá en Rebuscapp" de la cabecera web: degradé celeste → azul
    que se desplaza despacio, un brillo que la cruza cada tanto y el
    megáfono que se mueve un poco */

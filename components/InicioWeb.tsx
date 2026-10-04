@@ -17,7 +17,7 @@ import { elegirAnuncio } from '@/lib/elegirAnuncio'
 import { MenuWeb } from '@/components/CabeceraWeb'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
-// franja de bienvenida con buscador, rubros como tiles, tu actividad en una
+// franja de bienvenida con buscador, carrusel de publicidad, tu actividad en una
 // fila, y los trabajos como un sitio de avisos (filtros a la izquierda,
 // los trabajos en filas a la derecha). En el celular se usa el inicio de siempre.
 
@@ -115,15 +115,6 @@ const TAGS = [
   { fondo: COLORS.tagBlue, texto: COLORS.tagBlueText },
   { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
   { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
-]
-
-// Fondos de los círculos de rubro, alternados para que la fila no sea un
-// bloque de un solo color. Verde y rojo quedan afuera: son de estados.
-const COLORES_RUBRO = [
-  { fondo: COLORS.clayTint, texto: COLORS.clayDark },
-  { fondo: COLORS.tagBlue, texto: COLORS.tagBlueText },
-  { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
-  { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
 ]
 
 function tagDe(nombre: string) {
@@ -386,78 +377,6 @@ export default function InicioWeb({
       <CarruselWeb anuncios={anunciosCarrusel} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
-      {/* ——— Rubros ——— */}
-      <section style={{ marginTop: 36 }}>
-        <h2 style={{ ...tituloSeccion, marginBottom: 16 }}>Explorá por rubro</h2>
-        {/* Círculos sueltos con el nombre abajo, sin tarjeta: cada rubro con su
-            color, el elegido en oscuro con un aro alrededor */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-          {[{ slug: null, label: 'Todos' }, ...CATEGORIAS_DESTACADAS].map((c, i) => {
-            const activa = grupo === c.slug
-            const color = COLORES_RUBRO[i % COLORES_RUBRO.length]
-            return (
-              <button
-                key={c.label}
-                type="button"
-                className="rubro-circulo"
-                aria-pressed={activa}
-                onClick={() => {
-                  elegirRubro(activa ? null : c.slug)
-                  document.getElementById('resultados')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                style={{
-                  flex: '1 1 0',
-                  minWidth: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: 0,
-                  border: 'none',
-                  background: 'none',
-                  color: COLORS.ink,
-                  cursor: 'pointer',
-                  fontSize: 13.5,
-                  fontWeight: activa ? 700 : 400,
-                  lineHeight: 1.25,
-                  textAlign: 'center',
-                }}
-              >
-                <span
-                  className="rubro-disco"
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: '50%',
-                    flexShrink: 0,
-                    background: activa ? COLORS.dark : color.fondo,
-                    color: activa ? COLORS.clay : color.texto,
-                    boxShadow: activa ? `0 0 0 3px ${COLORS.paper}, 0 0 0 5px ${COLORS.dark}` : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <span style={{ display: 'flex', transform: 'scale(1.35)' }}>
-                    {c.slug ? (
-                      iconoParaCategoria(c.label)
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <circle cx="7" cy="7" r="3.2" />
-                        <circle cx="17" cy="7" r="3.2" />
-                        <circle cx="7" cy="17" r="3.2" />
-                        <circle cx="17" cy="17" r="3.2" />
-                      </svg>
-                    )}
-                  </span>
-                </span>
-                <span style={{ maxWidth: 96 }}>{c.label}</span>
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
       {/* ——— Tu actividad ——— */}
       {actividadDelModo.length > 0 && (
         <section style={{ marginTop: 40 }}>
