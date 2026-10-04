@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadores'
+import EnlaceConCarga from '@/components/EnlaceConCarga'
 
 // Nav flotante: Inicio y Mensajes a la izquierda, Notificaciones y Mi perfil
 // a la derecha (círculos negros, uno por botón) y, en el medio, el botón amarillo de "Publicar". Sin textos debajo de los íconos (cada uno
@@ -146,7 +147,7 @@ export default function BottomNav() {
         <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />
       ))}
 
-      <a
+      <EnlaceConCarga
         href="/publicar"
         aria-label="Publicar un trabajo"
         aria-current={publicarActivo ? 'page' : undefined}
@@ -166,7 +167,7 @@ export default function BottomNav() {
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
         </svg>
-      </a>
+      </EnlaceConCarga>
 
       {DERECHA.map((tab) => (
         <Capsula key={tab.href} tabs={[tab]} pathname={pathname} globos={globos} />

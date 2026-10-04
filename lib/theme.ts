@@ -6,7 +6,7 @@ export const COLORS = {
   clayDark: '#8A6100',
   clayTint: '#FFF1C2',
   // Degradé de la tarjeta del perfil: más claro arriba, más intenso abajo
-  clayGradient: 'linear-gradient(165deg, #FFE07A 0%, #FFC21A 55%, #FFAE00 100%)',
+  clayGradient: 'linear-gradient(165deg, #FFCC2E 0%, #FFBE0F 50%, #FFAE00 100%)',
   onClay: '#1C1C1E',
 
   // Verde — exclusivo para "Aceptada" / éxito

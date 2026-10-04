@@ -9,6 +9,7 @@ import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList
 import BannerPublicidad from '@/components/BannerPublicidad'
 import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import { elegirAnuncio, type AnuncioElegible } from '@/lib/elegirAnuncio'
+import { useModoOpcional } from '@/components/ModoContext'
 
 type Seccion = 'trabajos' | 'trabajadores'
 type Vista = 'lista' | 'mapa'
@@ -19,7 +20,6 @@ export default function FeedPedidos({
   centro,
   anunciosLista = [],
   semilla = 0,
-  seccionFija,
   misCategorias = [],
 }: {
   pedidos: any[]
@@ -27,11 +27,12 @@ export default function FeedPedidos({
   centro: [number, number]
   anunciosLista?: AnuncioElegible[]
   semilla?: number
-  // Con el modo del inicio elegido, solo esa sección y sin las pestañas
-  seccionFija?: Seccion
   // Rubros del perfil de trabajador, para el filtro rápido
   misCategorias?: string[]
 }) {
+  // Dentro del inicio con modo, solo la sección de ese modo y sin las pestañas
+  const modoInicio = useModoOpcional()
+  const seccionFija: Seccion | undefined = modoInicio ? (modoInicio === 'busco' ? 'trabajos' : 'trabajadores') : undefined
   const [seccionElegida, setSeccion] = useState<Seccion>('trabajos')
   const seccion = seccionFija ?? seccionElegida
   const [vista, setVista] = useState<Vista>('lista')

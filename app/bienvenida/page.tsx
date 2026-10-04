@@ -272,6 +272,32 @@ export default function BienvenidaPage() {
         </div>
       </section>
 
+      {/* Cómo crear la cuenta: con código por mail, y después contraseña si querés */}
+      <section style={{ ...contenedor, paddingBottom: 56 }}>
+        <span style={eyebrow}>Crear tu cuenta</span>
+        <h2 style={tituloSeccion}>Solo con tu mail. Sin formularios largos.</h2>
+        <div style={tarjeta}>
+          <ol
+            style={{
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
+              gap: 20,
+            }}
+          >
+            <Paso numero={1} titulo="Poné tu mail" texto="Entrá a la app y escribí tu mail. Si es la primera vez, la cuenta se crea sola." />
+            <Paso numero={2} titulo="Copiá el código" texto="Te mandamos un código de 6 dígitos por mail. Lo ponés y ya estás adentro." />
+            <Paso
+              numero={3}
+              titulo="Creá tu contraseña (si querés)"
+              texto="Desde tu perfil podés crear una contraseña. La próxima vez entrás con tu mail y contraseña, sin esperar el código."
+            />
+          </ol>
+        </div>
+      </section>
+
       {/* Ventajas */}
       <section style={{ ...contenedor, paddingBottom: 56 }}>
         <span style={eyebrow}>Por qué Rebuscapp</span>

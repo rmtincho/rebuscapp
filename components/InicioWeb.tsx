@@ -1,8 +1,8 @@
 'use client'
 
 import { Fragment, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { guardarModo, TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
+import { TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
+import { useModo } from '@/components/ModoContext'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
@@ -13,6 +13,7 @@ import BannerPublicidad from '@/components/BannerPublicidad'
 import InterruptorHabilidades from '@/components/InterruptorHabilidades'
 import type { Anuncio } from '@/lib/anuncios'
 import { elegirAnuncio } from '@/lib/elegirAnuncio'
+import EnlaceConCarga from '@/components/EnlaceConCarga'
 
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
@@ -88,7 +89,6 @@ export default function InicioWeb({
   anuncioLateral,
   anunciosLista,
   semilla,
-  modo,
   misCategorias,
 }: {
   nombre: string | null
@@ -101,12 +101,11 @@ export default function InicioWeb({
   anuncioLateral: Anuncio | null
   anunciosLista: Anuncio[]
   semilla: number
-  // Busco trabajo → trabajos; busco contratar → trabajadores y tus pedidos
-  modo: ModoInicio
   // Rubros del perfil de trabajador, para "Coinciden con mis habilidades"
   misCategorias: string[]
 }) {
-  const router = useRouter()
+  // Busco trabajo → trabajos; busco contratar → trabajadores y tus pedidos
+  const { modo, cambiarModo: cambiarModoContexto } = useModo()
   const [texto, setTexto] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [grupo, setGrupo] = useState<string | null>(null)
@@ -120,11 +119,10 @@ export default function InicioWeb({
 
   function cambiarModo(m: ModoInicio) {
     if (m === modo) return
-    guardarModo(m)
+    cambiarModoContexto(m)
     setBusqueda('')
     setTexto('')
     setGrupo(null)
-    router.refresh()
   }
   const [vista, setVista] = useState<'grilla' | 'mapa'>('grilla')
 
@@ -279,7 +277,7 @@ export default function InicioWeb({
               </div>
             ))}
           </div>
-          <a
+          <EnlaceConCarga
             href="/publicar"
             style={{
               display: 'block',
@@ -297,7 +295,7 @@ export default function InicioWeb({
               Publicá un trabajo
               <span style={{ color: modo === 'ofrezco' ? COLORS.onClay : COLORS.clay, fontSize: 20 }}>→</span>
             </p>
-          </a>
+          </EnlaceConCarga>
         </div>
       </section>
 

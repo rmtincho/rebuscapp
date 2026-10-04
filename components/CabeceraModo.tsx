@@ -1,5 +1,6 @@
 import { COLORS } from '@/lib/theme'
 import { TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
+import EnlaceConCarga from '@/components/EnlaceConCarga'
 
 // Encabezado del inicio (celular) con el color del modo: amarillo para
 // "busco trabajo", oscuro para "busco contratar". Debajo va pegada la
@@ -81,7 +82,7 @@ export default function CabeceraModo({
           {cantidadTrabajos === 1 ? '1 trabajo abierto' : `${cantidadTrabajos} trabajos abiertos`} · postulate y chateá
         </p>
       ) : (
-        <a
+        <EnlaceConCarga
           href="/publicar"
           style={{
             marginTop: 18,
@@ -119,7 +120,7 @@ export default function CabeceraModo({
               <path d="M12 5v14M5 12h14" />
             </svg>
           </span>
-        </a>
+        </EnlaceConCarga>
       )}
     </div>
   )

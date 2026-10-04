@@ -20,6 +20,10 @@ export default function LoginPage() {
   const cuentaEliminada = useCuentaEliminada()
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
+  const [contrasena, setContrasena] = useState('')
+  // Con código (crea la cuenta si es la primera vez) o con contraseña (solo
+  // para los que ya la crearon desde el perfil)
+  const [conContrasena, setConContrasena] = useState(false)
   const [paso, setPaso] = useState<'email' | 'codigo'>('email')
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,6 +57,31 @@ export default function LoginPage() {
     }
 
     setPaso('codigo')
+  }
+
+  async function entrarConContrasena(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    setCargando(true)
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password: contrasena })
+
+    setCargando(false)
+
+    if (error) {
+      console.error('signInWithPassword falló:', error.status, error.code, error.message)
+      if (error.code === 'invalid_credentials') {
+        setError('Email o contraseña incorrectos. Si todavía no creaste una contraseña, entrá con el código y creala desde tu perfil.')
+      } else if (error.status === 429) {
+        setError('Demasiados intentos seguidos. Esperá unos minutos y probá de nuevo.')
+      } else {
+        setError(`No pudimos entrar. Probá de nuevo. (${error.message})`)
+      }
+      return
+    }
+
+    router.push('/')
+    router.refresh()
   }
 
   async function confirmarCodigo(e: React.FormEvent) {
@@ -102,7 +131,7 @@ export default function LoginPage() {
       )}
 
       {paso === 'email' && (
-        <form onSubmit={enviarCodigo}>
+        <form onSubmit={conContrasena ? entrarConContrasena : enviarCodigo}>
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: COLORS.inkSoft, fontWeight: 600 }}>
             Tu email
           </label>
@@ -112,14 +141,37 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@email.com"
+            autoComplete="email"
             style={{ width: '100%', padding: 14, marginBottom: 16, fontSize: 15, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, outline: 'none' }}
           />
+          {conContrasena && (
+            <input
+              type="password"
+              required
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              placeholder="Tu contraseña"
+              autoComplete="current-password"
+              style={{ width: '100%', padding: 14, marginBottom: 16, fontSize: 15, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, outline: 'none' }}
+            />
+          )}
           <button
             type="submit"
             disabled={cargando}
             style={{ width: '100%', padding: 14, fontSize: 15, fontWeight: 700, borderRadius: 100, border: 'none', background: COLORS.clay, color: COLORS.onClay, cursor: 'pointer' }}
           >
-            {cargando ? 'Enviando...' : 'Continuar'}
+            {conContrasena ? (cargando ? 'Entrando...' : 'Entrar') : cargando ? 'Enviando...' : 'Continuar'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setConContrasena(!conContrasena)
+              setContrasena('')
+              setError(null)
+            }}
+            style={{ width: '100%', padding: 12, marginTop: 6, fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+          >
+            {conContrasena ? 'Entrar con un código por mail' : 'Ya tengo contraseña'}
           </button>
           <p style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 14, textAlign: 'center', lineHeight: 1.5 }}>
             Al continuar aceptás los{' '}

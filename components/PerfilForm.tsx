@@ -25,6 +25,7 @@ import EliminarCuenta from '@/components/EliminarCuenta'
 import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import ListaBloqueados, { type PersonaBloqueada } from '@/components/ListaBloqueados'
+import ContrasenaCuenta from '@/components/ContrasenaCuenta'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -785,6 +786,8 @@ export default function PerfilForm({
             {cargando ? 'Guardando...' : 'Guardar perfil'}
           </BotonPrincipal>
         </form>
+
+        <ContrasenaCuenta />
 
         <ListaBloqueados personas={bloqueados} />
 

@@ -1,21 +1,15 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { guardarModo, TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
+import { TEMA_MODO } from '@/lib/modoInicio'
+import { useModo } from '@/components/ModoContext'
 
 // Barra de modo del inicio (celular): "Busco trabajo" / "Necesito a
 // alguien". Va pegada debajo del encabezado, con el color del modo, y queda
 // fija arriba al bajar: así en cualquier parte del inicio se ve en qué lado
 // estás y se cambia con un toque.
-export default function SelectorModo({ modo }: { modo: ModoInicio }) {
-  const router = useRouter()
+export default function SelectorModo() {
+  const { modo, cambiarModo } = useModo()
   const tema = TEMA_MODO[modo]
-
-  function elegir(m: ModoInicio) {
-    if (m === modo) return
-    guardarModo(m)
-    router.refresh()
-  }
 
   return (
     <div
@@ -43,7 +37,7 @@ export default function SelectorModo({ modo }: { modo: ModoInicio }) {
               type="button"
               role="tab"
               aria-selected={activo}
-              onClick={() => elegir(m)}
+              onClick={() => cambiarModo(m)}
               style={{
                 flex: 1,
                 minWidth: 0,

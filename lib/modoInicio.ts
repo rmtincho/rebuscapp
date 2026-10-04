@@ -21,7 +21,7 @@ export function guardarModo(modo: ModoInicio) {
 export const TEMA_MODO = {
   busco: {
     nombre: 'Busco trabajo',
-    fondo: 'linear-gradient(180deg, #FFE07A 0%, #FFC21A 100%)',
+    fondo: 'linear-gradient(180deg, #FFCC2E 0%, #FFC21A 100%)',
     fondoBarra: '#FFC21A',
     texto: '#1C1C1E',
     textoSuave: 'rgba(28, 28, 30, 0.7)',

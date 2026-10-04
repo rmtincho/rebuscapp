@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { cumpleRequisitos, type PerfilParaRequisitos } from '@/lib/requisitos'
 import { COOKIE_MODO, esModo, type ModoInicio } from '@/lib/modoInicio'
 import SelectorModo from '@/components/SelectorModo'
+import { ModoProvider, SoloModo } from '@/components/ModoContext'
 import CabeceraModo from '@/components/CabeceraModo'
 import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
@@ -106,22 +107,6 @@ export default async function HomePage() {
       .limit(5)
 
     misPostulaciones = postulaciones ?? []
-
-    for (const p of misPostulaciones) {
-      const pedido = p.pedidos as any
-      // El chat ahora puede existir en cualquier momento (antes de
-      // elegir a alguien, para negociar; o después, ya en curso),
-      // así que siempre chequeamos si hay mensajes sin leer.
-      if (pedido) {
-        const { count } = await supabase
-          .from('mensajes')
-          .select('id', { count: 'exact', head: true })
-          .eq('pedido_id', pedido.id)
-          .eq('receptor_id', user.id)
-          .eq('leido', false)
-        sinLeerPorPedido[pedido.id] = count ?? 0
-      }
-    }
   }
 
   // Mis pedidos publicados (lado solicitante) — simétrico a "Mis postulaciones"
@@ -151,27 +136,32 @@ export default async function HomePage() {
       .in('estado', ['completado', 'cancelado'])
     tieneHistorial = (cerrados ?? 0) > 0
 
-    for (const p of misPedidos) {
-      if (p.estado === 'abierto') {
-        const { count } = await supabase
-          .from('postulaciones')
-          .select('id', { count: 'exact', head: true })
-          .eq('pedido_id', p.id)
-          .eq('estado', 'pendiente')
-        postulantesPorPedido[p.id] = count ?? 0
-      }
-      // Siempre chequeamos mensajes sin leer — el chat puede existir
-      // desde antes de elegir a alguien (para negociar) o después.
-      {
-        const { count } = await supabase
-          .from('mensajes')
-          .select('id', { count: 'exact', head: true })
-          .eq('pedido_id', p.id)
-          .eq('receptor_id', user.id)
-          .eq('leido', false)
-        sinLeerPedidoPropio[p.id] = count ?? 0
-      }
-    }
+    // Postulantes pendientes y mensajes sin leer, en una consulta cada uno
+    // (antes era una por pedido, en serie). El chat puede existir en
+    // cualquier momento (antes de elegir a alguien, para negociar; o
+    // después, ya en curso), así que siempre miramos los sin leer.
+    const idsAbiertos = misPedidos.filter((p) => p.estado === 'abierto').map((p) => p.id)
+    const idsPostulados = misPostulaciones.map((p) => (p.pedidos as any)?.id).filter(Boolean)
+    const idsConChat = [...new Set([...misPedidos.map((p) => p.id), ...idsPostulados])]
+    const [{ data: pendientes }, { data: sinLeer }] = await Promise.all([
+      idsAbiertos.length > 0
+        ? supabase.from('postulaciones').select('pedido_id').in('pedido_id', idsAbiertos).eq('estado', 'pendiente')
+        : Promise.resolve({ data: [] as { pedido_id: string }[] }),
+      idsConChat.length > 0
+        ? supabase
+            .from('mensajes')
+            .select('pedido_id')
+            .in('pedido_id', idsConChat)
+            .eq('receptor_id', user.id)
+            .eq('leido', false)
+        : Promise.resolve({ data: [] as { pedido_id: string }[] }),
+    ])
+    for (const id of idsAbiertos) postulantesPorPedido[id] = 0
+    for (const { pedido_id } of pendientes ?? []) postulantesPorPedido[pedido_id] = (postulantesPorPedido[pedido_id] ?? 0) + 1
+    const sinLeerPorId: Record<string, number> = {}
+    for (const { pedido_id } of sinLeer ?? []) sinLeerPorId[pedido_id] = (sinLeerPorId[pedido_id] ?? 0) + 1
+    for (const p of misPedidos) sinLeerPedidoPropio[p.id] = sinLeerPorId[p.id] ?? 0
+    for (const id of idsPostulados) sinLeerPorPedido[id] = sinLeerPorId[id] ?? 0
   }
 
   // Trabajadores que eligieron aparecer en el listado. Si la columna
@@ -359,6 +349,7 @@ export default async function HomePage() {
   ]
 
   return (
+    <ModoProvider inicial={modo}>
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       {/* En compu: un inicio propio de web (components/InicioWeb) */}
       <div className="solo-escritorio">
@@ -373,7 +364,6 @@ export default async function HomePage() {
           anuncioLateral={anuncios.lateral_web}
           anunciosLista={anunciosLista}
           semilla={semilla}
-          modo={modo}
           misCategorias={misCategorias}
         />
       </div>
@@ -382,17 +372,24 @@ export default async function HomePage() {
       <div className="pantalla solo-movil" style={{ background: COLORS.paper, minHeight: '100vh', paddingBottom: 110 }}>
         {/* Encabezado y barra de modo con el color del modo: amarillo para
             "busco trabajo", oscuro para "busco contratar". La barra queda
-            fija arriba al bajar. El resto muestra solo lo de ese modo. */}
-        <CabeceraModo
-          modo={modo}
-          nombre={primerNombre}
-          foto={fotoUsuario}
-          inicial={inicial}
-          cantidadTrabajos={cantidadTrabajos}
-        />
-        <SelectorModo modo={modo} />
+            fija arriba al bajar. El resto muestra solo lo de ese modo.
+            Se arman los dos modos acá y el cambio es instantáneo en el
+            navegador (components/ModoContext). */}
+        {(['busco', 'ofrezco'] as const).map((m) => (
+          <SoloModo key={m} modo={m}>
+            <CabeceraModo
+              modo={m}
+              nombre={primerNombre}
+              foto={fotoUsuario}
+              inicial={inicial}
+              cantidadTrabajos={cantidadTrabajos}
+            />
+          </SoloModo>
+        ))}
+        <SelectorModo />
 
-        {modo === 'ofrezco' && (misPedidos.length > 0 || tieneHistorial) && (
+        {(misPedidos.length > 0 || tieneHistorial) && (
+          <SoloModo modo="ofrezco">
           <div style={{ padding: '0 20px 16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
               <p style={tituloSeccion}>Trabajos que publicaste</p>
@@ -483,9 +480,11 @@ export default async function HomePage() {
               )
             })}
           </div>
+          </SoloModo>
         )}
 
-        {modo === 'busco' && misPostulaciones.length > 0 && (
+        {misPostulaciones.length > 0 && (
+          <SoloModo modo="busco">
           <div style={{ padding: '0 20px 16px' }}>
             <p style={tituloSeccion}>Mis postulaciones</p>
             {misPostulaciones.map((p) => {
@@ -549,6 +548,7 @@ export default async function HomePage() {
               )
             })}
           </div>
+          </SoloModo>
         )}
 
         {/* Publicidad: después de lo propio del modo (ofrecimientos o
@@ -574,12 +574,12 @@ export default async function HomePage() {
           centro={CENTRO_DEFAULT}
           anunciosLista={anunciosLista}
           semilla={semilla}
-          seccionFija={modo === 'busco' ? 'trabajos' : 'trabajadores'}
           misCategorias={misCategorias}
         />
       </div>
 
       <BottomNav />
     </div>
+    </ModoProvider>
   )
 }

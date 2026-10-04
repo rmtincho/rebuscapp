@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { COLORS } from '@/lib/theme'
 import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadores'
+import EnlaceConCarga from '@/components/EnlaceConCarga'
 
 // Cabecera de la versión web (desde 900 px): de lado a lado, con el logo,
 // el menú y el botón de publicar. En el celular no se muestra: ahí está
@@ -102,7 +103,7 @@ export default function CabeceraWeb() {
           })}
         </nav>
 
-        <a
+        <EnlaceConCarga
           href="/publicar"
           style={{
             display: 'inline-flex',
@@ -122,7 +123,7 @@ export default function CabeceraWeb() {
             <path d="M12 5v14M5 12h14" />
           </svg>
           Publicar trabajo
-        </a>
+        </EnlaceConCarga>
       </div>
     </header>
   )
