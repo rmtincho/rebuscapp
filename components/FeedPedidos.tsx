@@ -189,10 +189,11 @@ export default function FeedPedidos({
         )}
       </div>
 
-      {/* Filtros, destacados en un recuadro debajo del título */}
-      <div style={{ padding: '0 20px 14px' }}>
-        <div style={{ background: COLORS.card, borderRadius: 20, boxShadow: COLORS.cardShadow, padding: '12px 0' }}>
-          <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 14px 10px' }}>
+      {/* Filtros: sueltos sobre el fondo, sin recuadro, para que no se
+          confundan con las tarjetas de trabajo de abajo */}
+      <div style={{ padding: '0 0 14px' }}>
+        <div>
+          <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 20px 8px' }}>
             Filtrar por rubro
           </p>
           <div
@@ -201,7 +202,7 @@ export default function FeedPedidos({
               display: 'flex',
               gap: 8,
               overflowX: 'auto',
-              padding: '0 14px 2px',
+              padding: '0 20px 2px',
               scrollbarWidth: 'none',
             }}
           >
@@ -221,7 +222,7 @@ export default function FeedPedidos({
           </div>
 
           {seccion === 'trabajos' && (
-            <div style={{ borderTop: `1px solid ${COLORS.line}`, margin: '12px 0 0', padding: '12px 14px 0' }}>
+            <div style={{ padding: '12px 20px 0' }}>
               <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
             </div>
           )}

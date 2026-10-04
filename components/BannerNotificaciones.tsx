@@ -8,9 +8,8 @@ const CLAVE_DESCARTADO = 'rebuscapp_banner_notif_descartado'
 
 const COLORS = {
   naranja: '#FFC21A',
-  naranjaOscuro: '#8A6100',
   texto: '#1C1C22',
-  card: '#FFFFFF',
+  aviso: '#FFF1C2',
 }
 
 export default function BannerNotificaciones() {
@@ -61,30 +60,32 @@ export default function BannerNotificaciones() {
 
   return (
     <div
+      // Aviso, no tarjeta: amarillo suave con borde y sin sombra, para que
+      // no se confunda con las tarjetas de trabajo
       style={{
-        background: COLORS.card,
+        background: COLORS.aviso,
+        border: `1.5px solid ${COLORS.naranja}`,
         borderRadius: 16,
-        padding: '14px 16px',
+        padding: '12px 14px',
         margin: '0 0 16px',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        boxShadow: '0 1px 3px rgba(28, 28, 34, 0.08)',
       }}
     >
       <div
         style={{
           width: 36,
           height: 36,
-          borderRadius: 10,
-          background: 'rgba(226, 105, 28, 0.12)',
+          borderRadius: '50%',
+          background: COLORS.naranja,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
         }}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke={COLORS.naranjaOscuro} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke={COLORS.texto} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
           <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
           <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </svg>
@@ -106,8 +107,8 @@ export default function BannerNotificaciones() {
           padding: '9px 14px',
           borderRadius: 100,
           border: 'none',
-          background: COLORS.naranja,
-          color: COLORS.texto,
+          background: COLORS.texto,
+          color: '#FFFFFF',
           fontWeight: 600,
           fontSize: 12.5,
           cursor: 'pointer',
