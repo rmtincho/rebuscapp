@@ -73,15 +73,27 @@ const NIVEL: Record<string, string> = {
 }
 
 // Características del trabajo para las etiquetas de cada fila
-function caracteristicas(p: PedidoWeb): string[] {
-  return [
-    p.jornada ? JORNADA[p.jornada] : null,
-    p.es_comercio ? 'Comercio' : null,
-    p.edad_minima ? `Desde ${p.edad_minima} años` : null,
-    p.requisito_nivel_educativo ? NIVEL[p.requisito_nivel_educativo] ?? p.requisito_nivel_educativo : null,
-    p.requiere_carnet_conducir ? (p.categoria_carnet_requerida ? `Carnet ${p.categoria_carnet_requerida}` : 'Con carnet') : null,
-    p.idioma_requerido ? p.idioma_requerido : null,
-  ].filter((x): x is string => !!x)
+// Cada tipo de dato con su color: tipo de trabajo en naranja, comercio en
+// rosa y requisitos en amarillo (verde y rojo quedan para "cumplís / no")
+const COLOR_CARACTERISTICA = {
+  jornada: { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
+  comercio: { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
+  requisito: { fondo: COLORS.clayTint, texto: COLORS.clayDark },
+}
+
+function caracteristicas(p: PedidoWeb): { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA }[] {
+  const lista: ({ texto: string | null | undefined; tipo: keyof typeof COLOR_CARACTERISTICA })[] = [
+    { texto: p.jornada ? JORNADA[p.jornada] : null, tipo: 'jornada' },
+    { texto: p.es_comercio ? 'Comercio' : null, tipo: 'comercio' },
+    { texto: p.edad_minima ? `Desde ${p.edad_minima} años` : null, tipo: 'requisito' },
+    { texto: p.requisito_nivel_educativo ? NIVEL[p.requisito_nivel_educativo] ?? p.requisito_nivel_educativo : null, tipo: 'requisito' },
+    {
+      texto: p.requiere_carnet_conducir ? (p.categoria_carnet_requerida ? `Carnet ${p.categoria_carnet_requerida}` : 'Con carnet') : null,
+      tipo: 'requisito',
+    },
+    { texto: p.idioma_requerido, tipo: 'requisito' },
+  ]
+  return lista.filter((c): c is { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA } => !!c.texto)
 }
 
 // Los trabajos no tienen título: se usa la primera oración de la
@@ -693,8 +705,11 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
         {(etiquetas.length > 0 || tieneRequisitos(p)) && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 12 }}>
             {etiquetas.map((e) => (
-              <span key={e} style={{ ...etiqueta, background: '#EDEDF2', color: '#4B4B55' }}>
-                {e}
+              <span
+                key={e.texto}
+                style={{ ...etiqueta, background: COLOR_CARACTERISTICA[e.tipo].fondo, color: COLOR_CARACTERISTICA[e.tipo].texto }}
+              >
+                {e.texto}
               </span>
             ))}
             {tieneRequisitos(p) && p.cumple_requisitos !== undefined && (
