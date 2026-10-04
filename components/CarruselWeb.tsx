@@ -205,9 +205,6 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
 
       {anuncios.length > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 12 }}>
-          <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.inkSoft, marginRight: 8 }}>
-            Publicidad
-          </span>
           {anuncios.map((a, i) => {
             const activo = actual % anuncios.length === i
             return (
