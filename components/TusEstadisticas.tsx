@@ -65,6 +65,7 @@ function Grilla({ datos }: { datos: { valor: number; etiqueta: string }[] }) {
 export default function TusEstadisticas({ e }: { e: Estadisticas }) {
   return (
     <div
+      className="estadisticas-bloque"
       style={{
         background: COLORS.card,
         borderRadius: 24,
@@ -75,7 +76,7 @@ export default function TusEstadisticas({ e }: { e: Estadisticas }) {
       }}
     >
       {/* La calificación está en la tarjeta amarilla de arriba */}
-      <span style={pillTitulo}>Tu actividad</span>
+      <span className="estadisticas-titulo" style={pillTitulo}>Tu actividad</span>
 
       <p style={subtitulo}>Trabajos que ofreciste</p>
       <Grilla
@@ -98,10 +99,10 @@ export default function TusEstadisticas({ e }: { e: Estadisticas }) {
       />
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <a href="/historial" style={acceso}>
+        <a href="/historial" className="estadisticas-acceso" style={acceso}>
           Historial
         </a>
-        <a href="/mis-postulaciones" style={acceso}>
+        <a href="/mis-postulaciones" className="estadisticas-acceso" style={acceso}>
           Mis postulaciones
         </a>
       </div>

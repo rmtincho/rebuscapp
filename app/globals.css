@@ -254,3 +254,61 @@ textarea::placeholder {
 @media (prefers-reduced-motion: reduce) {
   .franja-anunciar, .franja-anunciar::after, .franja-anunciar-icono { animation: none; }
 }
+
+@media (min-width: 900px) {
+  /* Para las franjas de lado a lado dentro de una .pantalla: que el 100vw
+     (que incluye la barra de scroll) no genere scroll horizontal */
+  body { overflow-x: clip; }
+
+  /* Franja del perfil (HeroPerfil): de lado a lado y pegada a la cabecera,
+     aunque esté dentro de la columna centrada de la pantalla */
+  .perfil-hero { margin: -20px calc(50% - 50vw) 0; }
+
+  /* "Tu perfil" en compu: secciones del formulario sin tarjeta blanca,
+     separadas por una línea, con el título grande */
+  .perfil-columnas { grid-template-columns: 290px minmax(0, 1fr) !important; gap: 64px !important; }
+  .perfil-bloque {
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin-bottom: 44px !important;
+  }
+  .perfil-titulo-bloque {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    text-transform: none !important;
+    color: #1C1C1E !important;
+    border-top: 1px solid #ECE5D8;
+    padding-top: 28px;
+    margin-top: 0 !important;
+    margin-bottom: 18px !important;
+  }
+  .perfil-form input[type='text'],
+  .perfil-form input[type='number'],
+  .perfil-form textarea { background: #FFFFFF !important; border-radius: 8px !important; }
+  .perfil-form .etiqueta-rubro { border-radius: 6px !important; }
+  .perfil-form .boton-suave { border-radius: 8px !important; width: auto !important; padding: 11px 18px !important; }
+
+  /* "Tu actividad" en la columna de al lado: sin tarjeta, título grande */
+  .estadisticas-bloque { background: none !important; box-shadow: none !important; padding: 0 !important; margin-top: 0 !important; }
+  .estadisticas-titulo {
+    background: none !important;
+    color: #1C1C1E !important;
+    padding: 0 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+    display: block !important;
+    border-radius: 0 !important;
+    border-top: 1px solid #ECE5D8;
+    padding-top: 28px !important;
+    margin-bottom: 4px;
+  }
+  .estadisticas-acceso { border-radius: 8px !important; }
+
+  /* Controles comunes en compu: menos cápsula */
+  .chip { border-radius: 6px !important; }
+  .boton-principal { border-radius: 10px !important; }
+}

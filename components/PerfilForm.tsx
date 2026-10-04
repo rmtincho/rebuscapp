@@ -10,7 +10,6 @@ import {
   Subtitulo,
   TituloSeccion,
   Etiqueta,
-  Eyebrow,
   Chip,
   inputBaseStyle,
   BotonPrincipal,
@@ -26,6 +25,7 @@ import TusEstadisticas, { type Estadisticas } from '@/components/TusEstadisticas
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
 import ListaBloqueados, { type PersonaBloqueada } from '@/components/ListaBloqueados'
 import ContrasenaCuenta from '@/components/ContrasenaCuenta'
+import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 
@@ -177,6 +177,23 @@ export default function PerfilForm({
     visibleEnListado
 
   const inicial = (nombre.trim()[0] ?? '').toUpperCase()
+
+  // Lo mismo que ven los demás, con lo que tenés cargado ahora
+  const nombreTarjeta = `${nombre} ${apellido}`.trim() || 'Tu nombre'
+  const resumen = lineaResumen({
+    rubros: categoriasInteres.map((c) => c.nombre),
+    horario: DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
+    tieneCarnet,
+    clasesCarnet: carnetsDeclarados,
+    idiomas: idiomasDeclarados,
+  })
+  const datosRapidos = [
+    perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label : null,
+    NIVELES.find((n) => n.valor === nivelEducativo)?.label,
+    estadisticas && estadisticas.trabajosHechos > 0
+      ? `${estadisticas.trabajosHechos} trabajo${estadisticas.trabajosHechos === 1 ? '' : 's'}`
+      : null,
+  ].filter(Boolean) as string[]
 
   async function subirFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const archivo = e.target.files?.[0]
@@ -361,39 +378,57 @@ export default function PerfilForm({
 
   return (
     <PantallaBase>
-      <div style={{ padding: '20px 20px 110px' }}>
-        <LinkVolver href="/" />
+      {/* En compu: franja amarilla de lado a lado con lo mismo que la tarjeta */}
+      <HeroPerfil
+        nombre={nombreTarjeta}
+        fotoUrl={fotoUrl}
+        resumen={resumen}
+        datos={datosRapidos}
+        promedio={estadisticas?.promedio ?? null}
+        cantidadCalificaciones={estadisticas?.cantidadCalificaciones ?? 0}
+        volver={{ href: '/', label: 'Inicio' }}
+        debajoDeLaFoto={
+          <label style={{ fontSize: 14, textDecoration: 'underline', cursor: subiendoFoto ? 'default' : 'pointer' }}>
+            {subiendoFoto ? 'Subiendo...' : fotoUrl ? 'Cambiar foto' : 'Agregar foto'}
+            <input type="file" accept="image/*" onChange={subirFoto} disabled={subiendoFoto} style={{ display: 'none' }} />
+          </label>
+        }
+      >
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+            <span style={{ fontSize: 14, color: 'rgba(28, 28, 30, 0.75)' }}>Perfil de trabajador</span>
+            <span style={{ fontSize: 22, fontWeight: 800 }}>{porcentajeCompleto}%</span>
+          </div>
+          <div style={{ height: 6, borderRadius: 3, background: 'rgba(28, 28, 30, 0.12)', overflow: 'hidden' }}>
+            <div style={{ width: `${porcentajeCompleto}%`, height: '100%', background: COLORS.dark }} />
+          </div>
+        </div>
+        {estadisticas && <BotonHero href={`/prestadores/${estadisticas.usuarioId}?volver=/perfil`}>Ver cómo me ven</BotonHero>}
+      </HeroPerfil>
 
-        {/* En compu: tarjeta y actividad fijas a la izquierda, formulario a la derecha */}
-        <div className="web-dos-columnas">
+      <div className="sin-limite-web" style={{ padding: '20px 20px 110px' }}>
+        <div className="solo-movil">
+          <LinkVolver href="/" />
+        </div>
+
+        {/* En compu: actividad fija a la izquierda, formulario a la derecha */}
+        <div className="web-dos-columnas perfil-columnas">
         <div className="web-lateral">
-        <TituloPagina>Tu perfil</TituloPagina>
-        <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
+        {/* En el celular: título y la misma tarjeta que ven los demás */}
+        <div className="solo-movil">
+          <TituloPagina>Tu perfil</TituloPagina>
+          <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
 
-        {/* La misma tarjeta que ven los demás, con lo que tenés cargado ahora */}
-        <TarjetaPerfil
-          nombre={`${nombre} ${apellido}`.trim() || 'Tu nombre'}
-          fotoUrl={fotoUrl}
-          resumen={lineaResumen({
-            rubros: categoriasInteres.map((c) => c.nombre),
-            horario: DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
-            tieneCarnet,
-            clasesCarnet: carnetsDeclarados,
-            idiomas: idiomasDeclarados,
-          })}
-          pills={
-            [
-              perfilExistente ? TIPOS_BUSQUEDA.find((t) => t.valor === tipoBusqueda)?.label : null,
-              NIVELES.find((n) => n.valor === nivelEducativo)?.label,
-              estadisticas && estadisticas.trabajosHechos > 0
-                ? `${estadisticas.trabajosHechos} trabajo${estadisticas.trabajosHechos === 1 ? '' : 's'}`
-                : null,
-            ].filter(Boolean) as string[]
-          }
-          promedio={estadisticas?.promedio ?? null}
-          cantidadCalificaciones={estadisticas?.cantidadCalificaciones ?? 0}
-          boton={estadisticas ? { href: `/prestadores/${estadisticas.usuarioId}?volver=/perfil`, label: 'Ver cómo me ven' } : null}
-        />
+          <TarjetaPerfil
+            nombre={nombreTarjeta}
+            fotoUrl={fotoUrl}
+            resumen={resumen}
+            pills={datosRapidos}
+            promedio={estadisticas?.promedio ?? null}
+            cantidadCalificaciones={estadisticas?.cantidadCalificaciones ?? 0}
+            boton={estadisticas ? { href: `/prestadores/${estadisticas.usuarioId}?volver=/perfil`, label: 'Ver cómo me ven' } : null}
+          />
+        </div>
 
         {estadisticas && <TusEstadisticas e={estadisticas} />}
 
@@ -429,11 +464,12 @@ export default function PerfilForm({
 
         <div style={{ minWidth: 0 }}>
 
-        <form onSubmit={guardar}>
+        <form onSubmit={guardar} className="perfil-form">
           {/* ——— Datos personales ——— */}
-          <Eyebrow>Datos personales</Eyebrow>
-          <div style={tarjeta}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+          <TituloBloque>Datos personales</TituloBloque>
+          <div className="perfil-bloque" style={tarjeta}>
+            {/* En compu la foto se cambia desde la franja de arriba */}
+            <div className="solo-movil" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
               <div
                 style={{
                   width: 72,
@@ -534,14 +570,17 @@ export default function PerfilForm({
 
           {/* ——— Perfil como trabajador ——— */}
           <div id="trabajador" style={{ scrollMarginTop: 16 }}>
-            <Eyebrow>Perfil como trabajador</Eyebrow>
+            <TituloBloque>Perfil como trabajador</TituloBloque>
             <p style={{ ...ayuda, fontSize: 13, margin: '-4px 0 12px' }}>
               Completalo si querés ofrecer tu trabajo. Si solo publicás trabajos, podés saltearlo.
             </p>
 
-            <BarraProgreso porcentaje={porcentajeCompleto} />
+            {/* En compu el porcentaje está en la franja de arriba */}
+            <div className="solo-movil">
+              <BarraProgreso porcentaje={porcentajeCompleto} />
+            </div>
 
-            <div style={tarjeta}>
+            <div className="perfil-bloque" style={tarjeta}>
               <TituloSeccion>¿En qué querés trabajar?</TituloSeccion>
               <p style={{ ...ayuda, marginBottom: 12 }}>
                 Te avisamos cuando se publique un trabajo de estas categorías, y así te encuentran.
@@ -552,6 +591,7 @@ export default function PerfilForm({
                   {categoriasInteres.map((c) => (
                     <span
                       key={c.slug}
+                      className="etiqueta-rubro"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -594,6 +634,7 @@ export default function PerfilForm({
               <button
                 type="button"
                 onClick={() => setMostrarPicker(true)}
+                className="boton-suave"
                 style={{
                   width: '100%',
                   padding: 13,
@@ -685,6 +726,7 @@ export default function PerfilForm({
                 <button
                   type="button"
                   onClick={() => setIdiomasDeclarados([])}
+                  className="boton-suave"
                   style={{
                     background: 'transparent',
                     border: `1.5px solid ${COLORS.line}`,
@@ -807,6 +849,26 @@ export default function PerfilForm({
       </div>
       <BottomNav />
     </PantallaBase>
+  )
+}
+
+// Título de cada bloque del formulario: en el celular, el chico en
+// mayúsculas de siempre; en compu, grande y con una línea arriba (globals.css)
+function TituloBloque({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="perfil-titulo-bloque"
+      style={{
+        fontSize: 12,
+        fontWeight: 700,
+        color: COLORS.inkSoft,
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        marginBottom: 10,
+      }}
+    >
+      {children}
+    </p>
   )
 }
 

@@ -53,7 +53,7 @@ const trazo = {
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 }
-const ICONOS: Record<DatoResumen['tipo'], React.ReactNode> = {
+export const ICONOS_RESUMEN: Record<DatoResumen['tipo'], React.ReactNode> = {
   rubro: (
     <svg {...trazo}>
       <rect x="3" y="7" width="18" height="13" rx="2" />
@@ -191,7 +191,7 @@ export default function TarjetaPerfil({
         >
           {resumen.map((d) => (
             <span key={d.tipo} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, minWidth: 0, maxWidth: '100%' }}>
-              <span style={{ display: 'inline-flex', flexShrink: 0, opacity: 0.8 }}>{ICONOS[d.tipo]}</span>
+              <span style={{ display: 'inline-flex', flexShrink: 0, opacity: 0.8 }}>{ICONOS_RESUMEN[d.tipo]}</span>
               <span style={{ minWidth: 0 }}>{d.texto}</span>
             </span>
           ))}

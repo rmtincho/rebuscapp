@@ -126,6 +126,7 @@ export function BotonPrincipal({
       type={type}
       disabled={disabled}
       onClick={onClick}
+      className="boton-principal"
       style={{
         width: '100%',
         padding: 16,
@@ -157,6 +158,7 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
+      className="chip"
       style={{
         padding: '9px 15px',
         borderRadius: 100,

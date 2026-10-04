@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { CLASES_CARNET_FLAT } from '@/lib/carnetsIdiomas'
 import { formatearFechaCorta } from '@/lib/fechas'
 import TarjetaPerfil, { lineaResumen } from '@/components/TarjetaPerfil'
+import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import DenunciarBloquear from '@/components/DenunciarBloquear'
 import type { Anuncio } from '@/lib/anuncios'
@@ -11,6 +12,8 @@ import type { Anuncio } from '@/lib/anuncios'
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
 // foto, calificación y datos rápidos; abajo el detalle y las reseñas.
 // Solo presentación: los datos los trae app/prestadores/[id]/page.tsx.
+// En compu es otra disposición (PerfilPublicoWeb): franja amarilla de lado
+// a lado y debajo el texto como una nota, sin tarjetas.
 
 const NIVEL_LABEL: Record<string, string> = {
   primario: 'Primario',
@@ -183,7 +186,41 @@ export default function PerfilPublico({
   return (
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
-        <div style={{ padding: '20px 16px 40px' }}>
+        <HeroPerfil
+          nombre={nombreCompleto ?? ''}
+          fotoUrl={usuario.foto_perfil_url}
+          resumen={resumen}
+          datos={pillsRapidas}
+          promedio={promedio}
+          cantidadCalificaciones={calificaciones.length}
+          volver={{ href: volver, label: 'Volver' }}
+        >
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: calificaciones.length > 0 ? 18 : 0 }}>
+            {[
+              { n: hechos, l: hechos === 1 ? 'trabajo hecho' : 'trabajos hechos' },
+              { n: ofrecidosCompletados, l: 'ofrecidos y completados' },
+            ].map((d) => (
+              <div key={d.l}>
+                <p style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.03em', margin: 0, lineHeight: 1 }}>{d.n}</p>
+                <p style={{ fontSize: 14, margin: '4px 0 0', color: 'rgba(28, 28, 30, 0.75)' }}>{d.l}</p>
+              </div>
+            ))}
+          </div>
+          {calificaciones.length > 0 && <BotonHero href="#calificaciones-web">Ver calificaciones</BotonHero>}
+        </HeroPerfil>
+
+        <PerfilPublicoWeb
+          nombre={usuario.nombre}
+          perfil={perfil}
+          rubros={rubros}
+          // Trabajos hechos y ofrecidos ya están en la franja
+          datos={datos.slice(2)}
+          calificaciones={calificaciones}
+          anuncio={anuncio}
+          moderacion={moderacion}
+        />
+
+        <div className="solo-movil" style={{ padding: '20px 16px 40px' }}>
           <Link
             href={volver}
             style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
@@ -292,6 +329,143 @@ export default function PerfilPublico({
           </div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ——— Versión web ———
+
+// Título de cada parte: grande, con una línea arriba, sin cápsula
+function TituloWeb({ children }: { children: React.ReactNode }) {
+  return (
+    <h2
+      style={{
+        fontSize: 24,
+        fontWeight: 700,
+        letterSpacing: '-0.02em',
+        color: COLORS.ink,
+        margin: '0 0 16px',
+        paddingTop: 26,
+        borderTop: `1px solid ${COLORS.line}`,
+      }}
+    >
+      {children}
+    </h2>
+  )
+}
+
+function PerfilPublicoWeb({
+  nombre,
+  perfil,
+  rubros,
+  datos,
+  calificaciones,
+  anuncio,
+  moderacion,
+}: {
+  nombre: string | null
+  perfil: PerfilPublicoProps['perfil']
+  rubros: string[]
+  datos: { valor: string; etiqueta: string }[]
+  calificaciones: Calificacion[]
+  anuncio: Anuncio | null
+  moderacion: { otroId: string; bloqueado: boolean } | null
+}) {
+  const texto: React.CSSProperties = { fontSize: 17, color: COLORS.ink, lineHeight: 1.65, margin: '0 0 40px', maxWidth: 680 }
+  const hayTexto = perfil?.sobre_mi || perfil?.experiencia
+
+  return (
+    <div
+      className="solo-escritorio"
+      style={{ padding: '44px 0 80px' }}
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 72, alignItems: 'start' }}>
+        {/* La nota: presentación, experiencia y calificaciones */}
+        <div style={{ minWidth: 0 }}>
+          {perfil?.sobre_mi && (
+            <>
+              <TituloWeb>Sobre {nombre}</TituloWeb>
+              <p style={texto}>{perfil.sobre_mi}</p>
+            </>
+          )}
+          {perfil?.experiencia && (
+            <>
+              <TituloWeb>Experiencia</TituloWeb>
+              <p style={texto}>{perfil.experiencia}</p>
+            </>
+          )}
+          {!hayTexto && (
+            <>
+              <TituloWeb>Sobre {nombre}</TituloWeb>
+              <p style={{ ...texto, color: COLORS.inkSoft }}>
+                {perfil ? `${nombre} todavía no escribió una presentación.` : 'Esta persona todavía no completó su perfil de trabajador.'}
+              </p>
+            </>
+          )}
+
+          {calificaciones.length > 0 && (
+            <div id="calificaciones-web" style={{ scrollMarginTop: 20 }}>
+              <TituloWeb>Calificaciones</TituloWeb>
+              {calificaciones.map((c, i) => (
+                <div key={i} style={{ padding: '18px 0', borderTop: i > 0 ? `1px solid ${COLORS.line}` : 'none', maxWidth: 680 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+                    <Estrellas valor={c.estrellas} />
+                    <span style={{ fontSize: 14, color: COLORS.inkSoft }}>
+                      {c.tipo === 'solicitante_a_prestador' ? 'Como trabajador' : 'Como quien ofreció'}
+                      {c.fecha && ` · ${formatearFechaCorta(c.fecha)}`}
+                    </span>
+                  </div>
+                  {c.comentario && (
+                    <p style={{ fontSize: 16, color: COLORS.ink, lineHeight: 1.6, margin: '8px 0 0' }}>“{c.comentario}”</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Al costado: rubros y datos como lista, publicidad y moderación */}
+        <aside>
+          {rubros.length > 0 && (
+            <>
+              <TituloWeb>Le interesa</TituloWeb>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 36 }}>
+                {rubros.map((r) => (
+                  <span key={r} style={{ fontSize: 14, color: COLORS.ink, background: COLORS.clayTint, padding: '5px 10px', borderRadius: 4 }}>
+                    {r}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+
+          <TituloWeb>Datos</TituloWeb>
+          <dl style={{ margin: '0 0 32px' }}>
+            {datos.map((d, i) => (
+              <div
+                key={d.etiqueta}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  gap: 16,
+                  padding: '11px 0',
+                  borderTop: i > 0 ? `1px solid ${COLORS.line}` : 'none',
+                }}
+              >
+                <dt style={{ fontSize: 14.5, color: COLORS.inkSoft }}>{d.etiqueta}</dt>
+                <dd style={{ margin: 0, fontSize: 14.5, color: COLORS.ink, textAlign: 'right' }}>{d.valor}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <BannerPublicidad anuncio={anuncio} formato="lateral" />
+
+          {moderacion && (
+            <DenunciarBloquear otroId={moderacion.otroId} nombre={nombre ?? 'esta persona'} bloqueado={moderacion.bloqueado} />
+          )}
+        </aside>
       </div>
     </div>
   )
