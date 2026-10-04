@@ -141,8 +141,9 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
                 left: `${(100 - ANCHO) / 2}%`,
                 width: `${ANCHO}%`,
                 transform: `translateX(calc(${p * (100 + (SEPARACION * 100) / ANCHO)}% + ${arrastre}px))`,
-                transition: salta || arrastrando ? 'none' : 'transform 0.5s ease, opacity 0.5s ease',
-                opacity: visible ? 1 : 0,
+                // Solo se desliza: las que esperan quedan fuera del recuadro
+                // (no se ocultan con opacidad, si no "aparecían" al entrar)
+                transition: salta || arrastrando ? 'none' : 'transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1)',
                 pointerEvents: visible ? 'auto' : 'none',
               }}
               alTocarCostado={p !== 0 ? () => irA(i) : undefined}
