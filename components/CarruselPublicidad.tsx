@@ -56,18 +56,6 @@ export default function CarruselPublicidad({
 
   return (
     <div style={style}>
-      <p
-        style={{
-          fontSize: 10.5,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: COLORS.inkSoft,
-          margin: '0 0 6px 4px',
-        }}
-      >
-        Publicidad
-      </p>
       <div
         ref={pistaRef}
         onScroll={alDeslizar}

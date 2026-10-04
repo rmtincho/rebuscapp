@@ -605,7 +605,7 @@ export default function InicioWeb({
                   <Fragment key={p.id}>
                     <FilaTrabajo p={p} rubro={p.categorias?.grupo_slug ? nombresRubro[p.categorias.grupo_slug] : undefined} />
                     {patrocinado && i === posicionPatrocinado - 1 && (
-                      <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ maxWidth: 560, margin: '10px 0' }} />
+                      <BannerPublicidad anuncio={patrocinado} formato="movil" style={{ maxWidth: 560, margin: '10px 0' }} />
                     )}
                   </Fragment>
                 ))}

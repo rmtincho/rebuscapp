@@ -247,7 +247,7 @@ export default function FeedPedidos({
               <PedidosList
                 pedidos={pedidosFiltrados as any}
                 patrocinado={
-                  patrocinado ? <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" /> : undefined
+                  patrocinado ? <BannerPublicidad anuncio={patrocinado} formato="movil" /> : undefined
                 }
               />
             )}

@@ -5,9 +5,9 @@ import { registrarImpresion } from '@/app/actions/anuncios'
 import { COLORS } from '@/lib/theme'
 import type { Anuncio } from '@/lib/anuncios'
 
-// Espacio de publicidad: una imagen fija dentro del contenido, con la
-// etiqueta "Publicidad" (o "Patrocinado" dentro de las listas). Nada de
-// popups ni cosas que tapen. Sin anuncio cargado no se muestra nada.
+// Espacio de publicidad: una imagen fija dentro del contenido, sin
+// etiqueta encima. Nada de popups ni cosas que tapen. Sin anuncio cargado
+// no se muestra nada.
 
 export const PROPORCION = {
   movil: '5 / 2', // 1200 x 480
@@ -56,13 +56,11 @@ export default function BannerPublicidad({
   formato,
   className,
   style,
-  etiqueta = 'Publicidad',
 }: {
   anuncio: Anuncio | null
   formato: keyof typeof PROPORCION
   className?: string
   style?: React.CSSProperties
-  etiqueta?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -72,18 +70,6 @@ export default function BannerPublicidad({
 
   return (
     <div ref={ref} className={className} style={style}>
-      <p
-        style={{
-          fontSize: 10.5,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: COLORS.inkSoft,
-          margin: '0 0 6px 4px',
-        }}
-      >
-        {etiqueta}
-      </p>
       <a
         {...enlaceAnuncio(anuncio)}
         style={{ display: 'block', borderRadius: 20, overflow: 'hidden', boxShadow: COLORS.cardShadow, aspectRatio: PROPORCION[formato] }}
