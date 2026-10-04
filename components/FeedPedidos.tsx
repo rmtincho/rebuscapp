@@ -155,6 +155,41 @@ export default function FeedPedidos({
         </div>
       </div>
 
+      {/* Rubros arriba de todo: sueltos sobre el fondo, sin recuadro, para
+          que no se confundan con las tarjetas de trabajo */}
+      <div style={{ padding: '4px 0 8px' }}>
+        <div>
+          <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 20px 8px' }}>
+            Filtrar por rubro
+          </p>
+          <div
+            ref={filaPillsRef}
+            style={{
+              display: 'flex',
+              gap: 8,
+              overflowX: 'auto',
+              padding: '0 20px 2px',
+              scrollbarWidth: 'none',
+            }}
+          >
+            <button type="button" style={pill(grupo === null)} onClick={() => setGrupo(null)}>
+              Todas
+            </button>
+            {CATEGORIAS_DESTACADAS.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                style={pill(grupo === c.slug)}
+                onClick={() => setGrupo(grupo === c.slug ? null : c.slug)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+        </div>
+      </div>
+
       {/* Título de la sección y, en Trabajos, el botón de Filtros */}
       <div style={{ padding: '8px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
         <p style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, letterSpacing: '-0.02em', margin: 0 }}>
@@ -208,42 +243,6 @@ export default function FeedPedidos({
           </button>
         )}
       </div>
-
-      {/* Filtros: sueltos sobre el fondo, sin recuadro, para que no se
-          confundan con las tarjetas de trabajo de abajo */}
-      <div style={{ padding: '0 0 14px' }}>
-        <div>
-          <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 20px 8px' }}>
-            Filtrar por rubro
-          </p>
-          <div
-            ref={filaPillsRef}
-            style={{
-              display: 'flex',
-              gap: 8,
-              overflowX: 'auto',
-              padding: '0 20px 2px',
-              scrollbarWidth: 'none',
-            }}
-          >
-            <button type="button" style={pill(grupo === null)} onClick={() => setGrupo(null)}>
-              Todas
-            </button>
-            {CATEGORIAS_DESTACADAS.map((c) => (
-              <button
-                key={c.slug}
-                type="button"
-                style={pill(grupo === c.slug)}
-                onClick={() => setGrupo(grupo === c.slug ? null : c.slug)}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-
-        </div>
-      </div>
-
 
       {seccion === 'trabajos' ? (
         <div style={{ padding: '0 20px 20px' }}>
