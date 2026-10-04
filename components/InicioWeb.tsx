@@ -75,11 +75,16 @@ const NIVEL: Record<string, string> = {
 // Características del trabajo para las etiquetas de cada fila
 // Cada tipo de dato con su color: tipo de trabajo en naranja, comercio en
 // rosa y requisitos en amarillo (verde y rojo quedan para "cumplís / no")
+// Fondos más saturados que las etiquetas pastel del resto de la app, con
+// el texto en el mismo tono, oscuro
 const COLOR_CARACTERISTICA = {
-  jornada: { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
-  comercio: { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
-  requisito: { fondo: COLORS.clayTint, texto: COLORS.clayDark },
+  jornada: { fondo: '#FFD3A8', texto: '#B45A12' },
+  comercio: { fondo: '#FFC4D6', texto: '#B0244F' },
+  requisito: { fondo: '#FFE07A', texto: '#7A5200' },
 }
+const COLOR_CUMPLE = { fondo: '#BDEFCB', texto: '#14703A' }
+const COLOR_NO_CUMPLE = { fondo: '#FFC6C2', texto: '#B42318' }
+const COLOR_PRECIO = { fondo: '#C6DAFF', texto: '#1D4ED8' }
 
 function caracteristicas(p: PedidoWeb): { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA }[] {
   const lista: ({ texto: string | null | undefined; tipo: keyof typeof COLOR_CARACTERISTICA })[] = [
@@ -642,7 +647,17 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
   const etiquetas = caracteristicas(p)
   const titulo = tituloDe(p.descripcion)
-  const etiqueta: React.CSSProperties = { fontSize: 12, padding: '3px 8px', borderRadius: 5, whiteSpace: 'nowrap' }
+  // Etiquetas: Inter en mayúsculas, peso 600
+  const etiqueta: React.CSSProperties = {
+    fontFamily: 'var(--font-inter), sans-serif',
+    fontSize: 11,
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: 0,
+    padding: '4px 8px',
+    borderRadius: 5,
+    whiteSpace: 'nowrap',
+  }
   return (
     <a
       href={`/pedidos/${p.id}`}
@@ -716,8 +731,8 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
               <span
                 style={{
                   ...etiqueta,
-                  background: p.cumple_requisitos ? COLORS.greenTint : COLORS.redTint,
-                  color: p.cumple_requisitos ? COLORS.greenDark : COLORS.redDark,
+                  background: (p.cumple_requisitos ? COLOR_CUMPLE : COLOR_NO_CUMPLE).fondo,
+                  color: (p.cumple_requisitos ? COLOR_CUMPLE : COLOR_NO_CUMPLE).texto,
                 }}
               >
                 {p.cumple_requisitos ? '✓ Cumplís los requisitos' : 'No cumplís los requisitos'}
@@ -728,7 +743,9 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, textAlign: 'right' }}>
-        {precio && <span style={{ ...etiqueta, fontSize: 14, background: COLORS.blueTint, color: COLORS.blueDark, padding: '4px 9px' }}>{precio}</span>}
+        {precio && (
+          <span style={{ ...etiqueta, fontSize: 13, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto, padding: '5px 9px' }}>{precio}</span>
+        )}
         {quien && (
           <span style={{ fontSize: 12.5, color: COLORS.inkSoft, maxWidth: '100%', lineHeight: 1.35 }}>
             Publicado por
