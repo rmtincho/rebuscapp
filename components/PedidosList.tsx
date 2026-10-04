@@ -154,12 +154,12 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
                   <span
                     style={{
                       flexShrink: 0,
-                      background: COLORS.blue,
-                      color: '#FFFFFF',
+                      background: COLORS.blueTint,
+                      color: COLORS.blueDark,
                       fontSize: 13.5,
-                      fontWeight: 500,
-                      padding: '5px 10px',
-                      borderRadius: 100,
+                      fontWeight: 400,
+                      padding: '5px 9px',
+                      borderRadius: 6,
                       whiteSpace: 'nowrap',
                     }}
                   >

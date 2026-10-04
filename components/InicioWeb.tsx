@@ -642,7 +642,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
           {quien ?? ''}
         </span>
         {precio && (
-          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blueTint, color: COLORS.blueDark, padding: '5px 10px', borderRadius: 6 }}>
+          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 400, background: COLORS.blueTint, color: COLORS.blueDark, padding: '5px 10px', borderRadius: 6 }}>
             {precio}
           </span>
         )}
