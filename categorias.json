@@ -94,7 +94,13 @@
         { "nombre": "Herrería general", "slug": "herreria-general", "requiere_matricula": false },
         { "nombre": "Rejas y portones", "slug": "rejas-portones", "requiere_matricula": false },
         { "nombre": "Soldadura", "slug": "soldadura", "requiere_matricula": false },
-        { "nombre": "Estructuras metálicas", "slug": "estructuras-metalicas", "requiere_matricula": false }
+        { "nombre": "Estructuras metálicas", "slug": "estructuras-metalicas", "requiere_matricula": false },
+        { "nombre": "Tornero/a", "slug": "tornero", "requiere_matricula": false },
+        { "nombre": "Fresador/a", "slug": "fresador", "requiere_matricula": false },
+        { "nombre": "Operador/a de torno o centro CNC", "slug": "operador-cnc", "requiere_matricula": false },
+        { "nombre": "Matricero/a", "slug": "matricero", "requiere_matricula": false },
+        { "nombre": "Calderero/a", "slug": "calderero", "requiere_matricula": false },
+        { "nombre": "Plegado y corte de chapa", "slug": "plegado-corte-chapa", "requiere_matricula": false }
       ]
     },
     {
@@ -266,6 +272,26 @@
         { "nombre": "Compras y mandados", "slug": "compras-mandados", "requiere_matricula": false },
         { "nombre": "Acompañamiento a turnos médicos", "slug": "acompanamiento-turnos", "requiere_matricula": false },
         { "nombre": "Organización de espacios (orden del hogar)", "slug": "organizacion-espacios", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Industria, maquinaria y transporte",
+      "slug_grupo": "industria-maquinaria",
+      "items": [
+        { "nombre": "Operador/a de grúa", "slug": "operador-grua", "requiere_matricula": false },
+        { "nombre": "Operador/a de hidrogrúa", "slug": "operador-hidrogrua", "requiere_matricula": false },
+        { "nombre": "Rigger / señalero de izaje", "slug": "rigger-senalero", "requiere_matricula": false },
+        { "nombre": "Operador/a de autoelevador", "slug": "operador-autoelevador", "requiere_matricula": false },
+        { "nombre": "Operador/a de retroexcavadora", "slug": "operador-retroexcavadora", "requiere_matricula": false },
+        { "nombre": "Operador/a de máquinas viales", "slug": "operador-maquinas-viales", "requiere_matricula": false },
+        { "nombre": "Operador/a de planta / producción", "slug": "operador-planta", "requiere_matricula": false },
+        { "nombre": "Operario/a de depósito", "slug": "operario-deposito", "requiere_matricula": false },
+        { "nombre": "Mecánico/a de mantenimiento industrial", "slug": "mecanico-mantenimiento-industrial", "requiere_matricula": false },
+        { "nombre": "Electromecánico/a", "slug": "electromecanico", "requiere_matricula": false },
+        { "nombre": "Electricista industrial", "slug": "electricista-industrial", "requiere_matricula": false },
+        { "nombre": "Instrumentista industrial", "slug": "instrumentista-industrial", "requiere_matricula": false },
+        { "nombre": "Chofer de camión", "slug": "chofer-camion", "requiere_matricula": false },
+        { "nombre": "Chofer de transporte de pasajeros", "slug": "chofer-pasajeros", "requiere_matricula": false }
       ]
     },
     {
