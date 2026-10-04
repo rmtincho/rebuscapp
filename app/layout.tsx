@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import CabeceraWeb from '@/components/CabeceraWeb'
 
-// Fuente: Helvetica Neue World, de Adobe Fonts (proyecto web iym1qdq,
+// Fuente: Helvetica LT Pro, de Adobe Fonts (proyecto web iym1qdq,
 // pesos 400 y 700), para títulos y texto. Inter queda de respaldo por si
 // el CSS de Adobe no carga; --font-body y --font-display se arman en globals.css.
 const inter = Inter({

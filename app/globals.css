@@ -10,9 +10,9 @@ body {
 }
 
 body {
-  /* Títulos y texto: Helvetica Neue World (Adobe Fonts, se carga en
+  /* Títulos y texto: Helvetica LT Pro (Adobe Fonts, se carga en
      app/layout.tsx), con Inter de respaldo */
-  --font-body: 'helvetica-neue-world', var(--font-inter), 'Helvetica Neue', Arial;
+  --font-body: 'helvetica-lt-pro', var(--font-inter), 'Helvetica Neue', Arial;
   --font-display: var(--font-body);
   font-family: var(--font-body), sans-serif;
   -webkit-font-smoothing: antialiased;
