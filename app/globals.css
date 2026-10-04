@@ -318,3 +318,7 @@ textarea::placeholder {
   .chip { border-radius: 6px !important; }
   .boton-principal { border-radius: 10px !important; }
 }
+
+/* Inicio web: fila de un trabajo, con un fondo suave al pasar el mouse */
+.fila-trabajo { transition: background 0.15s; }
+.fila-trabajo:hover { background: rgba(255, 255, 255, 0.7); }

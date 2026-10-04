@@ -55,6 +55,7 @@ export default async function HomePage() {
       requiere_carnet_conducir,
       categoria_carnet_requerida,
       idioma_requerido,
+      jornada,
       categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre )
     `

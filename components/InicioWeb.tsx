@@ -18,7 +18,7 @@ import { MenuWeb } from '@/components/CabeceraWeb'
 // Inicio de la versión web (compu). No es el inicio del celular estirado:
 // franja de bienvenida con buscador, rubros como tiles, tu actividad en una
 // fila, y los trabajos como un sitio de avisos (filtros a la izquierda,
-// la grilla a la derecha). En el celular se usa el inicio de siempre.
+// los trabajos en filas a la derecha). En el celular se usa el inicio de siempre.
 
 export type PedidoWeb = {
   id: string
@@ -31,6 +31,13 @@ export type PedidoWeb = {
   nombre_comercio: string | null
   fecha_creacion?: string | null
   categoria_slug?: string | null
+  // 'changa' (puntual), 'fulltime' o 'parttime'
+  jornada?: string | null
+  edad_minima?: number | null
+  requisito_nivel_educativo?: string | null
+  requiere_carnet_conducir?: boolean | null
+  categoria_carnet_requerida?: string | null
+  idioma_requerido?: string | null
   // Calculado en el servidor: ¿cumplo edad, estudios, carnet e idioma?
   cumple_requisitos?: boolean
   categorias: { nombre: string; grupo_slug: string | null } | null
@@ -49,6 +56,36 @@ export type ActividadWeb = {
 
 type Orden = 'recientes' | 'monto'
 type Pago = 'todos' | 'con_monto' | 'a_convenir'
+type Publicado = 'cualquiera' | '1d' | '3d' | '1w'
+type Tipo = 'todos' | 'puntual' | 'fijo'
+
+const HORAS_PUBLICADO: Record<Exclude<Publicado, 'cualquiera'>, number> = { '1d': 24, '3d': 72, '1w': 168 }
+
+const JORNADA: Record<string, string> = { changa: 'Trabajo puntual', fulltime: 'Full time', parttime: 'Part time' }
+
+const NIVEL: Record<string, string> = {
+  primario: 'Primario completo',
+  secundario: 'Secundario completo',
+  terciario: 'Terciario',
+  universitario: 'Universitario',
+  posgrado: 'Posgrado',
+}
+
+// Características del trabajo para las etiquetas de cada fila
+function caracteristicas(p: PedidoWeb): string[] {
+  return [
+    p.jornada ? JORNADA[p.jornada] : null,
+    p.es_comercio ? 'Comercio' : null,
+    p.edad_minima ? `Desde ${p.edad_minima} años` : null,
+    p.requisito_nivel_educativo ? NIVEL[p.requisito_nivel_educativo] ?? p.requisito_nivel_educativo : null,
+    p.requiere_carnet_conducir ? (p.categoria_carnet_requerida ? `Carnet ${p.categoria_carnet_requerida}` : 'Con carnet') : null,
+    p.idioma_requerido ? p.idioma_requerido : null,
+  ].filter((x): x is string => !!x)
+}
+
+function tieneRequisitos(p: PedidoWeb) {
+  return !!(p.edad_minima || p.requisito_nivel_educativo || p.requiere_carnet_conducir || p.idioma_requerido)
+}
 
 const COLORES_ESTADO: Record<ActividadWeb['colorEstado'], { fondo: string; texto: string }> = {
   amarillo: { fondo: COLORS.clayTint, texto: COLORS.clayDark },
@@ -117,6 +154,10 @@ export default function InicioWeb({
   const [grupo, setGrupo] = useState<string | null>(null)
   const [pago, setPago] = useState<Pago>('todos')
   const [orden, setOrden] = useState<Orden>('recientes')
+  const [publicado, setPublicado] = useState<Publicado>('cualquiera')
+  const [tipo, setTipo] = useState<Tipo>('todos')
+  // Hora de referencia para "Fecha de publicación" (la de cuando se abrió)
+  const [ahora] = useState(() => Date.now())
   const [soloMios, setSoloMios] = useState(false)
   const seccion = modo === 'busco' ? 'trabajos' : 'trabajadores'
   // Color del modo: amarillo para "busco trabajo", oscuro para "busco contratar"
@@ -134,6 +175,12 @@ export default function InicioWeb({
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase()
     const lista = pedidos.filter((p) => {
+      if (publicado !== 'cualquiera') {
+        if (!p.fecha_creacion) return false
+        if (ahora - new Date(p.fecha_creacion).getTime() > HORAS_PUBLICADO[publicado] * 3_600_000) return false
+      }
+      if (tipo === 'puntual' && p.jornada && p.jornada !== 'changa') return false
+      if (tipo === 'fijo' && (!p.jornada || p.jornada === 'changa')) return false
       if (grupo && p.categorias?.grupo_slug !== grupo) return false
       if (soloMios && (!misCategorias.includes(p.categoria_slug ?? '') || p.cumple_requisitos === false)) return false
       if (pago === 'con_monto' && !p.monto_ofrecido) return false
@@ -143,7 +190,7 @@ export default function InicioWeb({
     })
     if (orden === 'monto') return [...lista].sort((a, b) => (b.monto_ofrecido ?? 0) - (a.monto_ofrecido ?? 0))
     return lista
-  }, [pedidos, grupo, pago, orden, busqueda, soloMios, misCategorias])
+  }, [pedidos, grupo, pago, orden, busqueda, soloMios, misCategorias, publicado, tipo, ahora])
 
   const trabajadoresFiltrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase()
@@ -170,10 +217,12 @@ export default function InicioWeb({
     setBusqueda('')
     setGrupo(null)
     setPago('todos')
+    setPublicado('cualquiera')
+    setTipo('todos')
     setSoloMios(false)
   }
 
-  const hayFiltros = !!busqueda || !!grupo || pago !== 'todos' || soloMios
+  const hayFiltros = !!busqueda || !!grupo || pago !== 'todos' || publicado !== 'cualquiera' || tipo !== 'todos' || soloMios
 
   return (
     <div>
@@ -429,7 +478,7 @@ export default function InicioWeb({
 
       {/* ——— Publicidad: franja ancha fija ——— */}
 
-      {/* ——— Resultados: filtros a la izquierda, la grilla a la derecha ——— */}
+      {/* ——— Resultados: filtros a la izquierda, los trabajos en filas a la derecha ——— */}
       <section id="resultados" style={{ marginTop: 44, scrollMarginTop: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 18 }}>
           <h2 style={{ ...tituloSeccion, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -466,38 +515,57 @@ export default function InicioWeb({
               </div>
             )}
             <Filtro titulo="Rubro">
-              {[{ slug: null, label: 'Todos' }, ...CATEGORIAS_DESTACADAS].map((c) => (
-                <OpcionFiltro key={c.label} activa={grupo === c.slug} onClick={() => setGrupo(c.slug)}>
-                  {c.label}
-                </OpcionFiltro>
-              ))}
+              <Desplegable
+                valor={grupo ?? ''}
+                onChange={(v) => setGrupo(v || null)}
+                opciones={[{ valor: '', label: 'Todos los rubros' }, ...CATEGORIAS_DESTACADAS.map((c) => ({ valor: c.slug, label: c.label }))]}
+              />
             </Filtro>
             {seccion === 'trabajos' && (
               <>
-                <Filtro titulo="Pago">
-                  {(
-                    [
-                      ['todos', 'Todos'],
-                      ['con_monto', 'Con monto'],
-                      ['a_convenir', 'A convenir'],
-                    ] as const
-                  ).map(([v, l]) => (
-                    <OpcionFiltro key={v} activa={pago === v} onClick={() => setPago(v)}>
-                      {l}
-                    </OpcionFiltro>
-                  ))}
+                <Filtro titulo="Fecha de publicación">
+                  <Desplegable
+                    valor={publicado}
+                    onChange={(v) => setPublicado(v as Publicado)}
+                    opciones={[
+                      { valor: 'cualquiera', label: 'En cualquier momento' },
+                      { valor: '1d', label: 'Últimas 24 horas' },
+                      { valor: '3d', label: 'Últimos 3 días' },
+                      { valor: '1w', label: 'Última semana' },
+                    ]}
+                  />
                 </Filtro>
-                <Filtro titulo="Ordenar">
-                  {(
-                    [
-                      ['recientes', 'Más recientes'],
-                      ['monto', 'Mayor monto'],
-                    ] as const
-                  ).map(([v, l]) => (
-                    <OpcionFiltro key={v} activa={orden === v} onClick={() => setOrden(v)}>
-                      {l}
-                    </OpcionFiltro>
-                  ))}
+                <Filtro titulo="Tipo de trabajo">
+                  <Cajas
+                    valor={tipo}
+                    onChange={(v) => setTipo(v as Tipo)}
+                    opciones={[
+                      { valor: 'todos', label: 'Todos' },
+                      { valor: 'puntual', label: 'Puntual' },
+                      { valor: 'fijo', label: 'Fijo' },
+                    ]}
+                  />
+                </Filtro>
+                <Filtro titulo="Pago">
+                  <Cajas
+                    valor={pago}
+                    onChange={(v) => setPago(v as Pago)}
+                    opciones={[
+                      { valor: 'todos', label: 'Todos' },
+                      { valor: 'con_monto', label: 'Con monto' },
+                      { valor: 'a_convenir', label: 'A convenir' },
+                    ]}
+                  />
+                </Filtro>
+                <Filtro titulo="Ordenar por">
+                  <Desplegable
+                    valor={orden}
+                    onChange={(v) => setOrden(v as Orden)}
+                    opciones={[
+                      { valor: 'recientes', label: 'Más recientes' },
+                      { valor: 'monto', label: 'Mayor monto' },
+                    ]}
+                  />
                 </Filtro>
               </>
             )}
@@ -531,12 +599,14 @@ export default function InicioWeb({
             ) : filtrados.length === 0 ? (
               <Vacio texto={hayFiltros ? 'No hay trabajos con esos filtros.' : 'Todavía no hay trabajos publicados. Sé el primero.'} />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+              <div style={{ borderTop: `1px solid ${COLORS.line}` }}>
                 {filtrados.map((p, i) => (
                   <Fragment key={p.id}>
-                    <TarjetaTrabajo p={p} />
+                    <FilaTrabajo p={p} />
                     {patrocinado && i === posicionPatrocinado - 1 && (
-                      <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ gridColumn: 'span 2' }} />
+                      <div style={{ padding: '20px 0', borderBottom: `1px solid ${COLORS.line}` }}>
+                        <BannerPublicidad anuncio={patrocinado} formato="movil" etiqueta="Patrocinado" style={{ maxWidth: 560 }} />
+                      </div>
                     )}
                   </Fragment>
                 ))}
@@ -550,70 +620,90 @@ export default function InicioWeb({
   )
 }
 
-function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
+// Un trabajo como fila (como un sitio de avisos): rubro y cuándo arriba,
+// buena parte de la descripción, y abajo las características como
+// etiquetas; a la derecha el pago y quién lo publica.
+function FilaTrabajo({ p }: { p: PedidoWeb }) {
   const cat = p.categorias?.nombre ?? 'Trabajo'
   const tag = tagDe(cat)
   const quien = p.es_comercio ? p.nombre_comercio : p.usuarios?.nombre
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
+  const etiquetas = caracteristicas(p)
+  const etiqueta: React.CSSProperties = { fontSize: 13, padding: '4px 9px', borderRadius: 6, whiteSpace: 'nowrap' }
   return (
     <a
       href={`/pedidos/${p.id}`}
+      className="fila-trabajo"
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        background: COLORS.card,
-        borderRadius: 12,
-        padding: 18,
-        boxShadow: COLORS.cardShadow,
+        display: 'grid',
+        gridTemplateColumns: '44px minmax(0, 1fr) 170px',
+        gap: 18,
+        padding: '20px 12px',
+        borderBottom: `1px solid ${COLORS.line}`,
         textDecoration: 'none',
         color: COLORS.ink,
-        minHeight: 190,
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-        <span
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 8,
-            background: tag.fondo,
-            color: tag.texto,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {iconoParaCategoria(cat)}
-        </span>
-        <span style={{ fontSize: 13, color: COLORS.inkSoft, fontWeight: 500 }}>{p.fecha_creacion ? haceCuanto(p.fecha_creacion) : ''}</span>
-      </div>
-      <div style={{ flex: 1 }}>
-        <span style={{ display: 'inline-block', fontSize: 13, color: tag.texto, background: tag.fondo, padding: '4px 9px', borderRadius: 6 }}>
-          {cat}
-        </span>
+      <span
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          background: tag.fondo,
+          color: tag.texto,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {iconoParaCategoria(cat)}
+      </span>
+
+      <div style={{ minWidth: 0 }}>
+        <p style={{ fontSize: 13.5, color: COLORS.inkSoft, margin: '0 0 4px' }}>
+          <span style={{ color: tag.texto }}>{cat}</span>
+          {p.fecha_creacion && ` · ${haceCuanto(p.fecha_creacion)}`}
+        </p>
         <p
           style={{
-            fontSize: 17.5,
-            fontWeight: 700,
-            lineHeight: 1.3,
-            margin: '10px 0 0',
+            fontSize: 16,
+            lineHeight: 1.5,
+            margin: 0,
             display: '-webkit-box',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}
         >
           {p.descripcion}
         </p>
+        {(etiquetas.length > 0 || tieneRequisitos(p)) && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+            {etiquetas.map((e) => (
+              <span key={e} style={{ ...etiqueta, background: '#EDEDF2', color: '#4B4B55' }}>
+                {e}
+              </span>
+            ))}
+            {tieneRequisitos(p) && p.cumple_requisitos !== undefined && (
+              <span
+                style={{
+                  ...etiqueta,
+                  background: p.cumple_requisitos ? COLORS.greenTint : COLORS.redTint,
+                  color: p.cumple_requisitos ? COLORS.greenDark : COLORS.redDark,
+                }}
+              >
+                {p.cumple_requisitos ? '✓ Cumplís los requisitos' : 'No cumplís los requisitos'}
+              </span>
+            )}
+          </div>
+        )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 14, color: COLORS.inkSoft, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {quien ?? ''}
-        </span>
-        {precio && (
-          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 400, background: COLORS.blueTint, color: COLORS.blueDark, padding: '5px 10px', borderRadius: 6 }}>
-            {precio}
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, textAlign: 'right' }}>
+        {precio && <span style={{ ...etiqueta, fontSize: 15, background: COLORS.blueTint, color: COLORS.blueDark, padding: '5px 10px' }}>{precio}</span>}
+        {quien && (
+          <span style={{ fontSize: 13.5, color: COLORS.inkSoft, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {quien}
           </span>
         )}
       </div>
@@ -623,48 +713,86 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
 
 function Filtro({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 18 }}>
-      <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: COLORS.inkSoft, margin: '0 0 8px' }}>
-        {titulo}
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>{children}</div>
+    <div style={{ marginBottom: 22 }}>
+      <p style={{ fontSize: 14, fontWeight: 700, color: COLORS.ink, margin: '0 0 8px' }}>{titulo}</p>
+      {children}
     </div>
   )
 }
 
-function OpcionFiltro({ activa, onClick, children }: { activa: boolean; onClick: () => void; children: React.ReactNode }) {
+// Desplegable de filtro (rubro, fecha, orden)
+function Desplegable({
+  valor,
+  onChange,
+  opciones,
+}: {
+  valor: string
+  onChange: (v: string) => void
+  opciones: { valor: string; label: string }[]
+}) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <select
+      value={valor}
+      onChange={(e) => onChange(e.target.value)}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '7px 8px',
-        borderRadius: 6,
-        border: 'none',
-        background: activa ? COLORS.clayTint : 'transparent',
-        color: COLORS.ink,
+        width: '100%',
+        padding: '10px 12px',
         fontSize: 14,
-        fontWeight: activa ? 700 : 500,
+        color: COLORS.ink,
+        background: COLORS.card,
+        border: `1.5px solid ${COLORS.line}`,
+        borderRadius: 8,
         cursor: 'pointer',
-        textAlign: 'left',
       }}
     >
-      <span
-        style={{
-          width: 16,
-          height: 16,
-          borderRadius: '50%',
-          flexShrink: 0,
-          border: `2px solid ${activa ? COLORS.dark : COLORS.line}`,
-          background: activa ? COLORS.dark : 'transparent',
-          boxShadow: activa ? `inset 0 0 0 3px ${COLORS.clayTint}` : 'none',
-        }}
-      />
-      {children}
-    </button>
+      {opciones.map((o) => (
+        <option key={o.valor} value={o.valor}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+// Opciones en caja, una al lado de la otra (tipo de trabajo, pago)
+function Cajas({
+  valor,
+  onChange,
+  opciones,
+}: {
+  valor: string
+  onChange: (v: string) => void
+  opciones: { valor: string; label: string }[]
+}) {
+  return (
+    <div role="radiogroup" style={{ display: 'grid', gridTemplateColumns: `repeat(${opciones.length}, minmax(0, 1fr))`, gap: 6 }}>
+      {opciones.map((o) => {
+        const activa = valor === o.valor
+        return (
+          <button
+            key={o.valor}
+            type="button"
+            role="radio"
+            aria-checked={activa}
+            onClick={() => onChange(o.valor)}
+            style={{
+              padding: '9px 4px',
+              fontSize: 13,
+              borderRadius: 8,
+              border: `1.5px solid ${activa ? COLORS.dark : COLORS.line}`,
+              background: activa ? COLORS.dark : COLORS.card,
+              color: activa ? COLORS.onDark : COLORS.ink,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {o.label}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
