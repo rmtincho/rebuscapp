@@ -9,8 +9,9 @@ import { PROPORCION, enlaceAnuncio, textoAlternativo } from '@/components/Banner
 // Carrusel de publicidad del inicio en compu, debajo del hero: el anuncio
 // activo al centro con el 70% del ancho, y el anterior y el siguiente
 // asomando a los costados. Pasa solo cada 6 segundos (se frena con el mouse
-// encima y no se mueve solo si se pide "reducir movimiento"). Tocar uno de
-// los que asoman lo trae al centro. Usa la imagen banner (1200 × 480), la
+// encima y no se mueve solo si se pide "reducir movimiento"). Se pasa con
+// las flechas de los costados, arrastrando con el mouse, con las flechas
+// del teclado o tocando uno de los que asoman. Usa la imagen banner (1200 × 480), la
 // misma del carrusel del celular.
 
 const INTERVALO_MS = 6000
@@ -28,9 +29,45 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
   const [pausado, setPausado] = useState(false)
   // Una impresión por anuncio en esta visita, aunque esté repetido
   const contados = useRef(new Set<string>())
+  // Arrastre con el mouse: cuántos px se movió y desde dónde
+  const [arrastre, setArrastre] = useState(0)
+  const [arrastrando, setArrastrando] = useState(false)
+  const inicio = useRef<number | null>(null)
+  // Si hubo arrastre, el clic que viene al soltar no abre el anuncio
+  const movido = useRef(false)
 
   function irA(i: number) {
     setEstado((e) => ({ actual: i, previo: e.actual }))
+  }
+  const siguiente = () => irA((actual + 1) % n)
+  const anterior = () => irA((actual - 1 + n) % n)
+
+  function alApretar(e: React.PointerEvent<HTMLDivElement>) {
+    if (n < 2 || e.button !== 0) return
+    inicio.current = e.clientX
+    movido.current = false
+  }
+  function alMover(e: React.PointerEvent<HTMLDivElement>) {
+    if (inicio.current === null) return
+    const dx = e.clientX - inicio.current
+    if (!movido.current && Math.abs(dx) > 5) {
+      movido.current = true
+      setArrastrando(true)
+      e.currentTarget.setPointerCapture(e.pointerId)
+    }
+    if (movido.current) setArrastre(dx)
+  }
+  function alSoltar(e: React.PointerEvent<HTMLDivElement>) {
+    if (inicio.current === null) return
+    const dx = e.clientX - inicio.current
+    inicio.current = null
+    if (movido.current) {
+      const umbral = Math.min(80, e.currentTarget.clientWidth * 0.08)
+      if (dx < -umbral) siguiente()
+      else if (dx > umbral) anterior()
+    }
+    setArrastre(0)
+    setArrastrando(false)
   }
 
   useEffect(() => {
@@ -54,15 +91,34 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
       className="solo-escritorio"
       aria-roledescription="carrusel"
       aria-label="Publicidad"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowRight') siguiente()
+        if (e.key === 'ArrowLeft') anterior()
+      }}
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
       // En pantallas muy anchas no crece más (si no, el banner sería enorme)
       style={{ marginTop: 28, maxWidth: 1600, marginLeft: 'auto', marginRight: 'auto' }}
     >
       <div
+        onPointerDown={alApretar}
+        onPointerMove={alMover}
+        onPointerUp={alSoltar}
+        onPointerCancel={alSoltar}
+        onClickCapture={(e) => {
+          if (movido.current) {
+            e.preventDefault()
+            e.stopPropagation()
+            movido.current = false
+          }
+        }}
         style={{
           position: 'relative',
           overflow: 'hidden',
+          cursor: n > 1 ? (arrastrando ? 'grabbing' : 'grab') : undefined,
+          touchAction: 'pan-y',
+          userSelect: 'none',
           // El alto lo da la placa del centro (70% del ancho, proporción 5:2)
           aspectRatio: `${5 * 100} / ${2 * ANCHO}`,
         }}
@@ -81,8 +137,8 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
                 top: 0,
                 left: `${(100 - ANCHO) / 2}%`,
                 width: `${ANCHO}%`,
-                transform: `translateX(${p * (100 + (SEPARACION * 100) / ANCHO)}%)`,
-                transition: salta ? 'none' : 'transform 0.5s ease, opacity 0.5s ease',
+                transform: `translateX(calc(${p * (100 + (SEPARACION * 100) / ANCHO)}% + ${arrastre}px))`,
+                transition: salta || arrastrando ? 'none' : 'transform 0.5s ease, opacity 0.5s ease',
                 opacity: p === 0 ? 1 : visible ? 0.55 : 0,
                 pointerEvents: visible ? 'auto' : 'none',
               }}
@@ -95,6 +151,49 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
             />
           )
         })}
+
+        {/* Flechas sobre los anuncios que asoman */}
+        {n > 1 &&
+          (
+            [
+              ['anterior', anterior, `${(100 - ANCHO) / 4}%`],
+              ['siguiente', siguiente, `${100 - (100 - ANCHO) / 4}%`],
+            ] as const
+          ).map(([cual, accion, x]) => (
+            <button
+              key={cual}
+              type="button"
+              aria-label={cual === 'anterior' ? 'Anuncio anterior' : 'Anuncio siguiente'}
+              onClick={(e) => {
+                e.stopPropagation()
+                accion()
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="carrusel-flecha"
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: x,
+                transform: 'translate(-50%, -50%)',
+                zIndex: 2,
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
+                border: 'none',
+                background: COLORS.card,
+                color: COLORS.ink,
+                boxShadow: '0 6px 18px rgba(28, 28, 30, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d={cual === 'anterior' ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'} />
+              </svg>
+            </button>
+          ))}
       </div>
 
       {anuncios.length > 1 && (
@@ -175,6 +274,7 @@ function Placa({
       }
       aria-hidden={!activa}
       tabIndex={activa ? undefined : -1}
+      draggable={false}
       style={{
         ...style,
         display: 'block',
@@ -188,7 +288,8 @@ function Placa({
       <img
         src={anuncio.imagen_url}
         alt={textoAlternativo(anuncio)}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        draggable={false}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
       />
     </a>
   )

@@ -327,3 +327,7 @@ textarea::placeholder {
 /* Inicio web: tarjeta de un trabajo, se marca un poco al pasar el mouse */
 .fila-trabajo { transition: box-shadow 0.15s; }
 .fila-trabajo:hover { box-shadow: 0 0 0 1.5px #ECE5D8, 0 8px 24px rgba(80, 60, 20, 0.1) !important; }
+
+/* Flechas del carrusel de publicidad web */
+.carrusel-flecha { transition: transform 0.15s, box-shadow 0.15s; }
+.carrusel-flecha:hover { transform: translate(-50%, -50%) scale(1.08) !important; }
