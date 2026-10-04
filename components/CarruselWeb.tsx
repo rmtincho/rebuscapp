@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { registrarImpresion } from '@/app/actions/anuncios'
 import { COLORS } from '@/lib/theme'
 import type { Anuncio } from '@/lib/anuncios'
-import { PROPORCION, enlaceAnuncio, textoAlternativo } from '@/components/BannerPublicidad'
+import { enlaceAnuncio, textoAlternativo } from '@/components/BannerPublicidad'
 
 // Carrusel de publicidad del inicio en compu, debajo del hero: el anuncio
 // activo al centro con el 70% del ancho, y el anterior y el siguiente
@@ -16,6 +16,9 @@ import { PROPORCION, enlaceAnuncio, textoAlternativo } from '@/components/Banner
 
 const INTERVALO_MS = 6000
 const ANCHO = 70 // % del ancho que ocupa el activo
+// Proporción de cada placa: 1000 × 300. Por ahora se usa la imagen banner
+// (1200 × 480, 5:2), que se recorta un poco arriba y abajo
+const PROPORCION_PLACA = { ancho: 10, alto: 3 }
 const SEPARACION = 2 // % entre placas
 
 export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
@@ -122,8 +125,8 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
           cursor: n > 1 ? (arrastrando ? 'grabbing' : 'grab') : undefined,
           touchAction: 'pan-y',
           userSelect: 'none',
-          // El alto lo da la placa del centro (70% del ancho, proporción 5:2)
-          aspectRatio: `${5 * 100} / ${2 * ANCHO}`,
+          // El alto lo da la placa del centro (70% del ancho, proporción 10:3)
+          aspectRatio: `${PROPORCION_PLACA.ancho * 100} / ${PROPORCION_PLACA.alto * ANCHO}`,
         }}
       >
         {placas.map((a, i) => {
@@ -289,7 +292,7 @@ function Placa({
       style={{
         ...style,
         display: 'block',
-        aspectRatio: PROPORCION.movil,
+        aspectRatio: `${PROPORCION_PLACA.ancho} / ${PROPORCION_PLACA.alto}`,
         borderRadius: 12,
         overflow: 'hidden',
         cursor: alTocarCostado || anuncio.con_enlace ? 'pointer' : 'default',
