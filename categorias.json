@@ -310,6 +310,25 @@
       ]
     },
     {
+      "grupo": "Tecnología y soporte",
+      "slug_grupo": "tecnologia",
+      "items": [
+        { "nombre": "Programador/a web", "slug": "programador-web", "requiere_matricula": false },
+        { "nombre": "Desarrollador/a de apps", "slug": "desarrollador-apps", "requiere_matricula": false },
+        { "nombre": "Desarrollador/a de software", "slug": "desarrollador-software", "requiere_matricula": false },
+        { "nombre": "Analista de sistemas", "slug": "analista-sistemas", "requiere_matricula": false },
+        { "nombre": "Analista funcional", "slug": "analista-funcional", "requiere_matricula": false },
+        { "nombre": "Tester / QA", "slug": "tester-qa", "requiere_matricula": false },
+        { "nombre": "Soporte IT / mesa de ayuda", "slug": "soporte-it", "requiere_matricula": false },
+        { "nombre": "Administrador/a de redes y servidores", "slug": "administrador-redes", "requiere_matricula": false },
+        { "nombre": "Analista de datos", "slug": "analista-datos", "requiere_matricula": false },
+        { "nombre": "Ciberseguridad", "slug": "ciberseguridad", "requiere_matricula": false },
+        { "nombre": "Página web o tienda online", "slug": "pagina-web-tienda", "requiere_matricula": false },
+        { "nombre": "Programador/a de PLC / automatización", "slug": "programador-plc", "requiere_matricula": false },
+        { "nombre": "Community manager / redes sociales", "slug": "community-manager", "requiere_matricula": false }
+      ]
+    },
+    {
       "grupo": "Otro",
       "slug_grupo": "otro",
       "items": [

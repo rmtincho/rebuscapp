@@ -13,9 +13,14 @@ export async function rubrosParaMenu(): Promise<RubroMenu[]> {
     .select('slug, nombre, categorias ( slug, nombre )')
     .order('nombre');
   if (error || !data) return [];
-  return data.map((g) => ({
-    slug: g.slug,
-    nombre: g.nombre,
-    categorias: [...((g.categorias ?? []) as { slug: string; nombre: string }[])].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
-  }));
+  return (
+    data
+      .map((g) => ({
+        slug: g.slug,
+        nombre: g.nombre,
+        categorias: [...((g.categorias ?? []) as { slug: string; nombre: string }[])].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
+      }))
+      // Un rubro sin categorías no lleva a nada: no se muestra
+      .filter((g) => g.categorias.length > 0)
+  );
 }

@@ -165,7 +165,11 @@ const ICONOS: { claves: string[]; icono: ReactElement }[] = [
     ),
   },
   {
-    claves: ['tecnolog', 'comput', 'celular', 'software', 'soporte técnico', 'pc'],
+    claves: [
+      'tecnolog', 'comput', 'celular', 'software', 'soporte técnico', 'pc',
+      'programador', 'desarrollador', 'analista', 'tester', 'soporte it', 'redes y servidores',
+      'ciberseguridad', 'página web', 'plc', 'community manager',
+    ],
     icono: (
       <svg {...props}>
         <rect x="3" y="4" width="18" height="12" rx="2" />
