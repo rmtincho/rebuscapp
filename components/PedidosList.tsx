@@ -137,8 +137,8 @@ export default function PedidosList({
                 {iconoParaCategoria(nombreCategoria)}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontWeight: 700, fontSize: 16, lineHeight: 1.3 }}>{titulo}</p>
-                <p style={{ margin: '3px 0 0', fontSize: 12.5, color: COLORS.inkSoft, lineHeight: 1.4 }}>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 17.5, lineHeight: 1.3 }}>{titulo}</p>
+                <p style={{ margin: '3px 0 0', fontSize: 13.5, color: COLORS.inkSoft, lineHeight: 1.4 }}>
                   {rubro && rubro !== nombreCategoria && (
                     <>
                       {rubro}
@@ -155,7 +155,7 @@ export default function PedidosList({
             <p
               style={{
                 margin: '10px 0 0',
-                fontSize: 14,
+                fontSize: 15,
                 lineHeight: 1.45,
                 color: '#3F3F46',
                 display: '-webkit-box',
@@ -213,7 +213,7 @@ export default function PedidosList({
                 )}
               </span>
               {precio && (
-                <span style={{ ...ESTILO_ETIQUETA, fontSize: 12.5, padding: '5px 9px', flexShrink: 0, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
+                <span style={{ ...ESTILO_ETIQUETA, fontSize: 12.5, fontWeight: 400, padding: '5px 9px', flexShrink: 0, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
                   {precio}
                 </span>
               )}
