@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
-import PedidosList from '@/components/PedidosList'
+import PedidosList, { type Ubicacion } from '@/components/PedidosList'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import InterruptorHabilidades from '@/components/InterruptorHabilidades'
@@ -37,6 +37,38 @@ export default function FeedPedidos({
 
   // "Coinciden con mis habilidades": trabajos de mis rubros cuyos requisitos cumplo
   const [soloMios, setSoloMios] = useState(false)
+
+  // Orden: recientes o cercanos (para cercanos hace falta la ubicación)
+  const [orden, setOrden] = useState<'recientes' | 'cercanos'>('recientes')
+  const [miUbicacion, setMiUbicacion] = useState<Ubicacion | null>(null)
+  const [buscandoUbicacion, setBuscandoUbicacion] = useState(false)
+  const [errorUbicacion, setErrorUbicacion] = useState(false)
+  const [panelAbierto, setPanelAbierto] = useState(false)
+  const filtrosActivos = (orden === 'cercanos' ? 1 : 0) + (soloMios ? 1 : 0)
+
+  function elegirCercanos() {
+    setErrorUbicacion(false)
+    if (miUbicacion) {
+      setOrden('cercanos')
+      return
+    }
+    if (!navigator.geolocation) {
+      setErrorUbicacion(true)
+      return
+    }
+    setBuscandoUbicacion(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setMiUbicacion({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        setOrden('cercanos')
+        setBuscandoUbicacion(false)
+      },
+      () => {
+        setBuscandoUbicacion(false)
+        setErrorUbicacion(true)
+      }
+    )
+  }
   const pedidosFiltrados = pedidos.filter(
     (p) =>
       (!grupo || p.categorias?.grupo_slug === grupo) &&
@@ -123,12 +155,58 @@ export default function FeedPedidos({
         </div>
       </div>
 
-      {/* Título de la sección */}
-      <div style={{ padding: '8px 20px 12px' }}>
+      {/* Título de la sección y, en Trabajos, el botón de Filtros */}
+      <div style={{ padding: '8px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
         <p style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, letterSpacing: '-0.02em', margin: 0 }}>
           {seccion === 'trabajos' ? 'Trabajos cerca tuyo' : 'Trabajadores'}
           <span style={{ color: COLORS.inkSoft, fontWeight: 400 }}> · {cantidad}</span>
         </p>
+        {seccion === 'trabajos' && (
+          <button
+            type="button"
+            onClick={() => setPanelAbierto(true)}
+            aria-haspopup="dialog"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 7,
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: `1.5px solid ${filtrosActivos > 0 ? COLORS.dark : COLORS.line}`,
+              background: filtrosActivos > 0 ? COLORS.dark : COLORS.card,
+              color: filtrosActivos > 0 ? COLORS.onDark : COLORS.ink,
+              fontSize: 13,
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+              <circle cx="16" cy="6" r="2" />
+              <circle cx="10" cy="12" r="2" />
+              <circle cx="18" cy="18" r="2" />
+            </svg>
+            Filtros
+            {filtrosActivos > 0 && (
+              <span
+                style={{
+                  minWidth: 18,
+                  height: 18,
+                  borderRadius: 100,
+                  background: COLORS.clay,
+                  color: COLORS.onClay,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {filtrosActivos}
+              </span>
+            )}
+          </button>
+        )}
       </div>
 
       {/* Filtros: sueltos sobre el fondo, sin recuadro, para que no se
@@ -163,11 +241,6 @@ export default function FeedPedidos({
             ))}
           </div>
 
-          {seccion === 'trabajos' && (
-            <div style={{ padding: '12px 20px 0' }}>
-              <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
-            </div>
-          )}
         </div>
       </div>
 
@@ -186,6 +259,7 @@ export default function FeedPedidos({
             {pedidosFiltrados.length > 0 && (
               <PedidosList
                 pedidos={pedidosFiltrados as any}
+                cercaDe={orden === 'cercanos' ? miUbicacion : null}
                 patrocinado={
                   patrocinado ? <BannerPublicidad anuncio={patrocinado} formato="movil" /> : undefined
                 }
@@ -198,6 +272,89 @@ export default function FeedPedidos({
           {grupo && trabajadores.length > 0 && trabajadoresFiltrados.length === 0
             ? vacio(`Nadie de ${labelGrupo} en el listado por ahora.`)
             : <TrabajadoresList trabajadores={trabajadoresFiltrados} />}
+        </div>
+      )}
+
+      {/* Panel de Filtros: sube desde abajo */}
+      {panelAbierto && (
+        <div
+          role="presentation"
+          onClick={() => setPanelAbierto(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 20000, background: 'rgba(28, 28, 30, 0.45)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+        >
+          <div
+            role="dialog"
+            aria-label="Filtros"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: 480,
+              background: COLORS.paper,
+              borderRadius: '16px 16px 0 0',
+              padding: '18px 20px calc(20px + env(safe-area-inset-bottom, 0px))',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <p style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Filtros</p>
+              {filtrosActivos > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOrden('recientes')
+                    setSoloMios(false)
+                  }}
+                  style={{ border: 'none', background: 'none', padding: 0, fontSize: 13.5, color: COLORS.clayDark, textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Limpiar
+                </button>
+              )}
+            </div>
+
+            <p style={{ fontSize: 14, fontWeight: 700, margin: '0 0 8px' }}>Ordenar por</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              {(
+                [
+                  ['recientes', 'Más recientes'],
+                  ['cercanos', buscandoUbicacion ? 'Buscando…' : 'Más cercanos'],
+                ] as const
+              ).map(([v, l]) => (
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={orden === v}
+                  onClick={() => (v === 'cercanos' ? elegirCercanos() : setOrden('recientes'))}
+                  style={{
+                    padding: '11px 8px',
+                    fontSize: 14,
+                    borderRadius: 8,
+                    border: `1.5px solid ${orden === v ? COLORS.dark : COLORS.line}`,
+                    background: orden === v ? COLORS.dark : COLORS.card,
+                    color: orden === v ? COLORS.onDark : COLORS.ink,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            {errorUbicacion && (
+              <p style={{ fontSize: 12.5, color: COLORS.redDark, margin: '8px 0 0', lineHeight: 1.4 }}>
+                No pudimos saber dónde estás. Revisá que el navegador tenga permiso de ubicación.
+              </p>
+            )}
+
+            <div style={{ borderTop: `1px solid ${COLORS.line}`, margin: '18px 0', paddingTop: 18 }}>
+              <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setPanelAbierto(false)}
+              style={{ width: '100%', padding: 14, fontSize: 15, fontWeight: 700, borderRadius: 10, border: 'none', background: COLORS.clay, color: COLORS.onClay, cursor: 'pointer' }}
+            >
+              Ver {pedidosFiltrados.length} trabajo{pedidosFiltrados.length === 1 ? '' : 's'}
+            </button>
+          </div>
         </div>
       )}
     </div>

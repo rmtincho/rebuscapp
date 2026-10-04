@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { COLORS } from '@/lib/theme'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { haceCuanto } from '@/lib/fechas'
@@ -35,30 +35,22 @@ function distanciaAlPedido(yo: { lat: number; lng: number }, pedido: Pedido) {
   return distanciaKm(yo.lat, yo.lng, pedido.ubicacion_lat, pedido.ubicacion_lng)
 }
 
-// `patrocinado`: tarjeta de publicidad que se intercala en la lista
-export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[]; patrocinado?: React.ReactNode }) {
-  const [orden, setOrden] = useState<'recientes' | 'cercanos'>('recientes')
-  const [miUbicacion, setMiUbicacion] = useState<{ lat: number; lng: number } | null>(null)
-  const [buscandoUbicacion, setBuscandoUbicacion] = useState(false)
+export type Ubicacion = { lat: number; lng: number }
 
-  function activarCercanos() {
-    if (!navigator.geolocation) {
-      setOrden('cercanos') // igual lo dejamos activo, solo no va a poder ordenar
-      return
-    }
-    setBuscandoUbicacion(true)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setMiUbicacion({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setOrden('cercanos')
-        setBuscandoUbicacion(false)
-      },
-      () => {
-        setBuscandoUbicacion(false)
-        setOrden('cercanos')
-      }
-    )
-  }
+// `patrocinado`: tarjeta de publicidad que se intercala en la lista.
+// `cercaDe`: con una ubicación, se ordena por distancia y se muestra a
+// cuántos km está cada uno (lo elige el panel de Filtros de FeedPedidos).
+export default function PedidosList({
+  pedidos,
+  patrocinado,
+  cercaDe = null,
+}: {
+  pedidos: Pedido[]
+  patrocinado?: React.ReactNode
+  cercaDe?: Ubicacion | null
+}) {
+  const miUbicacion = cercaDe
+  const orden = cercaDe ? 'cercanos' : 'recientes'
 
   const pedidosOrdenados = useMemo(() => {
     if (orden === 'cercanos' && miUbicacion) {
@@ -71,29 +63,8 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
     return pedidos
   }, [pedidos, orden, miUbicacion])
 
-  const chipStyle = (activo: boolean): React.CSSProperties => ({
-    padding: '8px 14px',
-    borderRadius: 100,
-    fontSize: 12.5,
-    fontWeight: 500,
-    border: `1px solid ${activo ? COLORS.dark : COLORS.line}`,
-    background: activo ? COLORS.dark : COLORS.card,
-    color: activo ? COLORS.onDark : COLORS.inkSoft,
-    whiteSpace: 'nowrap',
-    cursor: 'pointer',
-  })
-
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 16, paddingBottom: 2 }}>
-        <button style={chipStyle(orden === 'recientes')} onClick={() => setOrden('recientes')}>
-          Recientes
-        </button>
-        <button style={chipStyle(orden === 'cercanos')} onClick={activarCercanos}>
-          {buscandoUbicacion ? 'Buscando...' : 'Cercanos'}
-        </button>
-      </div>
-
       {pedidosOrdenados.map((pedido, indice) => {
         const nombrePublicador = pedido.es_comercio
           ? pedido.nombre_comercio
