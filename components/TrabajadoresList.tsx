@@ -6,7 +6,7 @@ export type Trabajador = {
   fotoUrl: string | null
   sobreMi: string | null
   tipoBusqueda: string | null
-  categorias: { nombre: string; grupoSlug: string | null }[]
+  categorias: { slug: string; nombre: string; grupoSlug: string | null }[]
 }
 
 const BUSQUEDA_LABEL: Record<string, string> = {

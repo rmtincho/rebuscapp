@@ -191,7 +191,7 @@ export default async function HomePage() {
         supabase.from('usuarios').select('id, nombre, apellido, foto_perfil_url').in('id', ids),
         supabase
           .from('prestador_categorias')
-          .select('prestador_id, categorias ( nombre, grupo_slug )')
+          .select('prestador_id, categoria_slug, categorias ( nombre, grupo_slug )')
           .in('prestador_id', ids),
       ])
 
@@ -209,7 +209,7 @@ export default async function HomePage() {
             tipoBusqueda: p.tipo_busqueda ?? null,
             categorias: (categoriasVisibles ?? [])
               .filter((c: any) => c.prestador_id === p.usuario_id && c.categorias)
-              .map((c: any) => ({ nombre: c.categorias.nombre, grupoSlug: c.categorias.grupo_slug ?? null })),
+              .map((c: any) => ({ slug: c.categoria_slug, nombre: c.categorias.nombre, grupoSlug: c.categorias.grupo_slug ?? null })),
           }
         })
         .filter((t): t is Trabajador => t !== null)

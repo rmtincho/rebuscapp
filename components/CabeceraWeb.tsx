@@ -8,6 +8,7 @@ import type { ModoInicio } from '@/lib/modoInicio'
 import { useMensajesSinLeer, useNotificacionesSinLeer } from '@/lib/useContadores'
 import EnlaceConCarga from '@/components/EnlaceConCarga'
 import { LEGAL } from '@/lib/legal'
+import MegaMenuRubros from '@/components/MegaMenuRubros'
 
 // Cabecera de la versión web (desde 900 px): de lado a lado, con el logo,
 // el menú y el botón de publicar. No queda fija: se va con el scroll.
@@ -94,6 +95,8 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
   return (
     <div
       style={{
+        // relative: el panel de Rubros se abre debajo, a lo ancho del menú
+        position: 'relative',
         maxWidth: 1200,
         height: 'var(--alto-menu)',
         margin: '0 auto',
@@ -110,6 +113,7 @@ export function MenuWeb({ sobre }: { sobre?: ModoInicio }) {
       {/* Menú a la derecha, junto a "Publicar trabajo". El activo se marca
           con una raya al pie, no con una cápsula */}
       <nav style={{ display: 'flex', alignSelf: 'stretch', gap: 28, marginLeft: 'auto' }}>
+        <MegaMenuRubros colores={{ texto: e.texto, textoSuave: e.textoSuave, raya: e.raya }} />
         {LINKS.map((l) => {
           const activo = l.href === '/' ? pathname === '/' : pathname.startsWith(l.href)
           const globo = globos[l.href] ?? 0

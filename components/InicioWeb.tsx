@@ -1,6 +1,7 @@
 'use client'
 
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
 import { useModo } from '@/components/ModoContext'
 import { COLORS } from '@/lib/theme'
@@ -84,17 +85,18 @@ function caracteristicas(p: PedidoWeb): string[] {
 }
 
 // Los trabajos no tienen título: se usa la primera oración de la
-// descripción (si es muy larga, se corta en una palabra) y el resto va abajo
-function tituloYResto(descripcion: string): { titulo: string; resto: string } {
+// descripción, cortada en una palabra si es larga. Debajo va siempre la
+// descripción completa, así nunca queda una tarjeta sin el detalle.
+function tituloDe(descripcion: string): string {
   const texto = descripcion.trim().replace(/\s+/g, ' ')
   const corte = texto.search(/[.!?](\s|$)/)
-  let titulo = corte >= 0 ? texto.slice(0, corte + 1) : texto
-  if (titulo.length > 110) {
-    const espacio = titulo.lastIndexOf(' ', 100)
-    titulo = `${titulo.slice(0, espacio > 40 ? espacio : 100)}…`
-    return { titulo, resto: texto }
+  let oracion = corte >= 0 ? texto.slice(0, corte) : texto
+  if (oracion.length > 80) {
+    const espacio = oracion.lastIndexOf(' ', 76)
+    oracion = `${oracion.slice(0, espacio > 30 ? espacio : 76).replace(/[,;:\s]+$/, '')}…`
   }
-  return { titulo, resto: texto.slice(titulo.length).trim() }
+  // Con mayúscula inicial, aunque la descripción arranque en minúscula
+  return oracion.charAt(0).toUpperCase() + oracion.slice(1)
 }
 
 function tieneRequisitos(p: PedidoWeb) {
@@ -169,6 +171,31 @@ export default function InicioWeb({
   const [texto, setTexto] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [grupo, setGrupo] = useState<string | null>(null)
+  // Categoría elegida en el menú Rubros de la cabecera (dentro de un rubro)
+  const [categoria, setCategoria] = useState<string | null>(null)
+
+  // El menú Rubros lleva a /?rubro=…&categoria=…: se aplica el filtro y se
+  // baja a los resultados
+  const params = useSearchParams()
+  const rubroUrl = params.get('rubro')
+  const categoriaUrl = params.get('categoria')
+  const claveUrl = `${rubroUrl ?? ''}|${categoriaUrl ?? ''}`
+  const [urlAplicada, setUrlAplicada] = useState('|')
+  if (claveUrl !== urlAplicada) {
+    setUrlAplicada(claveUrl)
+    if (rubroUrl || categoriaUrl) {
+      setGrupo(rubroUrl)
+      setCategoria(categoriaUrl)
+    }
+  }
+  useEffect(() => {
+    if (rubroUrl || categoriaUrl) document.getElementById('resultados')?.scrollIntoView({ behavior: 'smooth' })
+  }, [rubroUrl, categoriaUrl])
+
+  function elegirRubro(slug: string | null) {
+    setGrupo(slug)
+    setCategoria(null)
+  }
   const [pago, setPago] = useState<Pago>('todos')
   const [orden, setOrden] = useState<Orden>('recientes')
   const [publicado, setPublicado] = useState<Publicado>('cualquiera')
@@ -186,7 +213,7 @@ export default function InicioWeb({
     cambiarModoContexto(m)
     setBusqueda('')
     setTexto('')
-    setGrupo(null)
+    elegirRubro(null)
   }
 
   const filtrados = useMemo(() => {
@@ -199,6 +226,7 @@ export default function InicioWeb({
       if (tipo === 'puntual' && p.jornada && p.jornada !== 'changa') return false
       if (tipo === 'fijo' && (!p.jornada || p.jornada === 'changa')) return false
       if (grupo && p.categorias?.grupo_slug !== grupo) return false
+      if (categoria && p.categoria_slug !== categoria) return false
       if (soloMios && (!misCategorias.includes(p.categoria_slug ?? '') || p.cumple_requisitos === false)) return false
       if (pago === 'con_monto' && !p.monto_ofrecido) return false
       if (pago === 'a_convenir' && !p.monto_a_convenir) return false
@@ -207,17 +235,18 @@ export default function InicioWeb({
     })
     if (orden === 'monto') return [...lista].sort((a, b) => (b.monto_ofrecido ?? 0) - (a.monto_ofrecido ?? 0))
     return lista
-  }, [pedidos, grupo, pago, orden, busqueda, soloMios, misCategorias, publicado, tipo, ahora])
+  }, [pedidos, grupo, pago, orden, busqueda, soloMios, misCategorias, publicado, tipo, ahora, categoria])
 
   const trabajadoresFiltrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase()
     return trabajadores.filter((t) => {
       if (grupo && !t.categorias.some((c) => c.grupoSlug === grupo)) return false
+      if (categoria && !t.categorias.some((c) => c.slug === categoria)) return false
       if (q && !`${t.nombre} ${t.sobreMi ?? ''} ${t.categorias.map((c) => c.nombre).join(' ')}`.toLowerCase().includes(q))
         return false
       return true
     })
-  }, [trabajadores, grupo, busqueda])
+  }, [trabajadores, grupo, categoria, busqueda])
 
   // Tarjeta "Patrocinado" en la grilla: del rubro filtrado si hay, si no general
   const patrocinado = elegirAnuncio(anunciosLista, grupo, semilla)
@@ -232,14 +261,27 @@ export default function InicioWeb({
   function limpiar() {
     setTexto('')
     setBusqueda('')
-    setGrupo(null)
+    elegirRubro(null)
     setPago('todos')
     setPublicado('cualquiera')
     setTipo('todos')
     setSoloMios(false)
   }
 
-  const hayFiltros = !!busqueda || !!grupo || pago !== 'todos' || publicado !== 'cualquiera' || tipo !== 'todos' || soloMios
+  // Todos los rubros en el desplegable (si no llegaron, los destacados)
+  const opcionesRubro =
+    Object.keys(nombresRubro).length > 0
+      ? Object.entries(nombresRubro)
+          .map(([valor, label]) => ({ valor, label }))
+          .sort((x, y) => x.label.localeCompare(y.label, 'es'))
+      : CATEGORIAS_DESTACADAS.map((c) => ({ valor: c.slug as string, label: c.label as string }))
+  const nombreCategoria = categoria
+    ? pedidos.find((p) => p.categoria_slug === categoria)?.categorias?.nombre ??
+      trabajadores.flatMap((t) => t.categorias).find((c) => c.slug === categoria)?.nombre ??
+      categoria.replace(/-/g, ' ')
+    : null
+
+  const hayFiltros = !!busqueda || !!grupo || !!categoria || pago !== 'todos' || publicado !== 'cualquiera' || tipo !== 'todos' || soloMios
 
   return (
     <div>
@@ -360,7 +402,7 @@ export default function InicioWeb({
                 className="rubro-circulo"
                 aria-pressed={activa}
                 onClick={() => {
-                  setGrupo(activa ? null : c.slug)
+                  elegirRubro(activa ? null : c.slug)
                   document.getElementById('resultados')?.scrollIntoView({ behavior: 'smooth' })
                 }}
                 style={{
@@ -535,9 +577,31 @@ export default function InicioWeb({
             <Filtro titulo="Rubro">
               <Desplegable
                 valor={grupo ?? ''}
-                onChange={(v) => setGrupo(v || null)}
-                opciones={[{ valor: '', label: 'Todos los rubros' }, ...CATEGORIAS_DESTACADAS.map((c) => ({ valor: c.slug, label: c.label }))]}
+                onChange={(v) => elegirRubro(v || null)}
+                opciones={[{ valor: '', label: 'Todos los rubros' }, ...opcionesRubro]}
               />
+              {categoria && (
+                <button
+                  type="button"
+                  onClick={() => setCategoria(null)}
+                  aria-label={`Quitar la categoría ${nombreCategoria}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    marginTop: 8,
+                    padding: '5px 9px',
+                    fontSize: 13,
+                    border: 'none',
+                    borderRadius: 6,
+                    background: COLORS.clayTint,
+                    color: COLORS.ink,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {nombreCategoria} <span aria-hidden>✕</span>
+                </button>
+              )}
             </Filtro>
             {seccion === 'trabajos' && (
               <>
@@ -637,8 +701,8 @@ export default function InicioWeb({
 }
 
 // Un trabajo como fila (como un sitio de avisos), en una tarjeta blanca:
-// título (la primera oración), debajo "Rubro › Categoría" y cuándo, el
-// resto de la descripción y las características como etiquetas; a la
+// título (la primera oración), debajo "Rubro › Categoría" y cuándo, la
+// descripción y las características como etiquetas; a la
 // derecha el pago y quién lo publica.
 function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const cat = p.categorias?.nombre ?? 'Trabajo'
@@ -646,7 +710,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
   const quien = p.es_comercio ? p.nombre_comercio : p.usuarios?.nombre
   const precio = p.monto_a_convenir ? 'A convenir' : p.monto_ofrecido ? `$${p.monto_ofrecido.toLocaleString('es-AR')}` : null
   const etiquetas = caracteristicas(p)
-  const { titulo, resto } = tituloYResto(p.descripcion)
+  const titulo = tituloDe(p.descripcion)
   const etiqueta: React.CSSProperties = { fontSize: 12, padding: '3px 8px', borderRadius: 5, whiteSpace: 'nowrap' }
   return (
     <a
@@ -691,7 +755,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
           <span style={{ color: tag.texto }}>{cat}</span>
           {p.fecha_creacion && <span> · {haceCuanto(p.fecha_creacion)}</span>}
         </p>
-        {resto && (
+        {p.descripcion && (
           <p
             style={{
               fontSize: 15,
@@ -699,12 +763,12 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
               color: '#3F3F46',
               margin: '10px 0 0',
               display: '-webkit-box',
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
             }}
           >
-            {resto}
+            {p.descripcion}
           </p>
         )}
         {(etiquetas.length > 0 || tieneRequisitos(p)) && (
