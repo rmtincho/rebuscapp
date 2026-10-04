@@ -18,7 +18,6 @@ import CarruselPublicidad from '@/components/CarruselPublicidad'
 import type { Trabajador } from '@/components/TrabajadoresList'
 import { idsConBloqueo } from '@/lib/bloqueos'
 
-const CENTRO_DEFAULT: [number, number] = [-45.8641, -67.4966]
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -575,7 +574,6 @@ export default async function HomePage() {
         <FeedPedidos
           pedidos={pedidosConRequisitos}
           trabajadores={trabajadores}
-          centro={CENTRO_DEFAULT}
           anunciosLista={anunciosLista}
           semilla={semilla}
           misCategorias={misCategorias}

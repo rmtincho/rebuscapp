@@ -41,16 +41,6 @@ h1, h2, h3 {
   color: #1C1C1E; /* red de seguridad: si algún título no fija su color, no queda invisible */
 }
 
-/* El mapa queda en su color claro original, coherente con el resto de la app ahora */
-
-/* Leaflet usa z-index internos altos (hasta 1000) para sus propias capas
-   (calles, pines, popups). Con "isolation: isolate" el mapa queda en su
-   propia burbuja de apilado: sus z-index internos nunca compiten con
-   elementos de afuera, como el nav inferior. */
-.leaflet-container {
-  isolation: isolate;
-}
-
 input,
 textarea,
 select,

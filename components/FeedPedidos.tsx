@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
-import MapaPedidosWrapper from '@/components/MapaPedidosWrapper'
 import PedidosList from '@/components/PedidosList'
 import TrabajadoresList, { type Trabajador } from '@/components/TrabajadoresList'
 import BannerPublicidad from '@/components/BannerPublicidad'
@@ -12,19 +11,16 @@ import { elegirAnuncio, type AnuncioElegible } from '@/lib/elegirAnuncio'
 import { useModoOpcional } from '@/components/ModoContext'
 
 type Seccion = 'trabajos' | 'trabajadores'
-type Vista = 'lista' | 'mapa'
 
 export default function FeedPedidos({
   pedidos,
   trabajadores,
-  centro,
   anunciosLista = [],
   semilla = 0,
   misCategorias = [],
 }: {
   pedidos: any[]
   trabajadores: Trabajador[]
-  centro: [number, number]
   anunciosLista?: AnuncioElegible[]
   semilla?: number
   // Rubros del perfil de trabajador, para el filtro rápido
@@ -35,12 +31,9 @@ export default function FeedPedidos({
   const seccionFija: Seccion | undefined = modoInicio ? (modoInicio === 'busco' ? 'trabajos' : 'trabajadores') : undefined
   const [seccionElegida, setSeccion] = useState<Seccion>('trabajos')
   const seccion = seccionFija ?? seccionElegida
-  const [vista, setVista] = useState<Vista>('lista')
   // null = "Todas"
   const [grupo, setGrupo] = useState<string | null>(null)
   const filaPillsRef = useRef<HTMLDivElement>(null)
-  const mostrarLista = vista === 'lista'
-  const mostrarMapa = vista === 'mapa'
 
   // "Coinciden con mis habilidades": trabajos de mis rubros cuyos requisitos cumplo
   const [soloMios, setSoloMios] = useState(false)
@@ -52,11 +45,6 @@ export default function FeedPedidos({
   const trabajadoresFiltrados = grupo
     ? trabajadores.filter((t) => t.categorias.some((c) => c.grupoSlug === grupo))
     : trabajadores
-
-  const pedidosConUbicacion = pedidosFiltrados.filter(
-    (p) => p.ubicacion_lat !== null && p.ubicacion_lng !== null
-  )
-  const sinUbicacion = pedidosFiltrados.length - pedidosConUbicacion.length
 
   const labelGrupo = CATEGORIAS_DESTACADAS.find((c) => c.slug === grupo)?.label
 
@@ -102,19 +90,6 @@ export default function FeedPedidos({
 
   const cantidad = seccion === 'trabajos' ? pedidosFiltrados.length : trabajadoresFiltrados.length
 
-  const mapa = (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ borderRadius: 28, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
-        <MapaPedidosWrapper pedidos={pedidosConUbicacion as any} centro={centro} />
-      </div>
-      {sinUbicacion > 0 && (
-        <p style={{ fontSize: 12, color: COLORS.inkSoft, margin: '10px 4px 0' }}>
-          {sinUbicacion} pedido{sinUbicacion > 1 ? 's' : ''} sin ubicación — visible{sinUbicacion > 1 ? 's' : ''} solo en la lista
-        </p>
-      )}
-    </div>
-  )
-
   return (
     <div id="trabajos" style={{ scrollMarginTop: 16 }}>
       {/* Trabajos | Trabajadores */}
@@ -148,45 +123,12 @@ export default function FeedPedidos({
         </div>
       </div>
 
-      {/* Título de la sección + botón redondo Lista/Mapa (solo en Trabajos) */}
-      <div style={{ padding: '8px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+      {/* Título de la sección */}
+      <div style={{ padding: '8px 20px 12px' }}>
         <p style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, letterSpacing: '-0.02em', margin: 0 }}>
           {seccion === 'trabajos' ? 'Trabajos cerca tuyo' : 'Trabajadores'}
           <span style={{ color: COLORS.inkSoft, fontWeight: 400 }}> · {cantidad}</span>
         </p>
-        {seccion === 'trabajos' && (
-          <button
-            type="button"
-            onClick={() => setVista(vista === 'lista' ? 'mapa' : 'lista')}
-            aria-label={vista === 'lista' ? 'Ver en el mapa' : 'Ver como lista'}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px 8px 11px',
-              borderRadius: 100,
-              border: 'none',
-              background: vista === 'mapa' ? COLORS.dark : COLORS.card,
-              color: vista === 'mapa' ? COLORS.onDark : COLORS.ink,
-              boxShadow: COLORS.cardShadow,
-              fontSize: 12.5,
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
-          >
-            {vista === 'lista' ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z" />
-                <path d="M8 2v16M16 6v16" />
-              </svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-              </svg>
-            )}
-            {vista === 'lista' ? 'Mapa' : 'Lista'}
-          </button>
-        )}
       </div>
 
       {/* Filtros: sueltos sobre el fondo, sin recuadro, para que no se
@@ -231,9 +173,7 @@ export default function FeedPedidos({
 
 
       {seccion === 'trabajos' ? (
-        // Mapa arriba (si se eligió) y lista abajo
         <div style={{ padding: '0 20px 20px' }}>
-          {mostrarMapa && mapa}
           <div style={{ minWidth: 0 }}>
             {pedidosFiltrados.length === 0 &&
               vacio(
@@ -243,7 +183,7 @@ export default function FeedPedidos({
                   ? `No hay trabajos de ${labelGrupo} por ahora.`
                   : 'Todavía no hay trabajos publicados. Sé el primero.'
               )}
-            {mostrarLista && pedidosFiltrados.length > 0 && (
+            {pedidosFiltrados.length > 0 && (
               <PedidosList
                 pedidos={pedidosFiltrados as any}
                 patrocinado={

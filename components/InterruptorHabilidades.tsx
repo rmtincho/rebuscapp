@@ -40,9 +40,11 @@ export default function InterruptorHabilidades({
           border: 'none',
           padding: 0,
           position: 'relative',
-          background: activo ? COLORS.dark : COLORS.line,
+          // Apagado: gris marcado (con el color de las líneas no se veía
+          // sobre el fondo claro)
+          background: activo ? COLORS.dark : '#C9C2B5',
           cursor: sinRubros ? 'default' : 'pointer',
-          opacity: sinRubros ? 0.5 : 1,
+          opacity: sinRubros ? 0.65 : 1,
           transition: 'background 0.2s',
         }}
       >
@@ -55,6 +57,7 @@ export default function InterruptorHabilidades({
             height: 22,
             borderRadius: '50%',
             background: activo ? COLORS.clay : COLORS.card,
+            boxShadow: '0 1px 3px rgba(28, 28, 30, 0.3)',
             transition: 'left 0.2s',
           }}
         />
