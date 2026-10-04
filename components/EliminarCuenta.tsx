@@ -36,7 +36,7 @@ export default function EliminarCuenta() {
         <button
           type="button"
           onClick={() => setAbierto(true)}
-          style={{ border: 'none', background: 'none', color: COLORS.redDark, fontSize: 13, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+          style={{ border: 'none', background: 'none', color: COLORS.redDark, fontSize: 13, fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }}
         >
           Eliminar mi cuenta
         </button>
@@ -73,7 +73,7 @@ export default function EliminarCuenta() {
             setError(null)
           }}
           disabled={cargando}
-          style={{ flex: 1, padding: 13, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+          style={{ flex: 1, padding: 13, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
         >
           Cancelar
         </button>

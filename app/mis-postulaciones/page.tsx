@@ -52,7 +52,7 @@ export default async function MisPostulacionesPage() {
         <div style={{ padding: '20px 20px 100px' }}>
           <Link
             href="/"
-            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}
+            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
           </Link>
@@ -62,7 +62,7 @@ export default async function MisPostulacionesPage() {
             style={{
               fontFamily: 'var(--font-display)',
               fontSize: 22,
-              fontWeight: 600,
+              fontWeight: 500,
               color: COLORS.ink,
               margin: '16px 0 20px',
             }}
@@ -124,7 +124,7 @@ export default async function MisPostulacionesPage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: 11,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       padding: '0 6px',
                     }}
                   >
@@ -132,7 +132,7 @@ export default async function MisPostulacionesPage() {
                   </div>
                 )}
 
-                <p style={{ margin: 0, fontWeight: 600, fontSize: 14.5, color: COLORS.ink, paddingRight: sinLeer > 0 ? 70 : 0 }}>
+                <p style={{ margin: 0, fontWeight: 500, fontSize: 14.5, color: COLORS.ink, paddingRight: sinLeer > 0 ? 70 : 0 }}>
                   {pedido.descripcion}
                 </p>
                 <p style={{ margin: '4px 0 8px', fontSize: 12.5, color: COLORS.inkSoft }}>
@@ -141,17 +141,17 @@ export default async function MisPostulacionesPage() {
 
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   {p.estado === 'pendiente' && (
-                    <span style={{ fontSize: 11.5, fontWeight: 600, color: COLORS.inkSoft, background: COLORS.line, padding: '3px 9px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 500, color: COLORS.inkSoft, background: COLORS.line, padding: '3px 9px', borderRadius: 100 }}>
                       Postulación pendiente
                     </span>
                   )}
                   {p.estado === 'aceptada' && (
-                    <span style={{ fontSize: 11.5, fontWeight: 600, color: COLORS.green, background: COLORS.greenTint, padding: '3px 9px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 500, color: COLORS.green, background: COLORS.greenTint, padding: '3px 9px', borderRadius: 100 }}>
                       ✓ Aceptada — {puedeChatear ? 'ir al chat' : ''}
                     </span>
                   )}
                   {p.estado === 'rechazada' && (
-                    <span style={{ fontSize: 11.5, fontWeight: 600, color: COLORS.red, background: COLORS.redTint, padding: '3px 9px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 500, color: COLORS.red, background: COLORS.redTint, padding: '3px 9px', borderRadius: 100 }}>
                       No fue elegida esta vez
                     </span>
                   )}

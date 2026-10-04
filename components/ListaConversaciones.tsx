@@ -155,7 +155,7 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
                   >
                     {nombre}
                   </p>
-                  <span style={{ flexShrink: 0, fontSize: 11.5, color: tieneSinLeer ? COLORS.clayDark : COLORS.inkSoft, fontWeight: 600 }}>
+                  <span style={{ flexShrink: 0, fontSize: 11.5, color: tieneSinLeer ? COLORS.clayDark : COLORS.inkSoft, fontWeight: 500 }}>
                     {cuando(c.ultimo.fecha)}
                   </span>
                 </div>
@@ -164,7 +164,7 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
                     margin: '1px 0 0',
                     fontSize: 12,
                     color: COLORS.inkSoft,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -181,7 +181,7 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
                       margin: 0,
                       fontSize: 13.5,
                       color: tieneSinLeer ? COLORS.ink : COLORS.inkSoft,
-                      fontWeight: tieneSinLeer ? 600 : 400,
+                      fontWeight: tieneSinLeer ? 500 : 400,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',

@@ -113,7 +113,7 @@ export default async function ChatMultiplePage({
         >
           <Link
             href={esSolicitante ? `/pedidos/${id}` : `/pedidos/${id}`}
-            style={{ fontSize: 11.5, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}
+            style={{ fontSize: 11.5, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
           </Link>
@@ -121,7 +121,7 @@ export default async function ChatMultiplePage({
             style={{
               margin: '4px 0 0',
               fontSize: 17,
-              fontWeight: 600,
+              fontWeight: 500,
               color: COLORS.ink,
               fontFamily: 'var(--font-display)',
               textTransform: 'capitalize',
@@ -129,7 +129,7 @@ export default async function ChatMultiplePage({
           >
             {pedido.descripcion}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 600 }}>
+          <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 500 }}>
             <Link
             href={`/prestadores/${otroId}?volver=/pedidos/${id}/chat/${otroId}`}
             style={{ color: 'inherit', textDecoration: 'underline' }}
@@ -160,7 +160,7 @@ export default async function ChatMultiplePage({
                   width: '100%',
                   padding: 10,
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   borderRadius: 100,
                   border: 'none',
                   background: '#15803D',
@@ -182,7 +182,7 @@ export default async function ChatMultiplePage({
                   width: '100%',
                   padding: 10,
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   borderRadius: 100,
                   border: 'none',
                   background: '#DC2626',

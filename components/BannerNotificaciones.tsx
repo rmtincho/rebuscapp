@@ -92,7 +92,7 @@ export default function BannerNotificaciones() {
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 13.5, fontWeight: 600, margin: 0, color: COLORS.texto }}>
+        <p style={{ fontSize: 13.5, fontWeight: 500, margin: 0, color: COLORS.texto }}>
           No te pierdas ningún trabajo
         </p>
         <p style={{ fontSize: 12, margin: '2px 0 0', color: COLORS.texto }}>
@@ -109,7 +109,7 @@ export default function BannerNotificaciones() {
           border: 'none',
           background: COLORS.texto,
           color: '#FFFFFF',
-          fontWeight: 600,
+          fontWeight: 500,
           fontSize: 12.5,
           cursor: 'pointer',
           flexShrink: 0,

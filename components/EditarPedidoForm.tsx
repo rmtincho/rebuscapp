@@ -251,7 +251,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                 border: 'none',
                 background: jornada === 'changa' ? COLORS.card : 'transparent',
                 color: jornada === 'changa' ? COLORS.ink : COLORS.inkSoft,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 boxShadow: jornada === 'changa' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
@@ -273,7 +273,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                 border: 'none',
                 background: jornada !== 'changa' ? COLORS.card : 'transparent',
                 color: jornada !== 'changa' ? COLORS.ink : COLORS.inkSoft,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 boxShadow: jornada !== 'changa' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
@@ -313,7 +313,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                 style={{ ...inputBaseStyle, marginBottom: 14 }}
               />
 
-              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 600, margin: '0 0 8px' }}>
+              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 500, margin: '0 0 8px' }}>
                 ¿De qué rubro es? (opcional)
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
@@ -368,7 +368,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                   {iconoParaCategoria(categoriaNombre)}
                 </span>
                 <span style={{ flex: 1 }}>
-                  <span style={{ display: 'block', fontWeight: 600, color: COLORS.ink }}>{categoriaNombre}</span>
+                  <span style={{ display: 'block', fontWeight: 500, color: COLORS.ink }}>{categoriaNombre}</span>
                   <span style={{ display: 'block', fontSize: 11.5, color: COLORS.inkSoft }}>{grupoNombre}</span>
                 </span>
               </>
@@ -568,7 +568,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                 border: 'none',
                 background: COLORS.navActiveBg,
                 color: COLORS.ink,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 flexShrink: 0,
@@ -591,7 +591,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
               textAlign: 'left',
               cursor: 'pointer',
               color: COLORS.inkSoft,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             📍 Usar mi ubicación actual

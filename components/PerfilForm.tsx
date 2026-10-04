@@ -445,7 +445,7 @@ export default function PerfilForm({
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: 26,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   flexShrink: 0,
                   overflow: 'hidden',
                   backgroundImage: fotoUrl ? `url(${fotoUrl})` : undefined,
@@ -464,7 +464,7 @@ export default function PerfilForm({
                     background: COLORS.dark,
                     color: COLORS.onDark,
                     fontSize: 12.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     cursor: subiendoFoto ? 'default' : 'pointer',
                     opacity: subiendoFoto ? 0.7 : 1,
                   }}
@@ -561,7 +561,7 @@ export default function PerfilForm({
                         background: COLORS.dark,
                         color: COLORS.onDark,
                         fontSize: 12.5,
-                        fontWeight: 600,
+                        fontWeight: 500,
                       }}
                     >
                       {c.nombre}
@@ -601,7 +601,7 @@ export default function PerfilForm({
                   border: 'none',
                   background: COLORS.clayTint,
                   color: COLORS.ink,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   fontSize: 13.5,
                   cursor: 'pointer',
                   marginBottom: 24,
@@ -678,7 +678,7 @@ export default function PerfilForm({
                 ))}
               </div>
               {idiomasDeclarados !== null ? (
-                <p style={{ fontSize: 12.5, fontWeight: 600, color: COLORS.green, marginBottom: 22 }}>
+                <p style={{ fontSize: 12.5, fontWeight: 500, color: COLORS.green, marginBottom: 22 }}>
                   ✓ Contestado
                 </p>
               ) : (
@@ -692,7 +692,7 @@ export default function PerfilForm({
                     padding: '8px 14px',
                     marginBottom: 22,
                     fontSize: 12.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: COLORS.inkSoft,
                     cursor: 'pointer',
                   }}
@@ -743,7 +743,7 @@ export default function PerfilForm({
                   }}
                 >
                   <span style={{ flex: 1 }}>
-                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 600 }}>Aparecer en el listado de trabajadores</span>
+                    <span style={{ display: 'block', fontSize: 14.5, fontWeight: 500 }}>Aparecer en el listado de trabajadores</span>
                     <span style={{ display: 'block', fontSize: 12.5, color: COLORS.inkSoft, marginTop: 3, lineHeight: 1.4 }}>
                       Tu nombre, foto, categorías y presentación se muestran en el inicio para que te contacten. Podés sacarlo cuando quieras.
                     </span>
@@ -815,7 +815,7 @@ export default function PerfilForm({
 function ContadorTexto({ texto, completo }: { texto: string; completo: boolean }) {
   const largo = texto.trim().length
   return (
-    <p style={{ fontSize: 12, color: completo ? COLORS.green : COLORS.inkSoft, marginBottom: 22, fontWeight: 600 }}>
+    <p style={{ fontSize: 12, color: completo ? COLORS.green : COLORS.inkSoft, marginBottom: 22, fontWeight: 500 }}>
       {largo < 100
         ? `${largo} / 100 caracteres mínimo`
         : completo

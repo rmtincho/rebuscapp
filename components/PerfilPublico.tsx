@@ -54,7 +54,7 @@ const tituloSeccion: React.CSSProperties = {
   background: COLORS.dark,
   color: COLORS.onDark,
   fontSize: 13,
-  fontWeight: 600,
+  fontWeight: 500,
   padding: '7px 14px',
   borderRadius: 100,
   marginBottom: 16,
@@ -71,7 +71,7 @@ const tarjeta: React.CSSProperties = {
 const chip: React.CSSProperties = {
   display: 'inline-block',
   fontSize: 12.5,
-  fontWeight: 600,
+  fontWeight: 500,
   color: COLORS.ink,
   background: COLORS.iconBg,
   padding: '6px 12px',
@@ -186,7 +186,7 @@ export default function PerfilPublico({
         <div style={{ padding: '20px 16px 40px' }}>
           <Link
             href={volver}
-            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}
+            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
           </Link>
@@ -271,7 +271,7 @@ export default function PerfilPublico({
                 <div key={i} style={{ padding: '12px 0', borderTop: i > 0 ? `1px solid ${COLORS.line}` : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <Estrellas valor={c.estrellas} />
-                    <span style={{ fontSize: 11.5, color: COLORS.inkSoft, fontWeight: 600 }}>
+                    <span style={{ fontSize: 11.5, color: COLORS.inkSoft, fontWeight: 500 }}>
                       {c.tipo === 'solicitante_a_prestador' ? 'Como trabajador' : 'Como quien ofreció'}
                       {c.fecha && ` · ${formatearFechaCorta(c.fecha)}`}
                     </span>

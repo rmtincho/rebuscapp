@@ -165,7 +165,7 @@ export default function CalificarForm({
                     padding: '9px 15px',
                     borderRadius: 100,
                     fontSize: 12.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     border: `1.5px solid ${activo ? COLORS.ink : COLORS.line}`,
                     background: activo ? COLORS.navActiveBg : 'transparent',
                     color: activo ? COLORS.ink : COLORS.inkSoft,

@@ -64,6 +64,15 @@ const TAGS = [
   { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
 ]
 
+// Fondos de los círculos de rubro, alternados para que la fila no sea un
+// bloque de un solo color. Verde y rojo quedan afuera: son de estados.
+const COLORES_RUBRO = [
+  { fondo: COLORS.clayTint, texto: COLORS.clayDark },
+  { fondo: COLORS.tagBlue, texto: COLORS.tagBlueText },
+  { fondo: COLORS.tagOrange, texto: COLORS.tagOrangeText },
+  { fondo: COLORS.tagPink, texto: COLORS.tagPinkText },
+]
+
 function tagDe(nombre: string) {
   let h = 0
   for (const c of nombre) h = (h * 31 + c.charCodeAt(0)) >>> 0
@@ -173,14 +182,15 @@ export default function InicioWeb({
   const hayFiltros = !!busqueda || !!grupo || pago !== 'todos' || soloMios
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 24px 80px' }}>
-      {/* ——— Bienvenida con buscador, con el color del modo ——— */}
-      <section
+    <div>
+      {/* ——— Bienvenida con buscador, con el color del modo: de lado a lado,
+          pegada a la cabecera; el contenido con el mismo ancho que el resto ——— */}
+      <section style={{ background: tema.fondo, color: tema.texto }}>
+      <div
         style={{
-          background: tema.fondo,
-          color: tema.texto,
-          borderRadius: 32,
-          padding: '40px 44px',
+          maxWidth: 1200,
+          margin: '0 auto',
+          padding: '44px 24px 48px',
           display: 'grid',
           gridTemplateColumns: 'minmax(0, 1fr) 300px',
           gap: 40,
@@ -188,7 +198,7 @@ export default function InicioWeb({
         }}
       >
         <div>
-          <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: tema.superficie, borderRadius: 100, padding: 4, marginBottom: 22 }}>
+          <div role="tablist" aria-label="¿Qué querés hacer?" style={{ display: 'inline-flex', background: tema.superficie, borderRadius: 10, padding: 4, marginBottom: 22 }}>
             {(
               [
                 ['busco', 'Busco trabajo'],
@@ -203,7 +213,7 @@ export default function InicioWeb({
                 onClick={() => cambiarModo(v)}
                 style={{
                   padding: '10px 20px',
-                  borderRadius: 100,
+                  borderRadius: 7,
                   border: 'none',
                   background: modo === v ? tema.activo : 'transparent',
                   color: modo === v ? tema.sobreActivo : tema.textoSuave,
@@ -216,7 +226,7 @@ export default function InicioWeb({
               </button>
             ))}
           </div>
-          <p style={{ fontSize: 16, fontWeight: 600, color: tema.textoSuave, margin: '0 0 6px' }}>
+          <p style={{ fontSize: 16, fontWeight: 500, color: tema.textoSuave, margin: '0 0 6px' }}>
             {nombre ? `Hola, ${nombre}` : 'Hola'}
           </p>
           <h1 style={{ fontSize: 46, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, margin: '0 0 24px', color: tema.texto }}>
@@ -229,7 +239,7 @@ export default function InicioWeb({
               alignItems: 'center',
               gap: 8,
               background: COLORS.card,
-              borderRadius: 100,
+              borderRadius: 10,
               padding: 6,
               boxShadow: '0 12px 30px rgba(80, 60, 20, 0.15)',
               maxWidth: 640,
@@ -251,7 +261,7 @@ export default function InicioWeb({
               type="submit"
               style={{
                 padding: '13px 26px',
-                borderRadius: 100,
+                borderRadius: 7,
                 border: 'none',
                 background: COLORS.dark,
                 color: COLORS.onDark,
@@ -271,9 +281,9 @@ export default function InicioWeb({
               { n: pedidos.length, l: pedidos.length === 1 ? 'trabajo abierto' : 'trabajos abiertos' },
               { n: trabajadores.length, l: trabajadores.length === 1 ? 'trabajador' : 'trabajadores' },
             ].map((d) => (
-              <div key={d.l} style={{ background: tema.superficie, borderRadius: 20, padding: '16px 16px 14px' }}>
+              <div key={d.l} style={{ background: tema.superficie, borderRadius: 10, padding: '16px 16px 14px' }}>
                 <p style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', margin: 0, color: tema.texto }}>{d.n}</p>
-                <p style={{ fontSize: 13, fontWeight: 600, margin: 0, color: tema.textoSuave }}>{d.l}</p>
+                <p style={{ fontSize: 13, fontWeight: 500, margin: 0, color: tema.textoSuave }}>{d.l}</p>
               </div>
             ))}
           </div>
@@ -283,12 +293,12 @@ export default function InicioWeb({
               display: 'block',
               background: modo === 'ofrezco' ? COLORS.clay : COLORS.dark,
               color: modo === 'ofrezco' ? COLORS.onClay : COLORS.onDark,
-              borderRadius: 20,
+              borderRadius: 10,
               padding: '18px 18px',
               textDecoration: 'none',
             }}
           >
-            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : COLORS.onDark, margin: '0 0 4px', fontWeight: 600 }}>
+            <p style={{ fontSize: 13, color: modo === 'ofrezco' ? 'rgba(28,28,30,0.7)' : COLORS.onDark, margin: '0 0 4px', fontWeight: 500 }}>
               {modo === 'ofrezco' ? 'Les avisamos a los del rubro' : '¿Necesitás a alguien?'}
             </p>
             <p style={{ fontSize: 17, fontWeight: 700, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -297,63 +307,76 @@ export default function InicioWeb({
             </p>
           </EnlaceConCarga>
         </div>
+      </div>
       </section>
 
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
       {/* ——— Rubros ——— */}
       <section style={{ marginTop: 36 }}>
         <h2 style={{ ...tituloSeccion, marginBottom: 16 }}>Explorá por rubro</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: 12 }}>
-          {[{ slug: null, label: 'Todos' }, ...CATEGORIAS_DESTACADAS].map((c) => {
+        {/* Círculos sueltos con el nombre abajo, sin tarjeta: cada rubro con su
+            color, el elegido en oscuro con un aro alrededor */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+          {[{ slug: null, label: 'Todos' }, ...CATEGORIAS_DESTACADAS].map((c, i) => {
             const activa = grupo === c.slug
+            const color = COLORES_RUBRO[i % COLORES_RUBRO.length]
             return (
               <button
                 key={c.label}
                 type="button"
+                className="rubro-circulo"
+                aria-pressed={activa}
                 onClick={() => {
                   setGrupo(activa ? null : c.slug)
                   document.getElementById('resultados')?.scrollIntoView({ behavior: 'smooth' })
                 }}
                 style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   gap: 10,
-                  padding: '14px 14px',
-                  borderRadius: 18,
+                  padding: 0,
                   border: 'none',
-                  background: activa ? COLORS.dark : COLORS.card,
-                  color: activa ? COLORS.onDark : COLORS.ink,
-                  boxShadow: COLORS.cardShadow,
+                  background: 'none',
+                  color: COLORS.ink,
                   cursor: 'pointer',
-                  textAlign: 'left',
-                  fontSize: 14,
-                  fontWeight: 600,
+                  fontSize: 13.5,
+                  fontWeight: activa ? 700 : 400,
+                  lineHeight: 1.25,
+                  textAlign: 'center',
                 }}
               >
                 <span
+                  className="rubro-disco"
                   style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 12,
+                    width: 72,
+                    height: 72,
+                    borderRadius: '50%',
                     flexShrink: 0,
-                    background: activa ? 'rgba(255,255,255,0.12)' : COLORS.clayTint,
-                    color: activa ? COLORS.clay : COLORS.clayDark,
+                    background: activa ? COLORS.dark : color.fondo,
+                    color: activa ? COLORS.clay : color.texto,
+                    boxShadow: activa ? `0 0 0 3px ${COLORS.paper}, 0 0 0 5px ${COLORS.dark}` : 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  {c.slug ? (
-                    iconoParaCategoria(c.label)
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                    </svg>
-                  )}
+                  <span style={{ display: 'flex', transform: 'scale(1.35)' }}>
+                    {c.slug ? (
+                      iconoParaCategoria(c.label)
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <circle cx="7" cy="7" r="3.2" />
+                        <circle cx="17" cy="7" r="3.2" />
+                        <circle cx="7" cy="17" r="3.2" />
+                        <circle cx="17" cy="17" r="3.2" />
+                      </svg>
+                    )}
+                  </span>
                 </span>
-                <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.label}</span>
+                <span style={{ maxWidth: 96 }}>{c.label}</span>
               </button>
             )
           })}
@@ -367,12 +390,12 @@ export default function InicioWeb({
             <h2 style={tituloSeccion}>Tu actividad</h2>
             <div style={{ display: 'flex', gap: 18 }}>
               {modo === 'busco' && (
-                <a href="/mis-postulaciones" style={{ fontSize: 14, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none' }}>
+                <a href="/mis-postulaciones" style={{ fontSize: 14, fontWeight: 500, color: COLORS.clayDark, textDecoration: 'none' }}>
                   Mis postulaciones →
                 </a>
               )}
               {modo === 'ofrezco' && tieneHistorial && (
-                <a href="/historial" style={{ fontSize: 14, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none' }}>
+                <a href="/historial" style={{ fontSize: 14, fontWeight: 500, color: COLORS.clayDark, textDecoration: 'none' }}>
                   Historial →
                 </a>
               )}
@@ -390,7 +413,7 @@ export default function InicioWeb({
                     position: 'relative',
                     background: a.sinLeer > 0 ? COLORS.dark : COLORS.card,
                     color: a.sinLeer > 0 ? COLORS.onDark : COLORS.ink,
-                    borderRadius: 22,
+                    borderRadius: 12,
                     padding: 18,
                     boxShadow: COLORS.cardShadow,
                     textDecoration: 'none',
@@ -409,11 +432,11 @@ export default function InicioWeb({
                       {a.tipo === 'pedido' ? 'Tu pedido' : 'Tu postulación'}
                     </span>
                     {a.sinLeer > 0 ? (
-                      <span style={{ fontSize: 13, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 100 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, background: COLORS.clay, color: COLORS.onClay, padding: '4px 10px', borderRadius: 5 }}>
                         {a.sinLeer} mensaje{a.sinLeer > 1 ? 's' : ''} nuevo{a.sinLeer > 1 ? 's' : ''}
                       </span>
                     ) : (
-                      <span style={{ fontSize: 13, fontWeight: 600, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 100 }}>
+                      <span style={{ fontSize: 13, fontWeight: 500, background: est.fondo, color: est.texto, padding: '4px 10px', borderRadius: 5 }}>
                         {a.estado}
                       </span>
                     )}
@@ -453,7 +476,7 @@ export default function InicioWeb({
                 background: tema.fondoBarra,
                 color: tema.texto,
                 padding: '6px 12px',
-                borderRadius: 100,
+                borderRadius: 5,
               }}
             >
               {tema.nombre}
@@ -483,14 +506,7 @@ export default function InicioWeb({
         <div style={{ display: 'grid', gridTemplateColumns: '250px minmax(0, 1fr)', gap: 28, alignItems: 'start' }}>
           {/* Filtros, y debajo un espacio de publicidad */}
           <div>
-          <aside
-            style={{
-              background: COLORS.card,
-              borderRadius: 22,
-              padding: 20,
-              boxShadow: COLORS.cardShadow,
-            }}
-          >
+          <aside>
             {seccion === 'trabajos' && (
               <div style={{ marginBottom: 18, paddingBottom: 16, borderBottom: `1px solid ${COLORS.line}` }}>
                 <InterruptorHabilidades activo={soloMios} onChange={setSoloMios} sinRubros={misCategorias.length === 0} />
@@ -562,7 +578,7 @@ export default function InicioWeb({
             ) : filtrados.length === 0 ? (
               <Vacio texto={hayFiltros ? 'No hay trabajos con esos filtros.' : 'Todavía no hay trabajos publicados. Sé el primero.'} />
             ) : vista === 'mapa' ? (
-              <div style={{ borderRadius: 26, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
+              <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: COLORS.cardShadow }}>
                 <MapaPedidosWrapper pedidos={conUbicacion as never} centro={centro} alto="calc(100vh - var(--alto-cabecera) - 140px)" />
               </div>
             ) : (
@@ -580,6 +596,7 @@ export default function InicioWeb({
           </div>
         </div>
       </section>
+      </div>
     </div>
   )
 }
@@ -597,7 +614,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         flexDirection: 'column',
         gap: 14,
         background: COLORS.card,
-        borderRadius: 22,
+        borderRadius: 12,
         padding: 18,
         boxShadow: COLORS.cardShadow,
         textDecoration: 'none',
@@ -610,7 +627,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
           style={{
             width: 42,
             height: 42,
-            borderRadius: 14,
+            borderRadius: 8,
             background: tag.fondo,
             color: tag.texto,
             display: 'flex',
@@ -620,7 +637,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
         >
           {iconoParaCategoria(cat)}
         </span>
-        <span style={{ fontSize: 13, color: COLORS.inkSoft, fontWeight: 600 }}>{p.fecha_creacion ? haceCuanto(p.fecha_creacion) : ''}</span>
+        <span style={{ fontSize: 13, color: COLORS.inkSoft, fontWeight: 500 }}>{p.fecha_creacion ? haceCuanto(p.fecha_creacion) : ''}</span>
       </div>
       <div style={{ flex: 1 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: tag.texto }}>{cat}</span>
@@ -644,7 +661,7 @@ function TarjetaTrabajo({ p }: { p: PedidoWeb }) {
           {quien ?? ''}
         </span>
         {precio && (
-          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blue, color: '#FFFFFF', padding: '5px 11px', borderRadius: 100 }}>
+          <span style={{ flexShrink: 0, fontSize: 14, fontWeight: 700, background: COLORS.blue, color: '#FFFFFF', padding: '5px 11px', borderRadius: 5 }}>
             {precio}
           </span>
         )}
@@ -663,7 +680,7 @@ function Segmento({
   onChange: (v: string) => void
 }) {
   return (
-    <div style={{ display: 'flex', background: COLORS.card, borderRadius: 100, padding: 4, boxShadow: COLORS.cardShadow }}>
+    <div style={{ display: 'flex', background: COLORS.card, borderRadius: 10, padding: 4, boxShadow: COLORS.cardShadow }}>
       {opciones.map((o) => (
         <button
           key={o.valor}
@@ -671,12 +688,12 @@ function Segmento({
           onClick={() => onChange(o.valor)}
           style={{
             padding: '9px 18px',
-            borderRadius: 100,
+            borderRadius: 7,
             border: 'none',
             background: valor === o.valor ? COLORS.dark : 'transparent',
             color: valor === o.valor ? COLORS.onDark : COLORS.inkSoft,
             fontSize: 14,
-            fontWeight: 600,
+            fontWeight: 500,
             cursor: 'pointer',
           }}
         >
@@ -708,7 +725,7 @@ function OpcionFiltro({ activa, onClick, children }: { activa: boolean; onClick:
         alignItems: 'center',
         gap: 10,
         padding: '7px 8px',
-        borderRadius: 10,
+        borderRadius: 6,
         border: 'none',
         background: activa ? COLORS.clayTint : 'transparent',
         color: COLORS.ink,
@@ -736,7 +753,7 @@ function OpcionFiltro({ activa, onClick, children }: { activa: boolean; onClick:
 
 function Vacio({ texto }: { texto: string }) {
   return (
-    <div style={{ background: COLORS.card, border: `2px dashed ${COLORS.line}`, borderRadius: 22, padding: 40, textAlign: 'center' }}>
+    <div style={{ background: COLORS.card, border: `2px dashed ${COLORS.line}`, borderRadius: 12, padding: 40, textAlign: 'center' }}>
       <p style={{ color: COLORS.inkSoft, fontSize: 15, margin: 0 }}>{texto}</p>
     </div>
   )

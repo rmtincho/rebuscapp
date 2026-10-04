@@ -109,7 +109,7 @@ function CuentaOficial({ volver }: { volver: string }) {
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: '20px 16px 40px' }}>
-          <Link href={volver} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}>
+          <Link href={volver} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}>
             ← Volver
           </Link>
           <div
@@ -123,7 +123,7 @@ function CuentaOficial({ volver }: { volver: string }) {
               textAlign: 'center',
             }}
           >
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, color: COLORS.ink, margin: 0 }}>
               Cuenta oficial de Rebuscapp
             </p>
             <p style={{ fontSize: 13.5, color: COLORS.inkSoft, lineHeight: 1.5, margin: '8px 0 0' }}>

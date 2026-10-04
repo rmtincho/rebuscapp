@@ -66,7 +66,7 @@ export function TituloSeccion({ children }: { children: React.ReactNode }) {
 // Etiqueta secundaria, más chica, subordinada a un TituloSeccion (ej. "Nivel educativo requerido" dentro de "Requisitos")
 export function Etiqueta({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 10, fontWeight: 600 }}>
+    <p style={{ fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 10, fontWeight: 500 }}>
       {children}
     </p>
   )
@@ -93,7 +93,7 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
 
 export function LinkVolver({ href, children = '← Volver' }: { href: string; children?: React.ReactNode }) {
   return (
-    <a href={href} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}>
+    <a href={href} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}>
       {children}
     </a>
   )
@@ -161,7 +161,7 @@ export function Chip({
         padding: '9px 15px',
         borderRadius: 100,
         fontSize: 12.5,
-        fontWeight: 600,
+        fontWeight: 500,
         border: `1.5px solid ${activo ? COLORS.dark : COLORS.line}`,
         background: activo ? COLORS.dark : COLORS.card,
         color: activo ? COLORS.onDark : COLORS.inkSoft,
@@ -175,13 +175,13 @@ export function Chip({
 
 export function MensajeError({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ color: COLORS.red, fontSize: 13, marginBottom: 16, fontWeight: 600 }}>{children}</p>
+    <p style={{ color: COLORS.red, fontSize: 13, marginBottom: 16, fontWeight: 500 }}>{children}</p>
   )
 }
 
 export function MensajeExito({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ color: COLORS.green, fontSize: 13, marginBottom: 16, fontWeight: 600 }}>{children}</p>
+    <p style={{ color: COLORS.green, fontSize: 13, marginBottom: 16, fontWeight: 500 }}>{children}</p>
   )
 }
 
@@ -198,12 +198,12 @@ export function BarraProgreso({ porcentaje }: { porcentaje: number }) {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink }}>Perfil completado</span>
+        <span style={{ fontSize: 13, fontWeight: 500, color: COLORS.ink }}>Perfil completado</span>
         <span
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: 18,
-            fontWeight: 600,
+            fontWeight: 500,
             color: COLORS.ink,
           }}
         >

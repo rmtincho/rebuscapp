@@ -83,7 +83,7 @@ const ICONOS: Record<DatoResumen['tipo'], React.ReactNode> = {
 const pillClara: React.CSSProperties = {
   display: 'inline-block',
   fontSize: 12.5,
-  fontWeight: 600,
+  fontWeight: 500,
   color: COLORS.ink,
   background: 'rgba(255, 255, 255, 0.55)',
   padding: '6px 12px',
@@ -184,7 +184,7 @@ export default function TarjetaPerfil({
             gap: '4px 14px',
             margin: '6px 0 0',
             fontSize: 13.5,
-            fontWeight: 600,
+            fontWeight: 500,
             lineHeight: 1.4,
             color: 'rgba(28, 28, 30, 0.75)',
           }}

@@ -89,7 +89,7 @@ export default function CompletarDatosForm({
         <Subtitulo>Necesitamos esto para que puedas postularte a trabajos. Es una sola vez.</Subtitulo>
         </div>
         <form onSubmit={guardar} style={{ marginTop: 16 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, marginBottom: 8 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, marginBottom: 8 }}>
             Nombre
           </label>
           <input
@@ -100,7 +100,7 @@ export default function CompletarDatosForm({
             style={{ ...inputBaseStyle, marginBottom: 18 }}
           />
 
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, marginBottom: 8 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, marginBottom: 8 }}>
             Apellido
           </label>
           <input
@@ -111,7 +111,7 @@ export default function CompletarDatosForm({
             style={{ ...inputBaseStyle, marginBottom: 18 }}
           />
 
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, marginBottom: 8 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, marginBottom: 8 }}>
             Edad
           </label>
           <input
@@ -122,7 +122,7 @@ export default function CompletarDatosForm({
             style={{ ...inputBaseStyle, marginBottom: 18 }}
           />
 
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, marginBottom: 8 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, marginBottom: 8 }}>
             DNI
           </label>
           <input

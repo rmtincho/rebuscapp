@@ -73,7 +73,7 @@ export default function FormAnuncio({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '0 0 16px' }}>
         <p style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{inicial ? 'Editar anuncio' : 'Nuevo anuncio'}</p>
         {inicial && (
-          <a href="/admin/anuncios" style={{ fontSize: 13, fontWeight: 600, color: COLORS.inkSoft }}>
+          <a href="/admin/anuncios" style={{ fontSize: 13, fontWeight: 500, color: COLORS.inkSoft }}>
             Cancelar
           </a>
         )}

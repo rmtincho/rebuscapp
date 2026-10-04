@@ -231,7 +231,7 @@ export default async function HomePage() {
 
   const tituloSeccion: React.CSSProperties = {
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: 500,
     color: COLORS.ink,
     letterSpacing: '-0.01em',
     margin: '0 0 12px',
@@ -394,7 +394,7 @@ export default async function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
               <p style={tituloSeccion}>Trabajos que publicaste</p>
               {tieneHistorial && (
-                <a href="/historial" style={{ fontSize: 13, fontWeight: 600, color: COLORS.clayDark, textDecoration: 'none', flexShrink: 0 }}>
+                <a href="/historial" style={{ fontSize: 13, fontWeight: 500, color: COLORS.clayDark, textDecoration: 'none', flexShrink: 0 }}>
                   Historial →
                 </a>
               )}
@@ -562,7 +562,7 @@ export default async function HomePage() {
 
         <div style={{ padding: '0 20px 8px' }}>
           {error && (
-            <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
+            <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 500, marginBottom: 12 }}>
               Error trayendo pedidos: {error.message}
             </p>
           )}

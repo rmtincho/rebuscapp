@@ -157,7 +157,7 @@ export default function PedidosList({ pedidos, patrocinado }: { pedidos: Pedido[
                       background: COLORS.blue,
                       color: '#FFFFFF',
                       fontSize: 13.5,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       padding: '5px 10px',
                       borderRadius: 100,
                       whiteSpace: 'nowrap',

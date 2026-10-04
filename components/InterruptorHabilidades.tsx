@@ -16,11 +16,11 @@ export default function InterruptorHabilidades({
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
       <div style={{ minWidth: 0 }}>
-        <p style={{ fontSize: 14, fontWeight: 600, color: sinRubros ? COLORS.inkSoft : COLORS.ink, margin: 0 }}>
+        <p style={{ fontSize: 14, fontWeight: 500, color: sinRubros ? COLORS.inkSoft : COLORS.ink, margin: 0 }}>
           Coinciden con mis habilidades
         </p>
         {sinRubros && (
-          <a href="/perfil#trabajador" style={{ fontSize: 12.5, color: COLORS.clayDark, fontWeight: 600 }}>
+          <a href="/perfil#trabajador" style={{ fontSize: 12.5, color: COLORS.clayDark, fontWeight: 500 }}>
             Cargá tus rubros en tu perfil
           </a>
         )}

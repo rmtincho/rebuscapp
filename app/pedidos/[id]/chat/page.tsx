@@ -89,7 +89,7 @@ export default async function ChatPage({
         >
           <Link
             href={`/pedidos/${id}`}
-            style={{ fontSize: 11.5, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}
+            style={{ fontSize: 11.5, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
           </Link>
@@ -97,7 +97,7 @@ export default async function ChatPage({
             style={{
               margin: '4px 0 0',
               fontSize: 17,
-              fontWeight: 600,
+              fontWeight: 500,
               color: COLORS.ink,
               fontFamily: 'var(--font-display)',
               textTransform: 'capitalize',
@@ -105,7 +105,7 @@ export default async function ChatPage({
           >
             {pedido.descripcion}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 600 }}>
+          <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 500 }}>
             <Link
             href={`/prestadores/${otroUsuarioId}?volver=/pedidos/${id}/chat`}
             style={{ color: 'inherit', textDecoration: 'underline' }}

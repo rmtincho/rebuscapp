@@ -98,7 +98,7 @@ export default async function HistorialPage() {
 
   const subtitulo: React.CSSProperties = {
     fontSize: 12,
-    fontWeight: 600,
+    fontWeight: 500,
     color: COLORS.inkSoft,
     margin: '14px 0 8px',
   }
@@ -213,7 +213,7 @@ function FilaPersona({ id, persona: p, detalle }: { id: string; persona: Persona
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 14,
-          fontWeight: 600,
+          fontWeight: 500,
           flexShrink: 0,
           backgroundImage: p?.foto_perfil_url ? `url(${p.foto_perfil_url})` : undefined,
           backgroundSize: 'cover',

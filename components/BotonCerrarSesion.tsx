@@ -22,7 +22,7 @@ export default function BotonCerrarSesion() {
         background: 'none',
         color: COLORS.inkSoft,
         fontSize: 13,
-        fontWeight: 600,
+        fontWeight: 500,
         cursor: 'pointer',
         textDecoration: 'underline',
       }}

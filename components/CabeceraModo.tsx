@@ -40,7 +40,7 @@ export default function CabeceraModo({
           <span
             style={{
               ...circulo,
-              fontWeight: 600,
+              fontWeight: 500,
               fontSize: 16,
               backgroundImage: foto ? `url(${foto})` : undefined,
               backgroundSize: 'cover',
@@ -61,12 +61,12 @@ export default function CabeceraModo({
         </a>
       </div>
 
-      <h1 style={{ margin: '18px 0 0', color: tema.texto, fontSize: 24, fontWeight: 600, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+      <h1 style={{ margin: '18px 0 0', color: tema.texto, fontSize: 24, fontWeight: 500, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
         {modo === 'busco' ? 'Trabajo cerca tuyo' : '¿A quién necesitás?'}
       </h1>
 
       {modo === 'busco' ? (
-        <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 600, color: tema.textoSuave }}>
+        <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 500, color: tema.textoSuave }}>
           {cantidadTrabajos === 1 ? '1 trabajo abierto' : `${cantidadTrabajos} trabajos abiertos`} · postulate y chateá
         </p>
       ) : (

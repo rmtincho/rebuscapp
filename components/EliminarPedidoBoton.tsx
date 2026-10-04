@@ -58,7 +58,7 @@ export default function EliminarPedidoBoton({ pedidoId }: { pedidoId: string }) 
         background: 'transparent',
         color: '#B91C1C',
         fontSize: 13,
-        fontWeight: 600,
+        fontWeight: 500,
         cursor: 'pointer',
       }}
     >

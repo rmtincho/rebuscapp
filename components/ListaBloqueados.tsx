@@ -44,12 +44,12 @@ export default function ListaBloqueados({ personas }: { personas: PersonaBloquea
               borderTop: i > 0 ? `1px solid ${COLORS.line}` : 'none',
             }}
           >
-            <span style={{ fontSize: 14, color: COLORS.ink, fontWeight: 600 }}>{p.nombre}</span>
+            <span style={{ fontSize: 14, color: COLORS.ink, fontWeight: 500 }}>{p.nombre}</span>
             <button
               type="button"
               onClick={() => handleDesbloquear(p.id)}
               disabled={cargandoId === p.id}
-              style={{ border: `1.5px solid ${COLORS.line}`, background: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, color: COLORS.ink, cursor: 'pointer' }}
+              style={{ border: `1.5px solid ${COLORS.line}`, background: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 12.5, fontWeight: 500, color: COLORS.ink, cursor: 'pointer' }}
             >
               {cargandoId === p.id ? 'Desbloqueando...' : 'Desbloquear'}
             </button>

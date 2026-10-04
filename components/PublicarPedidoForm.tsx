@@ -257,7 +257,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                 border: 'none',
                 background: jornada === 'changa' ? COLORS.card : 'transparent',
                 color: jornada === 'changa' ? COLORS.ink : COLORS.inkSoft,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 boxShadow: jornada === 'changa' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
@@ -279,7 +279,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                 border: 'none',
                 background: jornada !== 'changa' ? COLORS.card : 'transparent',
                 color: jornada !== 'changa' ? COLORS.ink : COLORS.inkSoft,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 boxShadow: jornada !== 'changa' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
@@ -319,7 +319,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                 style={{ ...inputBaseStyle, marginBottom: 14 }}
               />
 
-              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 600, margin: '0 0 8px' }}>
+              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 500, margin: '0 0 8px' }}>
                 ¿De qué rubro es? (opcional)
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
@@ -374,7 +374,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                   {iconoParaCategoria(categoriaNombre)}
                 </span>
                 <span style={{ flex: 1 }}>
-                  <span style={{ display: 'block', fontWeight: 600, color: COLORS.ink }}>{categoriaNombre}</span>
+                  <span style={{ display: 'block', fontWeight: 500, color: COLORS.ink }}>{categoriaNombre}</span>
                   <span style={{ display: 'block', fontSize: 11.5, color: COLORS.inkSoft }}>{grupoNombre}</span>
                 </span>
               </>
@@ -436,7 +436,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                     border: `1.5px solid ${COLORS.line}`,
                     background: COLORS.card,
                     color: COLORS.inkSoft,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     fontSize: 12,
                     cursor: 'pointer',
                   }}
@@ -461,7 +461,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
 
           {sugerencias.length > 0 && !categoriaSlug && (
             <div style={{ marginBottom: 20 }}>
-              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 600, margin: '0 0 8px' }}>
+              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 500, margin: '0 0 8px' }}>
                 ¿Es alguna de estas? Tocá para elegir
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -479,7 +479,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                       border: `1.5px solid ${COLORS.clay}`,
                       background: COLORS.card,
                       color: COLORS.clayDark,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       fontSize: 12.5,
                       cursor: 'pointer',
                     }}
@@ -640,7 +640,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
                 border: 'none',
                 background: COLORS.navActiveBg,
                 color: COLORS.ink,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 13,
                 cursor: 'pointer',
                 flexShrink: 0,
@@ -663,7 +663,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
               textAlign: 'left',
               cursor: 'pointer',
               color: COLORS.inkSoft,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             📍 Usar mi ubicación actual

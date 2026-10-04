@@ -48,7 +48,7 @@ export default function SelectorModo() {
                 color: activo ? tema.sobreActivo : tema.textoSuave,
                 // Achica un poco en celulares angostos (320 px) para que entre
                 fontSize: 'clamp(13px, 4.1vw, 14.5px)',
-                fontWeight: activo ? 700 : 600,
+                fontWeight: activo ? 700 : 500,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',

@@ -132,7 +132,7 @@ export default function LoginPage() {
 
       {paso === 'email' && (
         <form onSubmit={conContrasena ? entrarConContrasena : enviarCodigo}>
-          <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: COLORS.inkSoft, fontWeight: 600 }}>
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: COLORS.inkSoft, fontWeight: 500 }}>
             Tu email
           </label>
           <input
@@ -169,14 +169,14 @@ export default function LoginPage() {
               setContrasena('')
               setError(null)
             }}
-            style={{ width: '100%', padding: 12, marginTop: 6, fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+            style={{ width: '100%', padding: 12, marginTop: 6, fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
           >
             {conContrasena ? 'Entrar con un código por mail' : 'Ya tengo contraseña'}
           </button>
           <p style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 14, textAlign: 'center', lineHeight: 1.5 }}>
             Al continuar aceptás los{' '}
-            <a href="/terminos" style={{ color: COLORS.ink, fontWeight: 600 }}>Términos y condiciones</a> y la{' '}
-            <a href="/privacidad" style={{ color: COLORS.ink, fontWeight: 600 }}>Política de privacidad</a>.
+            <a href="/terminos" style={{ color: COLORS.ink, fontWeight: 500 }}>Términos y condiciones</a> y la{' '}
+            <a href="/privacidad" style={{ color: COLORS.ink, fontWeight: 500 }}>Política de privacidad</a>.
           </p>
         </form>
       )}
@@ -209,7 +209,7 @@ export default function LoginPage() {
               setOtp('')
               setError(null)
             }}
-            style={{ width: '100%', padding: 12, marginTop: 10, fontSize: 13, fontWeight: 600, color: COLORS.inkSoft, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+            style={{ width: '100%', padding: 12, marginTop: 10, fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
           >
             ← Usar otro email
           </button>
@@ -217,7 +217,7 @@ export default function LoginPage() {
       )}
 
       {error && (
-        <p style={{ color: COLORS.sage, fontSize: 13, marginTop: 12, fontWeight: 600 }}>{error}</p>
+        <p style={{ color: COLORS.sage, fontSize: 13, marginTop: 12, fontWeight: 500 }}>{error}</p>
       )}
     </div>
   )

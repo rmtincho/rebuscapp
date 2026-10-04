@@ -72,7 +72,7 @@ export default function AjustesNotificacionesPage() {
       <div className="pantalla" style={{ padding: '32px 24px' }}>
         <Link
           href="/"
-          style={{ fontSize: 13, color: COLORS.texto, textDecoration: 'none', fontWeight: 600 }}
+          style={{ fontSize: 13, color: COLORS.texto, textDecoration: 'none', fontWeight: 500 }}
         >
           ← Volver
         </Link>
@@ -90,7 +90,7 @@ export default function AjustesNotificacionesPage() {
           style={{
             fontFamily: 'var(--font-poppins, sans-serif)',
             fontSize: 22,
-            fontWeight: 600,
+            fontWeight: 500,
             margin: '20px 0 8px',
             color: COLORS.texto,
           }}
@@ -113,7 +113,7 @@ export default function AjustesNotificacionesPage() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <p style={{ fontWeight: 600, fontSize: 15, margin: 0 }}>
+              <p style={{ fontWeight: 500, fontSize: 15, margin: 0 }}>
                 {activo ? 'Notificaciones activadas' : 'Notificaciones desactivadas'}
               </p>
               <p style={{ fontSize: 12, color: COLORS.texto, margin: '4px 0 0' }}>
@@ -131,7 +131,7 @@ export default function AjustesNotificacionesPage() {
                   border: `1.5px solid ${COLORS.texto}`,
                   background: 'transparent',
                   color: COLORS.texto,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   fontSize: 13,
                   cursor: 'pointer',
                   flexShrink: 0,
@@ -149,7 +149,7 @@ export default function AjustesNotificacionesPage() {
                   border: 'none',
                   background: COLORS.naranja,
                   color: COLORS.texto,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   fontSize: 13,
                   cursor: soportado ? 'pointer' : 'default',
                   opacity: soportado ? 1 : 0.5,

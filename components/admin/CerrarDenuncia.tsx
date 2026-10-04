@@ -56,7 +56,7 @@ export default function CerrarDenuncia({ id }: { id: string }) {
               border: `1.5px solid ${texto === r ? COLORS.dark : COLORS.line}`,
               background: COLORS.card,
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 500,
               color: COLORS.ink,
               cursor: 'pointer',
             }}

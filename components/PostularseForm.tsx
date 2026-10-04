@@ -67,7 +67,7 @@ export default function PostularseForm({ pedidoId }: { pedidoId: string }) {
         style={{
           display: 'block',
           fontSize: 13,
-          fontWeight: 600,
+          fontWeight: 500,
           color: COLORS.inkSoft,
           marginBottom: 10,
         }}
@@ -94,7 +94,7 @@ export default function PostularseForm({ pedidoId }: { pedidoId: string }) {
       />
 
       {error && (
-        <p style={{ color: COLORS.sage, fontSize: 13, marginBottom: 12, fontWeight: 600 }}>
+        <p style={{ color: COLORS.sage, fontSize: 13, marginBottom: 12, fontWeight: 500 }}>
           {error}
         </p>
       )}

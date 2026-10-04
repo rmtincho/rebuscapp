@@ -24,7 +24,7 @@ export default function AccionesAnuncio({ id, activo, anunciante }: { id: string
     border: `1.5px solid ${COLORS.line}`,
     background: COLORS.card,
     fontSize: 12.5,
-    fontWeight: 600,
+    fontWeight: 500,
     cursor: 'pointer',
     color: COLORS.ink,
   }

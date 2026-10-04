@@ -72,7 +72,7 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
         <Subtitulo>Panel de administración. Solo lo ves vos.</Subtitulo>
 
         <p style={{ fontSize: 13, margin: '-8px 0 20px' }}>
-          <Link href="/admin/denuncias" style={{ color: COLORS.inkSoft, fontWeight: 600 }}>
+          <Link href="/admin/denuncias" style={{ color: COLORS.inkSoft, fontWeight: 500 }}>
             Ir a denuncias →
           </Link>
         </p>
@@ -188,7 +188,7 @@ export default async function AdminAnunciosPage({ searchParams }: { searchParams
                           background: COLORS.dark,
                           color: COLORS.onDark,
                           fontSize: 12.5,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           textDecoration: 'none',
                         }}
                       >

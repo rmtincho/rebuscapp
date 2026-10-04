@@ -86,7 +86,7 @@ export default function TerminosPage() {
         </p>
         <p style={p}>
           Cómo tratamos tus datos personales está explicado en la{' '}
-          <a href="/privacidad" style={{ color: 'inherit', fontWeight: 600 }}>
+          <a href="/privacidad" style={{ color: 'inherit', fontWeight: 500 }}>
             Política de privacidad
           </a>
           .

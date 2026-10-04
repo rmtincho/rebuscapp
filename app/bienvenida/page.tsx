@@ -27,7 +27,7 @@ const eyebrow: React.CSSProperties = {
   background: COLORS.dark,
   color: COLORS.onDark,
   fontSize: 13,
-  fontWeight: 600,
+  fontWeight: 500,
   padding: '7px 14px',
   borderRadius: 100,
   marginBottom: 14,
@@ -132,7 +132,7 @@ function CelularEjemplo() {
               <span style={{ fontSize: 10.5, fontWeight: 700, background: t.tag, color: t.tagText, padding: '3px 8px', borderRadius: 100 }}>
                 {t.cat}
               </span>
-              <span style={{ fontSize: 10.5, color: COLORS.inkSoft, fontWeight: 600 }}>{t.dist}</span>
+              <span style={{ fontSize: 10.5, color: COLORS.inkSoft, fontWeight: 500 }}>{t.dist}</span>
             </div>
             <p style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, margin: '0 0 6px' }}>{t.titulo}</p>
             <span style={{ fontSize: 11.5, fontWeight: 700, background: COLORS.dark, color: COLORS.onDark, padding: '3px 9px', borderRadius: 100 }}>

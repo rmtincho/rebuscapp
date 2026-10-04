@@ -82,7 +82,7 @@ export default function ContrasenaCuenta() {
                 setAbierto(true)
                 setListo(false)
               }}
-              style={{ border: `1.5px solid ${COLORS.line}`, background: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, color: COLORS.ink, cursor: 'pointer', flexShrink: 0 }}
+              style={{ border: `1.5px solid ${COLORS.line}`, background: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 12.5, fontWeight: 500, color: COLORS.ink, cursor: 'pointer', flexShrink: 0 }}
             >
               Crear o cambiar
             </button>
@@ -107,7 +107,7 @@ export default function ContrasenaCuenta() {
               placeholder="Repetila"
               style={campo}
             />
-            {error && <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 600, margin: '0 0 10px' }}>{error}</p>}
+            {error && <p style={{ color: COLORS.red, fontSize: 13, fontWeight: 500, margin: '0 0 10px' }}>{error}</p>}
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 type="submit"
@@ -124,7 +124,7 @@ export default function ContrasenaCuenta() {
                   setRepetida('')
                   setError(null)
                 }}
-                style={{ padding: '11px 16px', fontSize: 14, fontWeight: 600, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: 'none', color: COLORS.ink, cursor: 'pointer' }}
+                style={{ padding: '11px 16px', fontSize: 14, fontWeight: 500, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: 'none', color: COLORS.ink, cursor: 'pointer' }}
               >
                 Cancelar
               </button>

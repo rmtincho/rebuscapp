@@ -43,7 +43,7 @@ export default function TrabajadoresList({ trabajadores }: { trabajadores: Traba
         <p style={{ color: COLORS.inkSoft, fontSize: 14, margin: '0 0 12px', lineHeight: 1.5 }}>
           Todavía no hay trabajadores en el listado.
         </p>
-        <a href="/perfil#trabajador" style={{ fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>
+        <a href="/perfil#trabajador" style={{ fontSize: 13.5, fontWeight: 500, color: COLORS.ink }}>
           Sumate desde tu perfil →
         </a>
       </div>
@@ -83,7 +83,7 @@ export default function TrabajadoresList({ trabajadores }: { trabajadores: Traba
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 17,
-                fontWeight: 600,
+                fontWeight: 500,
                 flexShrink: 0,
                 backgroundImage: t.fotoUrl ? `url(${t.fotoUrl})` : undefined,
                 backgroundSize: 'cover',

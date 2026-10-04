@@ -103,7 +103,7 @@ export default function CategoriaPicker({
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 19, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 19, fontWeight: 500, color: COLORS.ink, margin: 0 }}>
             {multiple ? 'Elegí tus categorías' : '¿Qué necesitás?'}
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function CategoriaPicker({
                   }}
                 >
                   <p style={{ fontSize: 15, fontWeight: 700, color: COLORS.ink, margin: 0, flex: 1 }}>{grupo.nombre}</p>
-                  <span style={{ fontSize: 14, color: COLORS.ink, fontWeight: 600 }}>{grupo.categorias.length}</span>
+                  <span style={{ fontSize: 14, color: COLORS.ink, fontWeight: 500 }}>{grupo.categorias.length}</span>
                   <svg
                     width="15"
                     height="15"
@@ -207,7 +207,7 @@ export default function CategoriaPicker({
                             background: elegida ? COLORS.clayTint : COLORS.card,
                             color: COLORS.ink,
                             fontSize: 13,
-                            fontWeight: 600,
+                            fontWeight: 500,
                             cursor: 'pointer',
                           }}
                         >

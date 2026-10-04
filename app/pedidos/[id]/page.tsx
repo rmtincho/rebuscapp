@@ -217,7 +217,7 @@ export default async function DetallePedidoPage({
         <div style={{ padding: 20 }}>
           <Link
             href="/"
-            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 600 }}
+            style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
           </Link>
@@ -239,7 +239,7 @@ export default async function DetallePedidoPage({
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 20,
-                fontWeight: 600,
+                fontWeight: 500,
                 color: COLORS.ink,
                 margin: '0 0 12px',
               }}
@@ -251,7 +251,7 @@ export default async function DetallePedidoPage({
               <span
                 style={{
                   fontSize: 11.5,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: COLORS.clayDark,
                   background: COLORS.line,
                   padding: '5px 12px',
@@ -264,7 +264,7 @@ export default async function DetallePedidoPage({
                 <span
                   style={{
                     fontSize: 11.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: '#4B4B55',
                     background: '#EDEDF2',
                     padding: '5px 12px',
@@ -277,7 +277,7 @@ export default async function DetallePedidoPage({
             </div>
 
             {!esElDueño && (
-              <p style={{ fontSize: 13, color: COLORS.inkSoft, margin: 0, fontWeight: 600 }}>
+              <p style={{ fontSize: 13, color: COLORS.inkSoft, margin: 0, fontWeight: 500 }}>
                 Publicado por {nombrePublicador}
                 {pedido.es_comercio && ' 🏢'}
               </p>
@@ -289,7 +289,7 @@ export default async function DetallePedidoPage({
                   display: 'inline-block',
                   marginTop: 10,
                   fontSize: 12,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: COLORS.ink,
                   background: COLORS.line,
                   padding: '4px 10px',
@@ -307,7 +307,7 @@ export default async function DetallePedidoPage({
                   marginTop: 10,
                   marginLeft: pedido.marca_vehiculo ? 8 : 0,
                   fontSize: 12,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: COLORS.ink,
                   background: COLORS.line,
                   padding: '4px 10px',
@@ -325,7 +325,7 @@ export default async function DetallePedidoPage({
                   background: COLORS.blueTint,
                   color: COLORS.blue,
                   fontSize: 12.5,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   padding: '10px 12px',
                   borderRadius: 10,
                 }}
@@ -347,31 +347,31 @@ export default async function DetallePedidoPage({
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: pedido.requisitos_adicionales ? 8 : 0 }}>
                   {pedido.requisito_nivel_educativo && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🎓 {pedido.requisito_nivel_educativo === 'secundario' ? 'Secundario completo' : pedido.requisito_nivel_educativo === 'terciario' ? 'Terciario' : pedido.requisito_nivel_educativo === 'universitario' ? 'Universitario' : 'Posgrado'}
                     </span>
                   )}
                   {pedido.edad_minima && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🪪 {pedido.edad_minima} años o más
                     </span>
                   )}
                   {pedido.categoria_carnet_requerida ? (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🚗 Carnet clase {pedido.categoria_carnet_requerida}
                     </span>
                   ) : pedido.requiere_carnet_conducir ? (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🚗 Carnet de conducir
                     </span>
                   ) : null}
                   {pedido.idioma_requerido && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       🗣️ {pedido.idioma_requerido}
                     </span>
                   )}
                   {pedido.requiere_matricula_profesional && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
                       📋 Matrícula profesional vigente
                     </span>
                   )}
@@ -391,7 +391,7 @@ export default async function DetallePedidoPage({
                   background: COLORS.greenTint,
                   color: COLORS.green,
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   padding: '10px 12px',
                   borderRadius: 10,
                 }}
@@ -407,7 +407,7 @@ export default async function DetallePedidoPage({
                   background: COLORS.greenTint,
                   color: COLORS.green,
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   padding: '10px 12px',
                   borderRadius: 10,
                 }}
@@ -430,7 +430,7 @@ export default async function DetallePedidoPage({
                       border: `1.5px solid ${COLORS.clayDark}`,
                       color: COLORS.clayDark,
                       fontSize: 13,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textDecoration: 'none',
                     }}
                   >
@@ -456,7 +456,7 @@ export default async function DetallePedidoPage({
                       border: `1.5px solid ${COLORS.green}`,
                       color: COLORS.green,
                       fontSize: 13,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textDecoration: 'none',
                     }}
                   >
@@ -479,7 +479,7 @@ export default async function DetallePedidoPage({
                           border: `1.5px solid ${COLORS.green}`,
                           color: COLORS.green,
                           fontSize: 13,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           textDecoration: 'none',
                         }}
                       >
@@ -495,7 +495,7 @@ export default async function DetallePedidoPage({
                           border: `1.5px solid ${COLORS.line}`,
                           color: COLORS.inkSoft,
                           fontSize: 13,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           textDecoration: 'none',
                         }}
                       >
@@ -509,7 +509,7 @@ export default async function DetallePedidoPage({
 
             {!user && (
               <p style={{ color: COLORS.inkSoft, fontSize: 14 }}>
-                <Link href="/login" style={{ color: COLORS.clayDark, fontWeight: 600 }}>
+                <Link href="/login" style={{ color: COLORS.clayDark, fontWeight: 500 }}>
                   Iniciá sesión
                 </Link>{' '}
                 para postularte.
@@ -534,7 +534,7 @@ export default async function DetallePedidoPage({
                           border: `1.5px solid ${COLORS.green}`,
                           color: COLORS.green,
                           fontSize: 13,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           textDecoration: 'none',
                         }}
                       >
@@ -550,7 +550,7 @@ export default async function DetallePedidoPage({
                           border: `1.5px solid ${COLORS.line}`,
                           color: COLORS.inkSoft,
                           fontSize: 13,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           textDecoration: 'none',
                         }}
                       >
@@ -569,7 +569,7 @@ export default async function DetallePedidoPage({
                       border: `1.5px solid ${COLORS.green}`,
                       color: COLORS.green,
                       fontSize: 13,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textDecoration: 'none',
                     }}
                   >
@@ -591,7 +591,7 @@ export default async function DetallePedidoPage({
                   padding: 14,
                   borderRadius: 14,
                   fontSize: 14,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   textAlign: 'center',
                 }}
               >
@@ -608,7 +608,7 @@ export default async function DetallePedidoPage({
                     borderRadius: 14,
                   }}
                 >
-                  <p style={{ fontSize: 13.5, color: COLORS.clayDark, fontWeight: 600, lineHeight: 1.5, margin: '0 0 10px' }}>
+                  <p style={{ fontSize: 13.5, color: COLORS.clayDark, fontWeight: 500, lineHeight: 1.5, margin: '0 0 10px' }}>
                     📋 Antes de postularte, completá tus datos básicos (nombre, edad y DNI) — es una sola vez.
                   </p>
                   <Link
@@ -621,7 +621,7 @@ export default async function DetallePedidoPage({
                       background: COLORS.clay,
                       color: COLORS.onClay,
                       fontSize: 14,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textDecoration: 'none',
                     }}
                   >
@@ -636,7 +636,7 @@ export default async function DetallePedidoPage({
                     padding: 14,
                     borderRadius: 14,
                     fontSize: 13.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     lineHeight: 1.5,
                   }}
                 >
@@ -650,7 +650,7 @@ export default async function DetallePedidoPage({
                     padding: 14,
                     borderRadius: 14,
                     fontSize: 13.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     lineHeight: 1.5,
                   }}
                 >
@@ -667,7 +667,7 @@ export default async function DetallePedidoPage({
                     padding: 14,
                     borderRadius: 14,
                     fontSize: 13.5,
-                    fontWeight: 600,
+                    fontWeight: 500,
                     lineHeight: 1.5,
                   }}
                 >
@@ -752,7 +752,7 @@ export default async function DetallePedidoPage({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 600,
+                          fontWeight: 500,
                           fontSize: 15,
                           flexShrink: 0,
                         }}
@@ -760,7 +760,7 @@ export default async function DetallePedidoPage({
                         {nombre[0]?.toUpperCase()}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, fontWeight: 600, fontSize: 14.5, color: COLORS.ink }}>
+                        <p style={{ margin: 0, fontWeight: 500, fontSize: 14.5, color: COLORS.ink }}>
                           {nombreCompleto}
                         </p>
                         <p style={{ margin: 0, fontSize: 12, color: COLORS.inkSoft }}>
@@ -770,7 +770,7 @@ export default async function DetallePedidoPage({
                           {' · '}
                           <Link
                             href={`/prestadores/${postulacion.prestador_id}?volver=/pedidos/${id}`}
-                            style={{ color: COLORS.clayDark, fontWeight: 600, textDecoration: 'underline' }}
+                            style={{ color: COLORS.clayDark, fontWeight: 500, textDecoration: 'underline' }}
                           >
                             Ver perfil
                           </Link>
@@ -816,7 +816,7 @@ export default async function DetallePedidoPage({
                           textAlign: 'center',
                           padding: 12,
                           fontSize: 14,
-                          fontWeight: 600,
+                          fontWeight: 500,
                           borderRadius: 100,
                           border: 'none',
                           background: COLORS.blue,
@@ -838,7 +838,7 @@ export default async function DetallePedidoPage({
                               textAlign: 'center',
                               padding: 12,
                               fontSize: 14,
-                              fontWeight: 600,
+                              fontWeight: 500,
                               borderRadius: 100,
                               border: `1.5px solid ${COLORS.blue}`,
                               background: 'transparent',
@@ -863,7 +863,7 @@ export default async function DetallePedidoPage({
                               textAlign: 'center',
                               padding: 12,
                               fontSize: 14,
-                              fontWeight: 600,
+                              fontWeight: 500,
                               borderRadius: 100,
                               border: 'none',
                               background: COLORS.blue,
@@ -911,7 +911,7 @@ function ElegirBoton({
           width: '100%',
           padding: 12,
           fontSize: 14,
-          fontWeight: 600,
+          fontWeight: 500,
           borderRadius: 100,
           border: 'none',
           background: '#15803D',
@@ -945,7 +945,7 @@ function RechazarBoton({
           width: '100%',
           padding: 12,
           fontSize: 14,
-          fontWeight: 600,
+          fontWeight: 500,
           borderRadius: 100,
           border: 'none',
           background: '#DC2626',

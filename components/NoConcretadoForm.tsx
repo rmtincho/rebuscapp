@@ -120,7 +120,7 @@ export default function NoConcretadoForm({
                   background: motivo === m.valor ? COLORS.card : 'transparent',
                   color: COLORS.ink,
                   fontSize: 14,
-                  fontWeight: 600,
+                  fontWeight: 500,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -159,7 +159,7 @@ export default function NoConcretadoForm({
               marginBottom: 20,
               fontSize: 12.5,
               lineHeight: 1.5,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             Esto no es una mala calificación pública. Solo le avisamos a {otroUsuarioNombre} que

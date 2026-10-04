@@ -22,7 +22,7 @@ const pillTitulo: React.CSSProperties = {
   background: COLORS.dark,
   color: COLORS.onDark,
   fontSize: 13,
-  fontWeight: 600,
+  fontWeight: 500,
   padding: '7px 14px',
   borderRadius: 100,
 }
@@ -43,7 +43,7 @@ const acceso: React.CSSProperties = {
   borderRadius: 100,
   border: `1.5px solid ${COLORS.line}`,
   fontSize: 12.5,
-  fontWeight: 600,
+  fontWeight: 500,
   color: COLORS.ink,
   textDecoration: 'none',
   whiteSpace: 'nowrap',

@@ -70,7 +70,7 @@ export default function NotificacionesRegistroPage() {
           padding: '32px 24px 24px',
         }}
       >
-        <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 24 }}>Paso 4 de 4</p>
+        <p style={{ fontSize: 13, fontWeight: 500, marginBottom: 24 }}>Paso 4 de 4</p>
 
         <div
           style={{
@@ -101,7 +101,7 @@ export default function NotificacionesRegistroPage() {
         <h1
           style={{
             fontFamily: 'var(--font-poppins, sans-serif)',
-            fontWeight: 600,
+            fontWeight: 500,
             fontSize: 25,
             lineHeight: 1.3,
             marginBottom: 12,
@@ -163,7 +163,7 @@ export default function NotificacionesRegistroPage() {
               borderRadius: 14,
               padding: 16,
               fontSize: 16,
-              fontWeight: 600,
+              fontWeight: 500,
               cursor: cargando ? 'default' : 'pointer',
               opacity: cargando ? 0.7 : 1,
             }}
@@ -180,7 +180,7 @@ export default function NotificacionesRegistroPage() {
               border: 'none',
               padding: 12,
               fontSize: 14,
-              fontWeight: 600,
+              fontWeight: 500,
               cursor: 'pointer',
             }}
           >
@@ -232,7 +232,7 @@ function ItemNotificacion({
         {icono}
       </div>
       <div>
-        <p style={{ fontFamily: 'var(--font-poppins, sans-serif)', fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
+        <p style={{ fontFamily: 'var(--font-poppins, sans-serif)', fontSize: 14, fontWeight: 500, marginBottom: 2 }}>
           {titulo}
         </p>
         <p style={{ fontSize: 13, lineHeight: 1.4 }}>{texto}</p>

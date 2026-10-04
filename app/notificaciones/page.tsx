@@ -109,7 +109,7 @@ export default async function NotificacionesPage() {
         <TituloPagina>Notificaciones</TituloPagina>
         <Subtitulo>
           Trabajos nuevos, postulaciones y respuestas.{' '}
-          <a href="/configuracion/notificaciones" style={{ color: COLORS.ink, fontWeight: 600 }}>
+          <a href="/configuracion/notificaciones" style={{ color: COLORS.ink, fontWeight: 500 }}>
             Configurar avisos
           </a>
         </Subtitulo>
@@ -159,7 +159,7 @@ export default async function NotificacionesPage() {
                       {n.titulo}
                     </p>
                     {n.fecha && (
-                      <span style={{ flexShrink: 0, fontSize: 11.5, color: COLORS.inkSoft, fontWeight: 600 }}>
+                      <span style={{ flexShrink: 0, fontSize: 11.5, color: COLORS.inkSoft, fontWeight: 500 }}>
                         {cuando(n.fecha)}
                       </span>
                     )}

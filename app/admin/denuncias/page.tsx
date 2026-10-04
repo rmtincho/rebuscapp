@@ -118,7 +118,7 @@ export default async function AdminDenunciasPage() {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' }}>
           <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{etiquetaMotivo(d.motivo)}</p>
-          <span style={{ flexShrink: 0, fontSize: 12, color: COLORS.inkSoft, fontWeight: 600 }}>{formatearCuando(d.created_at)}</span>
+          <span style={{ flexShrink: 0, fontSize: 12, color: COLORS.inkSoft, fontWeight: 500 }}>{formatearCuando(d.created_at)}</span>
         </div>
 
         {d.detalle ? (
@@ -133,7 +133,7 @@ export default async function AdminDenunciasPage() {
           <div>
             <p style={etiqueta}>Denunciado</p>
             {d.denunciado_id ? (
-              <Link href={`/prestadores/${d.denunciado_id}?volver=/admin/denuncias`} style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>
+              <Link href={`/prestadores/${d.denunciado_id}?volver=/admin/denuncias`} style={{ fontSize: 14, fontWeight: 500, color: COLORS.ink }}>
                 {nombreDe(denunciado)}
               </Link>
             ) : (
@@ -143,12 +143,12 @@ export default async function AdminDenunciasPage() {
           </div>
           <div>
             <p style={etiqueta}>Denunció</p>
-            <span style={{ fontSize: 14, fontWeight: 600 }}>{nombreDe(usuarios.get(d.denunciante_id))}</span>
+            <span style={{ fontSize: 14, fontWeight: 500 }}>{nombreDe(usuarios.get(d.denunciante_id))}</span>
           </div>
           {d.pedido_id && (
             <div>
               <p style={etiqueta}>Trabajo</p>
-              <Link href={`/pedidos/${d.pedido_id}`} style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>
+              <Link href={`/pedidos/${d.pedido_id}`} style={{ fontSize: 14, fontWeight: 500, color: COLORS.ink }}>
                 {pedido?.descripcion ? pedido.descripcion.slice(0, 80) : 'Ver publicación'}
               </Link>
               {pedido?.estado === 'cancelado' && <p style={{ fontSize: 12.5, color: COLORS.inkSoft, margin: '2px 0 0' }}>Ya dado de baja</p>}
@@ -157,7 +157,7 @@ export default async function AdminDenunciasPage() {
         </div>
 
         {d.estado === 'pendiente' && d.denunciado_id && (
-          <p style={{ fontSize: 13, margin: '14px 0 0', color: previas.length ? COLORS.redDark : COLORS.inkSoft, fontWeight: 600 }}>
+          <p style={{ fontSize: 13, margin: '14px 0 0', color: previas.length ? COLORS.redDark : COLORS.inkSoft, fontWeight: 500 }}>
             {previas.length === 0
               ? 'Primera denuncia contra esta persona.'
               : `${previas.length + 1} denuncias contra esta persona, de ${personasDistintas} persona${personasDistintas === 1 ? '' : 's'} distinta${personasDistintas === 1 ? '' : 's'}.`}
@@ -223,7 +223,7 @@ export default async function AdminDenunciasPage() {
         <Subtitulo>Panel de administración. Solo lo ves vos.</Subtitulo>
 
         <p style={{ fontSize: 13, margin: '-8px 0 20px' }}>
-          <Link href="/admin/anuncios" style={{ color: COLORS.inkSoft, fontWeight: 600 }}>
+          <Link href="/admin/anuncios" style={{ color: COLORS.inkSoft, fontWeight: 500 }}>
             Ir a anuncios →
           </Link>
         </p>
@@ -264,7 +264,7 @@ export default async function AdminDenunciasPage() {
               {revisadas.map((d) => (
                 <div key={d.id} id={`d-${d.id}`} style={{ ...tarjeta, opacity: 0.85 }}>
                   <Detalle d={d} />
-                  <p style={{ fontSize: 13, margin: '12px 0 0', fontWeight: 600, color: COLORS.greenDark }}>
+                  <p style={{ fontSize: 13, margin: '12px 0 0', fontWeight: 500, color: COLORS.greenDark }}>
                     ✓ {d.resolucion ?? 'Revisada'}
                   </p>
                 </div>

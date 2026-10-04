@@ -14,7 +14,7 @@ const linkStyle: React.CSSProperties = {
   padding: 0,
   color: COLORS.inkSoft,
   fontSize: 12.5,
-  fontWeight: 600,
+  fontWeight: 500,
   cursor: 'pointer',
   textDecoration: 'underline',
 }
@@ -93,7 +93,7 @@ export default function DenunciarBloquear({
   return (
     <div style={{ marginTop: 20, textAlign: centrado ? 'center' : 'left' }}>
       {enviada ? (
-        <p style={{ fontSize: 12.5, color: COLORS.greenDark, fontWeight: 600 }}>
+        <p style={{ fontSize: 12.5, color: COLORS.greenDark, fontWeight: 500 }}>
           ✓ Recibimos tu denuncia. La vamos a revisar.
         </p>
       ) : (
@@ -121,7 +121,7 @@ export default function DenunciarBloquear({
             <button
               type="button"
               onClick={() => setFaltaPerfil(false)}
-              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
             >
               Cancelar
             </button>
@@ -174,7 +174,7 @@ export default function DenunciarBloquear({
                 setError(null)
               }}
               disabled={cargando}
-              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
             >
               Cancelar
             </button>
