@@ -98,8 +98,8 @@ export default function CarruselWeb({ anuncios }: { anuncios: Anuncio[] }) {
       }}
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
-      // En pantallas muy anchas no crece más (si no, el banner sería enorme)
-      style={{ marginTop: 28, maxWidth: 1600, marginLeft: 'auto', marginRight: 'auto' }}
+      // De lado a lado de la ventana, en cualquier ancho
+      style={{ marginTop: 28, width: '100%' }}
     >
       <div
         onPointerDown={alApretar}
