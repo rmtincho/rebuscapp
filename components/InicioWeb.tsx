@@ -75,16 +75,16 @@ const NIVEL: Record<string, string> = {
 // Características del trabajo para las etiquetas de cada fila
 // Cada tipo de dato con su color: tipo de trabajo en naranja, comercio en
 // rosa y requisitos en amarillo (verde y rojo quedan para "cumplís / no")
-// Fondos más saturados que las etiquetas pastel del resto de la app, con
-// el texto en el mismo tono, oscuro
+// Colores llenos y vivos. Texto oscuro sobre los claros (naranja,
+// amarillo) y blanco sobre los fuertes, para que se lean
 const COLOR_CARACTERISTICA = {
-  jornada: { fondo: '#FFD3A8', texto: '#B45A12' },
-  comercio: { fondo: '#FFC4D6', texto: '#B0244F' },
-  requisito: { fondo: '#FFE07A', texto: '#7A5200' },
+  jornada: { fondo: '#FF9900', texto: '#1C1C1E' },
+  comercio: { fondo: '#E6195E', texto: '#FFFFFF' },
+  requisito: { fondo: '#FFD000', texto: '#1C1C1E' },
 }
-const COLOR_CUMPLE = { fondo: '#BDEFCB', texto: '#14703A' }
-const COLOR_NO_CUMPLE = { fondo: '#FFC6C2', texto: '#B42318' }
-const COLOR_PRECIO = { fondo: '#C6DAFF', texto: '#1D4ED8' }
+const COLOR_CUMPLE = { fondo: '#12873C', texto: '#FFFFFF' }
+const COLOR_NO_CUMPLE = { fondo: '#D92D20', texto: '#FFFFFF' }
+const COLOR_PRECIO = { fondo: '#2563EB', texto: '#FFFFFF' }
 
 function caracteristicas(p: PedidoWeb): { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA }[] {
   const lista: ({ texto: string | null | undefined; tipo: keyof typeof COLOR_CARACTERISTICA })[] = [
