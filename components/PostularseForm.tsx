@@ -107,7 +107,7 @@ export default function PostularseForm({ pedidoId }: { pedidoId: string }) {
           padding: 16,
           fontSize: 15.5,
           fontWeight: 700,
-          borderRadius: 100,
+          borderRadius: 8,
           border: 'none',
           background: COLORS.clay,
           boxShadow: '0 8px 20px rgba(0,0,0,0.4)',

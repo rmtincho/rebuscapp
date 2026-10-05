@@ -121,13 +121,13 @@ export default function DenunciarBloquear({
             <button
               type="button"
               onClick={() => setFaltaPerfil(false)}
-              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
+              style={{ flex: 1, padding: 12, borderRadius: 8, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
             >
               Cancelar
             </button>
             <a
               href="/perfil"
-              style={{ flex: 1, padding: 12, borderRadius: 100, background: COLORS.dark, color: COLORS.onDark, fontSize: 13, fontWeight: 700, textAlign: 'center', textDecoration: 'none' }}
+              style={{ flex: 1, padding: 12, borderRadius: 8, background: COLORS.dark, color: COLORS.onDark, fontSize: 13, fontWeight: 700, textAlign: 'center', textDecoration: 'none' }}
             >
               Completar perfil
             </a>
@@ -174,7 +174,7 @@ export default function DenunciarBloquear({
                 setError(null)
               }}
               disabled={cargando}
-              style={{ flex: 1, padding: 12, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
+              style={{ flex: 1, padding: 12, borderRadius: 8, border: `1.5px solid ${COLORS.line}`, background: COLORS.card, color: COLORS.ink, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
             >
               Cancelar
             </button>
@@ -182,7 +182,7 @@ export default function DenunciarBloquear({
               type="button"
               onClick={enviarDenuncia}
               disabled={!motivo || cargando}
-              style={{ flex: 1, padding: 12, borderRadius: 100, border: 'none', background: motivo ? COLORS.dark : COLORS.line, color: motivo ? COLORS.onDark : COLORS.inkSoft, fontSize: 13, fontWeight: 700, cursor: motivo ? 'pointer' : 'default' }}
+              style={{ flex: 1, padding: 12, borderRadius: 8, border: 'none', background: motivo ? COLORS.dark : COLORS.line, color: motivo ? COLORS.onDark : COLORS.inkSoft, fontSize: 13, fontWeight: 700, cursor: motivo ? 'pointer' : 'default' }}
             >
               {cargando ? 'Enviando...' : 'Enviar denuncia'}
             </button>

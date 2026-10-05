@@ -53,7 +53,7 @@ export default function EliminarPedidoBoton({ pedidoId }: { pedidoId: string }) 
         flex: 1,
         textAlign: 'center',
         padding: '13px',
-        borderRadius: 100,
+        borderRadius: 8,
         border: `1.5px solid ${COLORS.line}`,
         background: 'transparent',
         color: '#B91C1C',

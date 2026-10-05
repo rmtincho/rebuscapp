@@ -9,7 +9,15 @@ import Link from 'next/link'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import { anunciosPara } from '@/lib/anuncios'
 import { proximaPostulacionPermitida, POSTULACIONES_POR_DIA } from '@/lib/limites'
-import { formatearCuando } from '@/lib/fechas'
+import { formatearCuando, haceCuanto } from '@/lib/fechas'
+import { iconoParaCategoria } from '@/lib/categoryIcons'
+import {
+  caracteristicas,
+  tituloDe,
+  COLOR_CARACTERISTICA,
+  COLOR_PRECIO,
+  ESTILO_ETIQUETA,
+} from '@/lib/tarjetaTrabajo'
 import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones'
 
 export default async function DetallePedidoPage({
@@ -48,6 +56,7 @@ export default async function DetallePedidoPage({
       solicitante_id,
       prestador_asignado_id,
       estado,
+      fecha_creacion,
       categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre, apellido )
     `
@@ -194,6 +203,12 @@ export default async function DetallePedidoPage({
   const categoriaPedido = pedido.categorias as { grupo_slug?: string | null } | { grupo_slug?: string | null }[] | null
   const rubroPedido = (Array.isArray(categoriaPedido) ? categoriaPedido[0]?.grupo_slug : categoriaPedido?.grupo_slug) ?? null
   const { pedido: anuncioPedido } = await anunciosPara(['pedido'], rubroPedido)
+  const { data: grupo } = rubroPedido
+    ? await supabase.from('categorias_grupo').select('nombre').eq('slug', rubroPedido).maybeSingle()
+    : { data: null }
+  const nombreCategoria = (Array.isArray(categoriaPedido) ? null : (categoriaPedido as { nombre?: string } | null)?.nombre) ?? 'Sin categoría'
+  const nombreRubro = grupo?.nombre ?? null
+  const etiquetas = caracteristicas(pedido)
 
   const botonChatStyle: React.CSSProperties = {
     display: 'flex',
@@ -203,13 +218,20 @@ export default async function DetallePedidoPage({
     width: '100%',
     background: COLORS.blue,
     color: '#fff',
-    padding: '16px 18px',
-    borderRadius: 100,
+    padding: '15px 18px',
+    borderRadius: 10,
     fontSize: 15,
     fontWeight: 700,
     textDecoration: 'none',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
   }
+
+  // Etiquetas de requisitos: las mismas de las tarjetas, en amarillo
+  const etiquetaRequisito: React.CSSProperties = {
+    ...ESTILO_ETIQUETA,
+    background: COLOR_CARACTERISTICA.requisito.fondo,
+    color: COLOR_CARACTERISTICA.requisito.texto,
+  }
+  const etiquetaNeutra: React.CSSProperties = { ...ESTILO_ETIQUETA, background: '#EDEDF2', color: '#4B4B55' }
 
   return (
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
@@ -224,98 +246,81 @@ export default async function DetallePedidoPage({
 
           {/* En compu: detalle y postulantes a la izquierda, acciones fijas a la derecha */}
           <div className="pedido-grilla">
+          {/* Como las tarjetas del inicio: ícono amarillo, título, Rubro ›
+              Categoría, etiquetas de colores y la descripción completa */}
           <div
             className="pedido-detalle"
             style={{
               background: COLORS.card,
-              border: `1.5px solid ${COLORS.line}`,
-              borderRadius: 28,
-              padding: 18,
+              borderRadius: 12,
+              padding: 20,
               marginTop: 16,
-              boxShadow: '0 4px 14px rgba(31,41,55,0.06)',
+              boxShadow: COLORS.cardShadow,
             }}
           >
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 20,
-                fontWeight: 500,
-                color: COLORS.ink,
-                margin: '0 0 12px',
-              }}
-            >
-              {pedido.descripcion}
-            </h1>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: !esElDueño ? 12 : 0 }}>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
               <span
                 style={{
-                  fontSize: 11.5,
-                  fontWeight: 500,
-                  color: COLORS.clayDark,
-                  background: COLORS.line,
-                  padding: '5px 12px',
-                  borderRadius: 100,
+                  width: 46,
+                  height: 46,
+                  borderRadius: '50%',
+                  background: COLORS.clay,
+                  color: COLORS.ink,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
                 }}
               >
-                {(pedido.categorias as any)?.nombre ?? 'Sin categoría'}
+                {iconoParaCategoria(nombreCategoria)}
               </span>
-              {precio && (
-                <span
-                  style={{
-                    fontSize: 11.5,
-                    fontWeight: 500,
-                    color: '#4B4B55',
-                    background: '#EDEDF2',
-                    padding: '5px 12px',
-                    borderRadius: 100,
-                  }}
-                >
-                  {precio}
-                </span>
-              )}
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h1 style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.25, color: COLORS.ink, margin: 0 }}>
+                  {tituloDe(pedido.descripcion)}
+                </h1>
+                <p style={{ fontSize: 14, color: COLORS.inkSoft, margin: '4px 0 0', lineHeight: 1.4 }}>
+                  {nombreRubro && nombreRubro !== nombreCategoria && (
+                    <>
+                      {nombreRubro}
+                      <span aria-hidden style={{ margin: '0 6px' }}>›</span>
+                    </>
+                  )}
+                  <span style={{ color: COLORS.blue }}>{nombreCategoria}</span>
+                  {pedido.fecha_creacion && ` · ${haceCuanto(pedido.fecha_creacion)}`}
+                </p>
+              </div>
             </div>
 
+            {(precio || etiquetas.length > 0 || pedido.marca_vehiculo || pedido.tipo_comercio) && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
+                {precio && (
+                  <span style={{ ...ESTILO_ETIQUETA, fontSize: 13, fontWeight: 400, padding: '5px 9px', background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
+                    {precio}
+                  </span>
+                )}
+                {etiquetas
+                  .filter((e) => e.tipo !== 'requisito')
+                  .map((e) => (
+                    <span
+                      key={e.texto}
+                      style={{ ...ESTILO_ETIQUETA, alignSelf: 'center', background: COLOR_CARACTERISTICA[e.tipo].fondo, color: COLOR_CARACTERISTICA[e.tipo].texto }}
+                    >
+                      {e.texto}
+                    </span>
+                  ))}
+                {pedido.marca_vehiculo && <span style={{ ...etiquetaNeutra, alignSelf: 'center' }}>{pedido.marca_vehiculo}</span>}
+                {pedido.tipo_comercio && <span style={{ ...etiquetaNeutra, alignSelf: 'center' }}>{pedido.tipo_comercio}</span>}
+              </div>
+            )}
+
+            <p style={{ fontSize: 16, lineHeight: 1.6, color: '#3F3F46', margin: '16px 0 0', whiteSpace: 'pre-line' }}>
+              {pedido.descripcion}
+            </p>
+
             {!esElDueño && (
-              <p style={{ fontSize: 13, color: COLORS.inkSoft, margin: 0, fontWeight: 500 }}>
-                Publicado por {nombrePublicador}
-                {pedido.es_comercio && ' 🏢'}
+              <p style={{ fontSize: 13.5, color: COLORS.inkSoft, margin: '14px 0 0' }}>
+                Publicado por <span style={{ color: COLORS.ink }}>{nombrePublicador}</span>
               </p>
-            )}
-
-            {pedido.marca_vehiculo && (
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginTop: 10,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: COLORS.ink,
-                  background: COLORS.line,
-                  padding: '4px 10px',
-                  borderRadius: 100,
-                }}
-              >
-                🚗 {pedido.marca_vehiculo}
-              </span>
-            )}
-
-            {pedido.tipo_comercio && (
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginTop: 10,
-                  marginLeft: pedido.marca_vehiculo ? 8 : 0,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: COLORS.ink,
-                  background: COLORS.line,
-                  padding: '4px 10px',
-                  borderRadius: 100,
-                }}
-              >
-                🏪 {pedido.tipo_comercio}
-              </span>
             )}
 
             {pedido.pide_videollamada_previa && pedido.estado === 'abierto' && (
@@ -323,14 +328,13 @@ export default async function DetallePedidoPage({
                 style={{
                   marginTop: 14,
                   background: COLORS.blueTint,
-                  color: COLORS.blue,
-                  fontSize: 12.5,
-                  fontWeight: 500,
+                  color: COLORS.blueDark,
+                  fontSize: 13,
                   padding: '10px 12px',
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
-                📹 Pide videollamada antes de elegir
+                Pide videollamada antes de elegir
               </div>
             )}
 
@@ -341,45 +345,25 @@ export default async function DetallePedidoPage({
               pedido.idioma_requerido ||
               pedido.requiere_matricula_profesional ||
               pedido.requisitos_adicionales) && (
-              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px dashed ${COLORS.line}` }}>
-                <p style={{ fontSize: 11.5, fontWeight: 700, color: COLORS.inkSoft, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-                  Requisitos
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: pedido.requisitos_adicionales ? 8 : 0 }}>
+              <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${COLORS.line}` }}>
+                <p style={{ fontSize: 15, fontWeight: 700, color: COLORS.ink, margin: '0 0 10px' }}>Requisitos</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: pedido.requisitos_adicionales ? 10 : 0 }}>
                   {pedido.requisito_nivel_educativo && (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      🎓 {pedido.requisito_nivel_educativo === 'secundario' ? 'Secundario completo' : pedido.requisito_nivel_educativo === 'terciario' ? 'Terciario' : pedido.requisito_nivel_educativo === 'universitario' ? 'Universitario' : 'Posgrado'}
+                    <span style={etiquetaRequisito}>
+                      {pedido.requisito_nivel_educativo === 'secundario' ? 'Secundario completo' : pedido.requisito_nivel_educativo === 'terciario' ? 'Terciario' : pedido.requisito_nivel_educativo === 'universitario' ? 'Universitario' : pedido.requisito_nivel_educativo === 'primario' ? 'Primario completo' : 'Posgrado'}
                     </span>
                   )}
-                  {pedido.edad_minima && (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      🪪 {pedido.edad_minima} años o más
-                    </span>
-                  )}
+                  {pedido.edad_minima && <span style={etiquetaRequisito}>Desde {pedido.edad_minima} años</span>}
                   {pedido.categoria_carnet_requerida ? (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      🚗 Carnet clase {pedido.categoria_carnet_requerida}
-                    </span>
+                    <span style={etiquetaRequisito}>Carnet clase {pedido.categoria_carnet_requerida}</span>
                   ) : pedido.requiere_carnet_conducir ? (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      🚗 Carnet de conducir
-                    </span>
+                    <span style={etiquetaRequisito}>Carnet de conducir</span>
                   ) : null}
-                  {pedido.idioma_requerido && (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      🗣️ {pedido.idioma_requerido}
-                    </span>
-                  )}
-                  {pedido.requiere_matricula_profesional && (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.ink, background: COLORS.line, padding: '4px 10px', borderRadius: 100 }}>
-                      📋 Matrícula profesional vigente
-                    </span>
-                  )}
+                  {pedido.idioma_requerido && <span style={etiquetaRequisito}>{pedido.idioma_requerido}</span>}
+                  {pedido.requiere_matricula_profesional && <span style={etiquetaRequisito}>Matrícula profesional vigente</span>}
                 </div>
                 {pedido.requisitos_adicionales && (
-                  <p style={{ fontSize: 13, color: COLORS.inkSoft, lineHeight: 1.5, margin: 0 }}>
-                    {pedido.requisitos_adicionales}
-                  </p>
+                  <p style={{ fontSize: 14, color: COLORS.inkSoft, lineHeight: 1.5, margin: 0 }}>{pedido.requisitos_adicionales}</p>
                 )}
               </div>
             )}
@@ -389,14 +373,13 @@ export default async function DetallePedidoPage({
                 style={{
                   marginTop: 14,
                   background: COLORS.greenTint,
-                  color: COLORS.green,
-                  fontSize: 13,
-                  fontWeight: 500,
+                  color: COLORS.greenDark,
+                  fontSize: 13.5,
                   padding: '10px 12px',
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
-                🤝 Coordinando {soyElPrestadorAsignado ? 'conmigo' : `con ${nombrePrestadorAsignado}`}
+                Coordinando {soyElPrestadorAsignado ? 'conmigo' : `con ${nombrePrestadorAsignado}`}
               </div>
             )}
 
@@ -405,11 +388,10 @@ export default async function DetallePedidoPage({
                 style={{
                   marginTop: 14,
                   background: COLORS.greenTint,
-                  color: COLORS.green,
-                  fontSize: 13,
-                  fontWeight: 500,
+                  color: COLORS.greenDark,
+                  fontSize: 13.5,
                   padding: '10px 12px',
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 ✓ Completado {soyElPrestadorAsignado ? 'conmigo' : `con ${nombrePrestadorAsignado}`}
@@ -418,7 +400,7 @@ export default async function DetallePedidoPage({
 
             {esElDueño && pedido.estado === 'abierto' && (
               <>
-                <div style={{ borderTop: `1px dashed ${COLORS.line}`, margin: '16px -18px 14px' }} />
+                <div style={{ borderTop: `1px solid ${COLORS.line}`, margin: '18px 0 14px' }} />
                 <div style={{ display: 'flex', gap: 10 }}>
                   <Link
                     href={`/pedidos/${id}/editar`}
@@ -426,7 +408,7 @@ export default async function DetallePedidoPage({
                       flex: 1,
                       textAlign: 'center',
                       padding: '12px',
-                      borderRadius: 100,
+                      borderRadius: 8,
                       border: `1.5px solid ${COLORS.clayDark}`,
                       color: COLORS.clayDark,
                       fontSize: 13,
@@ -452,7 +434,7 @@ export default async function DetallePedidoPage({
                       display: 'block',
                       textAlign: 'center',
                       padding: '13px',
-                      borderRadius: 100,
+                      borderRadius: 8,
                       border: `1.5px solid ${COLORS.green}`,
                       color: COLORS.green,
                       fontSize: 13,
@@ -475,7 +457,7 @@ export default async function DetallePedidoPage({
                           flex: 1,
                           textAlign: 'center',
                           padding: '13px',
-                          borderRadius: 100,
+                          borderRadius: 8,
                           border: `1.5px solid ${COLORS.green}`,
                           color: COLORS.green,
                           fontSize: 13,
@@ -491,7 +473,7 @@ export default async function DetallePedidoPage({
                           flex: 1,
                           textAlign: 'center',
                           padding: '13px',
-                          borderRadius: 100,
+                          borderRadius: 8,
                           border: `1.5px solid ${COLORS.line}`,
                           color: COLORS.inkSoft,
                           fontSize: 13,
@@ -530,7 +512,7 @@ export default async function DetallePedidoPage({
                           flex: 1,
                           textAlign: 'center',
                           padding: '13px',
-                          borderRadius: 100,
+                          borderRadius: 8,
                           border: `1.5px solid ${COLORS.green}`,
                           color: COLORS.green,
                           fontSize: 13,
@@ -546,7 +528,7 @@ export default async function DetallePedidoPage({
                           flex: 1,
                           textAlign: 'center',
                           padding: '13px',
-                          borderRadius: 100,
+                          borderRadius: 8,
                           border: `1.5px solid ${COLORS.line}`,
                           color: COLORS.inkSoft,
                           fontSize: 13,
@@ -565,7 +547,7 @@ export default async function DetallePedidoPage({
                       display: 'block',
                       textAlign: 'center',
                       padding: '13px',
-                      borderRadius: 100,
+                      borderRadius: 8,
                       border: `1.5px solid ${COLORS.green}`,
                       color: COLORS.green,
                       fontSize: 13,
@@ -589,7 +571,7 @@ export default async function DetallePedidoPage({
                   background: COLORS.greenTint,
                   color: COLORS.green,
                   padding: 14,
-                  borderRadius: 14,
+                  borderRadius: 8,
                   fontSize: 14,
                   fontWeight: 500,
                   textAlign: 'center',
@@ -605,7 +587,7 @@ export default async function DetallePedidoPage({
                   style={{
                     background: 'rgba(226, 105, 28, 0.08)',
                     padding: 14,
-                    borderRadius: 14,
+                    borderRadius: 8,
                   }}
                 >
                   <p style={{ fontSize: 13.5, color: COLORS.clayDark, fontWeight: 500, lineHeight: 1.5, margin: '0 0 10px' }}>
@@ -617,7 +599,7 @@ export default async function DetallePedidoPage({
                       display: 'block',
                       textAlign: 'center',
                       padding: '13px',
-                      borderRadius: 100,
+                      borderRadius: 8,
                       background: COLORS.clay,
                       color: COLORS.onClay,
                       fontSize: 14,
@@ -634,7 +616,7 @@ export default async function DetallePedidoPage({
                     background: COLORS.line,
                     color: COLORS.inkSoft,
                     padding: 14,
-                    borderRadius: 14,
+                    borderRadius: 8,
                     fontSize: 13.5,
                     fontWeight: 500,
                     lineHeight: 1.5,
@@ -648,7 +630,7 @@ export default async function DetallePedidoPage({
                     background: 'rgba(185, 8, 55, 0.08)',
                     color: '#8A0A32',
                     padding: 14,
-                    borderRadius: 14,
+                    borderRadius: 8,
                     fontSize: 13.5,
                     fontWeight: 500,
                     lineHeight: 1.5,
@@ -665,7 +647,7 @@ export default async function DetallePedidoPage({
                     background: COLORS.line,
                     color: COLORS.inkSoft,
                     padding: 14,
-                    borderRadius: 14,
+                    borderRadius: 8,
                     fontSize: 13.5,
                     fontWeight: 500,
                     lineHeight: 1.5,
@@ -692,16 +674,7 @@ export default async function DetallePedidoPage({
 
           {esElDueño && pedido.estado === 'abierto' && (
             <div className="pedido-postulantes" style={{ marginTop: 28 }}>
-              <p
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  color: COLORS.inkSoft,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  marginBottom: 10,
-                }}
-              >
+              <p style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, margin: '0 0 12px' }}>
                 {postulaciones.length === 0
                   ? 'Postulantes'
                   : `${postulaciones.length} postulante${postulaciones.length > 1 ? 's' : ''}`}
@@ -712,7 +685,7 @@ export default async function DetallePedidoPage({
                   style={{
                     background: COLORS.card,
                     border: `1.5px dashed ${COLORS.line}`,
-                    borderRadius: 16,
+                    borderRadius: 12,
                     padding: 24,
                     textAlign: 'center',
                   }}
@@ -734,10 +707,10 @@ export default async function DetallePedidoPage({
                     key={postulacion.id}
                     style={{
                       background: COLORS.card,
-                      border: `1.5px solid ${sinLeer > 0 ? COLORS.blue : COLORS.line}`,
-                      borderRadius: 18,
+                      boxShadow: sinLeer > 0 ? `0 0 0 2px ${COLORS.blue}` : COLORS.cardShadow,
+                      borderRadius: 12,
                       padding: 16,
-                      marginBottom: 12,
+                      marginBottom: 10,
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -746,9 +719,8 @@ export default async function DetallePedidoPage({
                           width: 40,
                           height: 40,
                           borderRadius: '50%',
-                          background: COLORS.card,
+                          background: COLORS.clay,
                           color: COLORS.ink,
-                          border: `1.5px solid ${COLORS.line}`,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -760,7 +732,7 @@ export default async function DetallePedidoPage({
                         {nombre[0]?.toUpperCase()}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, fontWeight: 500, fontSize: 14.5, color: COLORS.ink }}>
+                        <p style={{ margin: 0, fontWeight: 700, fontSize: 15, color: COLORS.ink }}>
                           {nombreCompleto}
                         </p>
                         <p style={{ margin: 0, fontSize: 12, color: COLORS.inkSoft }}>
@@ -781,7 +753,7 @@ export default async function DetallePedidoPage({
                           style={{
                             background: COLORS.blue,
                             color: '#FFFFFF',
-                            borderRadius: 100,
+                            borderRadius: 8,
                             fontSize: 11,
                             fontWeight: 700,
                             padding: '3px 9px',
@@ -801,10 +773,10 @@ export default async function DetallePedidoPage({
                           lineHeight: 1.5,
                           margin: '0 0 12px',
                           paddingTop: 10,
-                          borderTop: `1px dashed ${COLORS.line}`,
+                          borderTop: `1px solid ${COLORS.line}`,
                         }}
                       >
-                        "{postulacion.mensaje}"
+                        “{postulacion.mensaje}”
                       </p>
                     )}
 
@@ -817,7 +789,7 @@ export default async function DetallePedidoPage({
                           padding: 12,
                           fontSize: 14,
                           fontWeight: 500,
-                          borderRadius: 100,
+                          borderRadius: 8,
                           border: 'none',
                           background: COLORS.blue,
                           color: '#FFFFFF',
@@ -839,7 +811,7 @@ export default async function DetallePedidoPage({
                               padding: 12,
                               fontSize: 14,
                               fontWeight: 500,
-                              borderRadius: 100,
+                              borderRadius: 8,
                               border: `1.5px solid ${COLORS.blue}`,
                               background: 'transparent',
                               color: COLORS.blue,
@@ -864,7 +836,7 @@ export default async function DetallePedidoPage({
                               padding: 12,
                               fontSize: 14,
                               fontWeight: 500,
-                              borderRadius: 100,
+                              borderRadius: 8,
                               border: 'none',
                               background: COLORS.blue,
                               color: '#FFFFFF',
@@ -912,7 +884,7 @@ function ElegirBoton({
           padding: 12,
           fontSize: 14,
           fontWeight: 500,
-          borderRadius: 100,
+          borderRadius: 8,
           border: 'none',
           background: '#15803D',
           color: '#FFFFFF',
@@ -946,7 +918,7 @@ function RechazarBoton({
           padding: 12,
           fontSize: 14,
           fontWeight: 500,
-          borderRadius: 100,
+          borderRadius: 8,
           border: 'none',
           background: '#DC2626',
           color: '#FFFFFF',
