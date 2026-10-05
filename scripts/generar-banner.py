@@ -1,5 +1,5 @@
 # Genera public/banners/rebuscapp-1200x480.svg: banner animado de Rebuscapp
-# para vadeprecio.com (1200 x 480). Uso: python scripts/generar-banner.py
+# (1200 x 480). Uso: python scripts/generar-banner.py
 import base64
 import os
 R=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public') + '/'
@@ -10,7 +10,7 @@ frases=['¿Necesitás a alguien?','¿Buscás trabajo?','Trabajo cerca tuyo.']
 tarjetas=[('Plomería','Arreglar una canilla','$25.000'),('Limpieza','Casa, 4 horas','A convenir'),('Flete','Mudanza chica, hoy','$40.000')]
 
 svg=f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="480" viewBox="0 0 1200 480">
-<!-- Banner animado de Rebuscapp para vadeprecio.com (1200 x 480).
+<!-- Banner animado de Rebuscapp (1200 x 480).
      Generado por un script: logo y lupa embebidos, animación en CSS
      (ciclo de 9 s). Funciona como <img>; el link lo pone el espacio del anuncio. -->
 <defs>
