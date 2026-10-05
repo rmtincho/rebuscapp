@@ -60,6 +60,8 @@ export default function MegaMenuRubros({
   const [abierto, setAbierto] = useState(false)
   const [rubros, setRubros] = useState<RubroMenu[] | null>(null)
   const cierre = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Rubros con todas sus categorías a la vista ("y N más")
+  const [desplegados, setDesplegados] = useState<string[]>([])
 
   // Se precargan apenas la página queda libre: al pasar el mouse ya están.
   // Si hay una copia guardada en el navegador, se usa mientras tanto.
@@ -160,6 +162,7 @@ export default function MegaMenuRubros({
           ) : (
             <div style={{ columnCount: 4, columnGap: 32 }}>
               {rubros.map((r) => {
+                const desplegado = desplegados.includes(r.slug)
                 const extra = r.categorias.length - CATEGORIAS_A_LA_VISTA
                 return (
                   <div key={r.slug} style={{ breakInside: 'avoid', marginBottom: 22 }}>
@@ -173,7 +176,7 @@ export default function MegaMenuRubros({
                       {r.nombre}
                     </Link>
                     <ul style={{ listStyle: 'none', margin: 0, padding: '0 0 0 28px' }}>
-                      {r.categorias.slice(0, CATEGORIAS_A_LA_VISTA).map((c) => (
+                      {(desplegado ? r.categorias : r.categorias.slice(0, CATEGORIAS_A_LA_VISTA)).map((c) => (
                         <li key={c.slug}>
                           <Link
                             href={enlaceRubro(r.slug, c.slug)}
@@ -187,13 +190,18 @@ export default function MegaMenuRubros({
                       ))}
                       {extra > 0 && (
                         <li>
-                          <Link
-                            href={enlaceRubro(r.slug)}
-                            onClick={() => setAbierto(false)}
-                            style={{ display: 'block', padding: '3px 0', fontSize: 12.5, color: COLORS.clayDark }}
+                          {/* Despliega el resto acá mismo (antes llevaba al inicio
+                              filtrado, y si ya estabas ahí no pasaba nada) */}
+                          <button
+                            type="button"
+                            aria-expanded={desplegado}
+                            onClick={() =>
+                              setDesplegados((d) => (desplegado ? d.filter((x) => x !== r.slug) : [...d, r.slug]))
+                            }
+                            style={{ display: 'block', padding: '3px 0', border: 'none', background: 'none', fontSize: 12.5, color: COLORS.clayDark, cursor: 'pointer', textDecoration: 'underline' }}
                           >
-                            y {extra} más →
-                          </Link>
+                            {desplegado ? 'Ver menos' : `y ${extra} más`}
+                          </button>
                         </li>
                       )}
                     </ul>
