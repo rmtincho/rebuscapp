@@ -13,12 +13,36 @@ import { COLORS } from '@/lib/theme'
 
 const CATEGORIAS_A_LA_VISTA = 6
 
+// Guardados también en el navegador (un día), para que el menú abra al
+// instante en la próxima visita mientras se actualizan por detrás
+const CLAVE = 'rebuscapp:rubros-menu'
+const UN_DIA_MS = 24 * 60 * 60 * 1000
+
+function guardados(): RubroMenu[] | null {
+  try {
+    const g = JSON.parse(localStorage.getItem(CLAVE) ?? 'null') as { cuando: number; rubros: RubroMenu[] } | null
+    return g && Date.now() - g.cuando < UN_DIA_MS && g.rubros.length > 0 ? g.rubros : null
+  } catch {
+    return null
+  }
+}
+
 let cache: Promise<RubroMenu[]> | null = null
 function cargarRubros() {
-  cache ??= rubrosParaMenu().catch(() => {
-    cache = null
-    return []
-  })
+  cache ??= rubrosParaMenu()
+    .then((rubros) => {
+      if (rubros.length === 0) cache = null
+      else {
+        try {
+          localStorage.setItem(CLAVE, JSON.stringify({ cuando: Date.now(), rubros }))
+        } catch {}
+      }
+      return rubros
+    })
+    .catch(() => {
+      cache = null
+      return []
+    })
   return cache
 }
 
@@ -37,10 +61,30 @@ export default function MegaMenuRubros({
   const [rubros, setRubros] = useState<RubroMenu[] | null>(null)
   const cierre = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Se precargan apenas la página queda libre: al pasar el mouse ya están.
+  // Si hay una copia guardada en el navegador, se usa mientras tanto.
+  useEffect(() => {
+    let cancelado = false
+    const copia = guardados()
+    const cargar = () =>
+      cargarRubros().then((r) => {
+        if (!cancelado && r.length > 0) setRubros(r)
+      })
+    const t = setTimeout(() => {
+      if (cancelado) return
+      if (copia) setRubros(copia)
+      cargar()
+    }, copia ? 0 : 600)
+    return () => {
+      cancelado = true
+      clearTimeout(t)
+    }
+  }, [])
+
   function abrir() {
     if (cierre.current) clearTimeout(cierre.current)
     setAbierto(true)
-    if (!rubros) cargarRubros().then(setRubros)
+    if (!rubros) cargarRubros().then((r) => setRubros(r))
   }
   // Con un respiro, para poder pasar el mouse del botón al panel
   function cerrarPronto() {
