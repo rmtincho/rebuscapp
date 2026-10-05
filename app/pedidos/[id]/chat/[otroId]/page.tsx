@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { COLORS } from '@/lib/theme'
+import { tituloDe } from '@/lib/tarjetaTrabajo'
 import ChatVentana from '@/components/ChatVentana'
 import ListaConversaciones from '@/components/ListaConversaciones'
 import Link from 'next/link'
@@ -124,10 +125,9 @@ export default async function ChatMultiplePage({
               fontWeight: 500,
               color: COLORS.ink,
               fontFamily: 'var(--font-display)',
-              textTransform: 'capitalize',
             }}
           >
-            {pedido.descripcion}
+            {tituloDe(pedido.descripcion)}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 12.5, color: COLORS.inkSoft, fontWeight: 500 }}>
             <Link

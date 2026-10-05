@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { COLORS } from '@/lib/theme'
+import { tituloDe } from '@/lib/tarjetaTrabajo'
 import { formatearFechaCorta, formatearHora } from '@/lib/fechas'
 
 // Lista de conversaciones del usuario (un pedido + la otra persona), la más
@@ -109,10 +110,10 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
               href={enlace(c)}
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: 14,
-                borderRadius: 18,
+                alignItems: 'flex-start',
+                gap: 14,
+                padding: 16,
+                borderRadius: 12,
                 background: COLORS.card,
                 boxShadow: COLORS.cardShadow,
                 textDecoration: 'none',
@@ -121,11 +122,11 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
             >
               <div
                 style={{
-                  width: 48,
-                  height: 48,
+                  width: 46,
+                  height: 46,
                   borderRadius: '50%',
                   flexShrink: 0,
-                  background: COLORS.clayTint,
+                  background: COLORS.clay,
                   backgroundImage: persona?.foto_perfil_url ? `url(${persona.foto_perfil_url})` : undefined,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
@@ -155,39 +156,46 @@ export default async function ListaConversaciones({ usuarioId, activa }: { usuar
                   >
                     {nombre}
                   </p>
-                  <span style={{ flexShrink: 0, fontSize: 11.5, color: tieneSinLeer ? COLORS.clayDark : COLORS.inkSoft, fontWeight: 500 }}>
+                  <span style={{ flexShrink: 0, fontSize: 12, color: tieneSinLeer ? COLORS.blue : COLORS.inkSoft }}>
                     {cuando(c.ultimo.fecha)}
                   </span>
                 </div>
+                {/* De qué trabajo es la charla, como el breadcrumb de las tarjetas */}
                 <p
                   style={{
-                    margin: '1px 0 0',
-                    fontSize: 12,
-                    color: COLORS.inkSoft,
-                    fontWeight: 500,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    textTransform: 'capitalize',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    margin: '3px 0 0',
+                    fontSize: 12.5,
+                    color: COLORS.blue,
+                    minWidth: 0,
                   }}
                 >
-                  {pedido?.descripcion ?? 'Trabajo'}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }} aria-hidden>
+                    <rect x="3" y="7" width="18" height="13" rx="2" />
+                    <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {pedido?.descripcion ? tituloDe(pedido.descripcion) : 'Trabajo'}
+                  </span>
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 3 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 9 }}>
                   <p
                     style={{
                       flex: 1,
                       minWidth: 0,
                       margin: 0,
-                      fontSize: 13.5,
-                      color: tieneSinLeer ? COLORS.ink : COLORS.inkSoft,
-                      fontWeight: tieneSinLeer ? 500 : 400,
+                      fontSize: 14,
+                      lineHeight: 1.4,
+                      color: tieneSinLeer ? COLORS.ink : '#3F3F46',
+                      fontWeight: tieneSinLeer ? 700 : 400,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {mio && 'Vos: '}
+                    {mio && <span style={{ color: COLORS.inkSoft, fontWeight: 400 }}>Vos: </span>}
                     {texto}
                   </p>
                   {tieneSinLeer && (
