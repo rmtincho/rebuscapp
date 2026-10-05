@@ -47,8 +47,10 @@ export default function TusPublicaciones({
 }) {
   return (
     <div
+      id="publicados"
       className="estadisticas-bloque"
       style={{
+        scrollMarginTop: 16,
         background: COLORS.card,
         borderRadius: 24,
         padding: 18,
@@ -71,7 +73,10 @@ export default function TusPublicaciones({
             const estado = ESTADOS[p.noConcretado ? 'no_concretado' : p.estado] ?? ESTADOS.abierto
             return (
               <li key={p.id} style={{ borderTop: i > 0 ? `1px solid ${COLORS.line}` : 'none' }}>
-                <a href={`/pedidos/${p.id}`} style={{ display: 'block', padding: '11px 0', textDecoration: 'none', color: COLORS.ink }}>
+                <a
+                  href={`/pedidos/${p.id}?volver=${encodeURIComponent('/perfil#publicados')}`}
+                  style={{ display: 'block', padding: '11px 0', textDecoration: 'none', color: COLORS.ink }}
+                >
                   <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
                     <span style={{ fontSize: 14.5, fontWeight: 700, lineHeight: 1.3, minWidth: 0 }}>{tituloDe(p.descripcion)}</span>
                     <span style={{ flexShrink: 0, fontSize: 11.5, background: estado.fondo, color: estado.color, padding: '3px 8px', borderRadius: 5 }}>

@@ -22,10 +22,16 @@ import { elegirPrestador, rechazarPostulante } from '@/app/actions/postulaciones
 
 export default async function DetallePedidoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ volver?: string }>
 }) {
   const { id } = await params
+  // A dónde vuelve "← Volver" (y adónde lleva eliminarlo): la pantalla de
+  // la que vino, si es una dirección de la app; si no, el inicio
+  const { volver: volverPedido } = await searchParams
+  const volver = volverPedido && volverPedido.startsWith('/') && !volverPedido.startsWith('//') ? volverPedido : '/'
   const supabase = await createClient()
 
   const {
@@ -238,7 +244,7 @@ export default async function DetallePedidoPage({
       <div className="pantalla" style={{ background: COLORS.paper, minHeight: '100vh' }}>
         <div style={{ padding: 20 }}>
           <Link
-            href="/"
+            href={volver}
             style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}
           >
             ← Volver
@@ -418,7 +424,7 @@ export default async function DetallePedidoPage({
                   >
                     Editar
                   </Link>
-                  <EliminarPedidoBoton pedidoId={id} />
+                  <EliminarPedidoBoton pedidoId={id} volver={volver} />
                 </div>
               </>
             )}

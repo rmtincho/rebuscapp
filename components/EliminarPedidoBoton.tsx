@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { COLORS } from '@/lib/theme'
 
-export default function EliminarPedidoBoton({ pedidoId }: { pedidoId: string }) {
+// `volver`: a dónde ir después de eliminarlo (por ejemplo, de vuelta al perfil)
+export default function EliminarPedidoBoton({ pedidoId, volver = '/' }: { pedidoId: string; volver?: string }) {
   const router = useRouter()
   const supabase = createClient()
   const [cargando, setCargando] = useState(false)
@@ -40,7 +41,7 @@ export default function EliminarPedidoBoton({ pedidoId }: { pedidoId: string }) 
       return
     }
 
-    router.push('/')
+    router.push(volver)
     router.refresh()
   }
 
