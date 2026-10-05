@@ -17,7 +17,7 @@
 // Restaurar es a mano: la estructura con estructura.sql (o scripts/sql) y los
 // datos importando los JSON. Lo importante es no perderlos.
 
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { readFileSync, mkdirSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
@@ -144,10 +144,23 @@ try {
   console.error(`  archivos: ERROR ${e.message}`)
 }
 
-// 4. Estructura completa, si se puede (pg_dump + cadena de conexión)
+// El instalador de PostgreSQL para Windows no agrega pg_dump al PATH (y la
+// tarea programada tampoco lo vería): se busca en su carpeta, la versión más nueva
+function rutaPgDump() {
+  const base = 'C:/Program Files/PostgreSQL'
+  if (!existsSync(base)) return 'pg_dump'
+  const versiones = readdirSync(base)
+    .filter((v) => existsSync(join(base, v, 'bin', 'pg_dump.exe')))
+    .sort((a, b) => Number(b) - Number(a))
+  return versiones.length ? join(base, versiones[0], 'bin', 'pg_dump.exe') : 'pg_dump'
+}
+
+// 4. Estructura completa, si se puede (pg_dump + cadena de conexión).
+// Con los permisos (GRANT/REVOKE): de ellos depende qué columnas puede
+// modificar cada usuario, no solo de las reglas RLS.
 if (env.SUPABASE_DB_URL) {
   try {
-    execFileSync('pg_dump', ['--schema-only', '--no-owner', '--no-privileges', '-f', join(destino, 'estructura.sql'), env.SUPABASE_DB_URL], {
+    execFileSync(rutaPgDump(), ['--schema-only', '--no-owner', '-f', join(destino, 'estructura.sql'), env.SUPABASE_DB_URL], {
       stdio: 'inherit',
     })
     resumen.estructura = true
