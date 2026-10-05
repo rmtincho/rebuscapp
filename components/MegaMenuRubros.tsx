@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { rubrosParaMenu, type RubroMenu } from '@/app/actions/rubros'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { COLORS } from '@/lib/theme'
+import { useRubrosMenu } from '@/components/RubrosMenuContext'
 
 // "Rubros" en el menú de la cabecera web: se abre un panel grande con
 // todos los rubros en columnas y sus categorías debajo. Cada uno lleva al
@@ -58,7 +59,9 @@ export default function MegaMenuRubros({
   colores: { texto: string; textoSuave: string; raya: string }
 }) {
   const [abierto, setAbierto] = useState(false)
-  const [rubros, setRubros] = useState<RubroMenu[] | null>(null)
+  // Normalmente ya llegan con la página; si no, se piden (y hay copia local)
+  const rubrosDeLaPagina = useRubrosMenu()
+  const [rubros, setRubros] = useState<RubroMenu[] | null>(rubrosDeLaPagina.length > 0 ? rubrosDeLaPagina : null)
   const cierre = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Rubros con todas sus categorías a la vista ("y N más")
   const [desplegados, setDesplegados] = useState<string[]>([])
@@ -66,6 +69,7 @@ export default function MegaMenuRubros({
   // Se precargan apenas la página queda libre: al pasar el mouse ya están.
   // Si hay una copia guardada en el navegador, se usa mientras tanto.
   useEffect(() => {
+    if (rubrosDeLaPagina.length > 0) return
     let cancelado = false
     const copia = guardados()
     const cargar = () =>
@@ -81,7 +85,7 @@ export default function MegaMenuRubros({
       cancelado = true
       clearTimeout(t)
     }
-  }, [])
+  }, [rubrosDeLaPagina.length])
 
   function abrir() {
     if (cierre.current) clearTimeout(cierre.current)

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import CabeceraWeb from '@/components/CabeceraWeb'
+import { RubrosMenuProvider } from '@/components/RubrosMenuContext'
+import { rubrosParaMenu } from '@/app/actions/rubros'
 
 // Fuente: Helvetica LT Pro, de Adobe Fonts (proyecto web iym1qdq,
 // pesos 400 y 700), para títulos y texto. Inter queda de respaldo por si
@@ -34,11 +36,14 @@ export const viewport: Viewport = {
   themeColor: '#FFC21A',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Rubros del megamenú de la cabecera: de la caché del servidor (una hora),
+  // así llegan con la página y el menú abre sin esperar
+  const rubros = await rubrosParaMenu()
   return (
     <html lang="es" className={inter.variable}>
       <head>
@@ -46,8 +51,10 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://use.typekit.net/iym1qdq.css" />
       </head>
       <body>
-        <CabeceraWeb />
-        {children}
+        <RubrosMenuProvider rubros={rubros}>
+          <CabeceraWeb />
+          {children}
+        </RubrosMenuProvider>
       </body>
     </html>
   )
