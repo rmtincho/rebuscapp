@@ -11,6 +11,7 @@ import { COLORS } from '@/lib/theme'
 import { formatearFechaCorta } from '@/lib/fechas'
 import BottomNav from '@/components/BottomNav'
 import BannerNotificaciones from '@/components/BannerNotificaciones'
+import AvisoContrasena from '@/components/AvisoContrasena'
 import FeedPedidos from '@/components/FeedPedidos'
 import InicioWeb, { type ActividadWeb } from '@/components/InicioWeb'
 import { anunciosPara, anunciosDeEspacio, anunciosParaCarrusel, semillaAnuncios } from '@/lib/anuncios'
@@ -355,6 +356,8 @@ export default async function HomePage() {
   return (
     <ModoProvider inicial={modo}>
     <div className="fondo-pantalla" style={{ background: COLORS.wrapperBg, minHeight: '100vh' }}>
+      {/* Arriba de todo, en celular y web, si falta crear la contraseña */}
+      <AvisoContrasena />
       {/* En compu: un inicio propio de web (components/InicioWeb) */}
       <div className="solo-escritorio">
         <InicioWeb
