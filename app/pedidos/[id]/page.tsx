@@ -294,7 +294,7 @@ export default async function DetallePedidoPage({
             {(precio || etiquetas.length > 0 || pedido.marca_vehiculo || pedido.tipo_comercio) && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
                 {precio && (
-                  <span style={{ ...ESTILO_ETIQUETA, fontSize: 13, fontWeight: 400, padding: '5px 9px', background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
+                  <span style={{ ...ESTILO_ETIQUETA, fontWeight: 400, alignSelf: 'center', background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
                     {precio}
                   </span>
                 )}

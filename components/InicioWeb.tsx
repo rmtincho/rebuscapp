@@ -675,7 +675,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, textAlign: 'right' }}>
         {precio && (
-          <span style={{ ...etiqueta, fontSize: 13, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto, padding: '5px 9px' }}>{precio}</span>
+          <span style={{ ...etiqueta, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>{precio}</span>
         )}
         {quien && (
           <span style={{ fontSize: 12.5, color: COLORS.inkSoft, maxWidth: '100%', lineHeight: 1.35 }}>

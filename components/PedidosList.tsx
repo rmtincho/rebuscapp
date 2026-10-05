@@ -211,7 +211,7 @@ export default function PedidosList({
                 )}
               </span>
               {precio && (
-                <span style={{ ...ESTILO_ETIQUETA, fontSize: 12.5, fontWeight: 400, padding: '5px 9px', flexShrink: 0, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
+                <span style={{ ...ESTILO_ETIQUETA, fontWeight: 400, flexShrink: 0, background: COLOR_PRECIO.fondo, color: COLOR_PRECIO.texto }}>
                   {precio}
                 </span>
               )}
