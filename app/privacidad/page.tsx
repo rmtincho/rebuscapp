@@ -30,32 +30,55 @@ export default function PrivacidadPage() {
 
       <Seccion titulo="Para qué los usamos">
         <p style={p}>
-          Solo para que la app funcione: mostrar trabajos y trabajadores, conectar a las partes, mandarte
-          avisos y cuidar la seguridad de la comunidad (por ejemplo, frenar cuentas falsas). No vendemos tus
-          datos ni los usamos para publicidad.
+          Usamos tus datos para que Rebuscapp funcione: mostrar trabajos y trabajadores, conectar a las
+          partes, mandarte avisos y cuidar la seguridad de la comunidad, por ejemplo para prevenir o
+          detectar cuentas falsas y usos indebidos.
         </p>
         <p style={p}>
-          La app muestra banners de comercios en algunos espacios fijos. Los anunciantes no reciben ningún dato
-          tuyo: solo sabemos cuántas veces se vio y se tocó cada banner, en total.
+          No vendemos tus datos ni los usamos para publicidad.
+        </p>
+        <p style={p}>
+          La app muestra banners de comercios en algunos espacios fijos. Los anunciantes no reciben ningún
+          dato tuyo: solo sabemos cuántas veces se vio y se tocó cada banner, en total.
         </p>
       </Seccion>
 
       <Seccion titulo="Quién ve qué">
         <Lista
           items={[
-            'Los demás usuarios ven tu nombre, apellido, foto, tu perfil de trabajador y tus calificaciones.',
-            'Tu edad, DNI y mail no se muestran a nadie.',
+            'Si activás tu perfil de trabajador, los demás usuarios pueden ver tu nombre, apellido, foto, la información de tu perfil de trabajador y tus calificaciones.',
+            'Tu edad, DNI y mail no se muestran a otros usuarios.',
             'Los mensajes del chat los ven solo las dos personas de la conversación, salvo que haya una denuncia: en ese caso podemos revisar la conversación para resolverla.',
             'Solo aparecés en el listado de trabajadores si lo activás en tu perfil.',
           ]}
         />
       </Seccion>
 
+      <Seccion titulo="Qué pasa si no proporcionás tus datos">
+        <p style={p}>
+          Algunos datos son necesarios para crear y mantener tu cuenta y para que podamos prestarte el
+          servicio. Si no proporcionás esos datos, puede que no podamos crear tu cuenta o habilitar
+          determinadas funciones de Rebuscapp.
+        </p>
+        <p style={p}>
+          Los datos que no sean necesarios para una función determinada no se utilizan para otros fines.
+        </p>
+      </Seccion>
+
       <Seccion titulo="Dónde se guardan">
         <p style={p}>
           Usamos servicios externos para funcionar: Supabase (base de datos y archivos), Resend (envío
-          de los mails de ingreso) y Vercel (donde corre la app). Sus servidores pueden estar fuera de
-          Argentina. Tus datos se guardan ahí con acceso restringido.
+          de los mails de ingreso) y Vercel (donde corre la app). Sus servidores o los de sus proveedores
+          pueden estar fuera de Argentina. Tus datos se guardan con acceso restringido y se utilizan para
+          prestar y mantener el servicio.
+        </p>
+      </Seccion>
+
+      <Seccion titulo="Seguridad">
+        <p style={p}>
+          Aplicamos medidas técnicas y organizativas razonables para proteger los datos personales contra
+          accesos no autorizados, pérdida, alteración o divulgación. El acceso a los datos está limitado a
+          los servicios y personas que lo necesitan para operar y mantener Rebuscapp.
         </p>
       </Seccion>
 
@@ -69,13 +92,15 @@ export default function PrivacidadPage() {
             </>
           )}
         </p>
+
         <p style={p}>
           También podés <b>eliminar tu cuenta</b> desde tu perfil. Al hacerlo borramos tus datos personales,
-          tu foto, tu perfil de trabajador, tus postulaciones pendientes y tus notificaciones, y damos de baja
-          tus trabajos abiertos. Lo que forma parte de la actividad de otras personas (mensajes que mandaste,
-          calificaciones y trabajos ya asignados) queda a nombre de &quot;Usuario eliminado&quot;, sin datos
-          que te identifiquen.
+          tu foto, tu perfil de trabajador, tus postulaciones pendientes y tus notificaciones, y damos de
+          baja tus trabajos abiertos. Lo que forma parte de la actividad de otras personas (mensajes que
+          mandaste, calificaciones y trabajos ya asignados) queda a nombre de &quot;Usuario eliminado&quot;,
+          sin datos que te identifiquen.
         </p>
+
         <p style={p}>
           La Agencia de Acceso a la Información Pública, órgano de control de la Ley 25.326, atiende las
           denuncias y reclamos de quienes consideren que no se respetaron sus derechos.
