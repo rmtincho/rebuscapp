@@ -66,9 +66,25 @@ export default function CabeceraModo({
       </h1>
 
       {modo === 'busco' ? (
-        <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 500, color: tema.textoSuave }}>
-          {cantidadTrabajos === 1 ? '1 trabajo abierto' : `${cantidadTrabajos} trabajos abiertos`} · postulate y chateá
-        </p>
+        <>
+          <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 500, color: tema.textoSuave }}>
+            {cantidadTrabajos === 1 ? '1 trabajo abierto' : `${cantidadTrabajos} trabajos abiertos`} · postulate y chateá
+          </p>
+
+          <a
+            href="/perfil"
+            style={{
+              display: 'block',
+              marginTop: 14,
+              fontSize: 13,
+              fontWeight: 500,
+              color: tema.texto,
+              textDecoration: 'none',
+            }}
+          >
+            Completá tu perfil y promocionate como trabajador →
+          </a>
+        </>
       ) : (
         <EnlaceConCarga
           href="/publicar"
