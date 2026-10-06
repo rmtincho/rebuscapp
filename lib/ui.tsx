@@ -40,7 +40,7 @@ export function TituloPagina({ children }: { children: React.ReactNode }) {
 
 export function Subtitulo({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 24 }}>
+    <p style={{ fontSize: 14, color: COLORS.inkSoft, marginBottom: 24 }}>
       {children}
     </p>
   )
@@ -52,7 +52,7 @@ export function TituloSeccion({ children }: { children: React.ReactNode }) {
     <label
       style={{
         display: 'block',
-        fontSize: 13.5,
+        fontSize: 15,
         fontWeight: 700,
         color: COLORS.ink,
         marginBottom: 10,
@@ -66,7 +66,7 @@ export function TituloSeccion({ children }: { children: React.ReactNode }) {
 // Etiqueta secundaria, más chica, subordinada a un TituloSeccion (ej. "Nivel educativo requerido" dentro de "Requisitos")
 export function Etiqueta({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 12.5, color: COLORS.inkSoft, marginBottom: 10, fontWeight: 500 }}>
+    <p style={{ fontSize: 14, color: COLORS.inkSoft, marginBottom: 10, fontWeight: 500 }}>
       {children}
     </p>
   )
@@ -78,7 +78,7 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
     <p
       style={{
         fontFamily: 'var(--font-body)',
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: 700,
         color: COLORS.inkSoft,
         textTransform: 'uppercase',
@@ -93,7 +93,7 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
 
 export function LinkVolver({ href, children = '← Volver' }: { href: string; children?: React.ReactNode }) {
   return (
-    <a href={href} style={{ fontSize: 13, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}>
+    <a href={href} style={{ fontSize: 14, color: COLORS.inkSoft, textDecoration: 'none', fontWeight: 500 }}>
       {children}
     </a>
   )
@@ -130,7 +130,7 @@ export function BotonPrincipal({
       style={{
         width: '100%',
         padding: 16,
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: 700,
         borderRadius: 100,
         border: 'none',
@@ -160,9 +160,9 @@ export function Chip({
       onClick={onClick}
       className="chip"
       style={{
-        padding: '9px 15px',
+        padding: '10px 16px',
         borderRadius: 100,
-        fontSize: 12.5,
+        fontSize: 14,
         fontWeight: 500,
         border: `1.5px solid ${activo ? COLORS.dark : COLORS.line}`,
         background: activo ? COLORS.dark : COLORS.card,
@@ -177,13 +177,13 @@ export function Chip({
 
 export function MensajeError({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ color: COLORS.red, fontSize: 13, marginBottom: 16, fontWeight: 500 }}>{children}</p>
+    <p style={{ color: COLORS.red, fontSize: 14, marginBottom: 16, fontWeight: 500 }}>{children}</p>
   )
 }
 
 export function MensajeExito({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ color: COLORS.green, fontSize: 13, marginBottom: 16, fontWeight: 500 }}>{children}</p>
+    <p style={{ color: COLORS.green, fontSize: 14, marginBottom: 16, fontWeight: 500 }}>{children}</p>
   )
 }
 
@@ -200,7 +200,7 @@ export function BarraProgreso({ porcentaje }: { porcentaje: number }) {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-        <span style={{ fontSize: 13, fontWeight: 500, color: COLORS.ink }}>Perfil completado</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.ink }}>Perfil completado</span>
         <span
           style={{
             fontFamily: 'var(--font-display)',
@@ -226,3 +226,4 @@ export function BarraProgreso({ porcentaje }: { porcentaje: number }) {
     </div>
   )
 }
+
