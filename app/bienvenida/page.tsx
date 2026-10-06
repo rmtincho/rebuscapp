@@ -50,7 +50,7 @@ const columna: React.CSSProperties = {
   paddingTop: 14,
 }
 
-const textoSuave: React.CSSProperties = { fontSize: 14.5, color: COLORS.inkSoft, lineHeight: 1.55, margin: 0 }
+const textoSuave: React.CSSProperties = { fontSize: 15.5, color: COLORS.inkSoft, lineHeight: 1.55, margin: 0 }
 
 const tituloColumna: React.CSSProperties = { fontSize: 16, fontWeight: 700, color: COLORS.ink, margin: '0 0 6px' }
 
