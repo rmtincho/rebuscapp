@@ -9,12 +9,7 @@ const p = { margin: '0 0 8px' }
 export default function PrivacidadPage() {
   return (
     <PaginaLegal titulo="Política de privacidad">
-      <Seccion titulo="Quién es responsable">
-        <p style={p}>
-          El responsable de los datos que cargás en Rebuscapp es {LEGAL.responsable} ({LEGAL.ciudad}).
-          {LEGAL.contacto && <> Contacto: {LEGAL.contacto}.</>}
-        </p>
-      </Seccion>
+      
 
       <Seccion titulo="Qué datos guardamos">
         <Lista
@@ -104,6 +99,13 @@ export default function PrivacidadPage() {
         <p style={p}>
           La Agencia de Acceso a la Información Pública, órgano de control de la Ley 25.326, atiende las
           denuncias y reclamos de quienes consideren que no se respetaron sus derechos.
+        </p>
+      </Seccion>
+
+      <Seccion titulo="Quién es responsable">
+        <p style={p}>
+          El responsable de los datos que cargás en Rebuscapp es {LEGAL.responsable} ({LEGAL.ciudad}).
+          {LEGAL.contacto && <> Contacto: {LEGAL.contacto}.</>}
         </p>
       </Seccion>
 
