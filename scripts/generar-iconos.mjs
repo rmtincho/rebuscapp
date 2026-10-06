@@ -74,7 +74,8 @@ async function main() {
   await sharp(await recortado('rebuscapp_icono_negro.png')).resize({ height: 400 }).png().toFile('public/icono-negro.png')
 
   // Imagen para compartir el link: degradé con el logo negro
-  const logoOg = await sharp(await recortado('rebuscapp_logo_negro.png')).resize({ width: 760 }).toBuffer()
+  // Logo actual (public/logo_negro.png, 4/10); nuevo-logo/ tiene el anterior
+  const logoOg = await sharp(await sharp('public/logo_negro.png').trim().toBuffer()).resize({ width: 760 }).toBuffer()
   await sharp(fondoDegrade(1200, 630)).composite([{ input: logoOg, gravity: 'center' }]).png().toFile('public/og.png')
 
   // Favicon: lupa amarilla sobre transparente, cuadrada
