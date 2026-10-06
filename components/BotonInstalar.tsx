@@ -74,7 +74,7 @@ export default function BotonInstalar({ variante = 'amarillo' }: { variante?: 'a
           style={{
             display: 'inline-block',
             padding: '15px 28px',
-            borderRadius: 100,
+            borderRadius: 6,
             background: COLORS.green,
             color: '#FFFFFF',
             fontSize: 15.5,
@@ -93,14 +93,13 @@ export default function BotonInstalar({ variante = 'amarillo' }: { variante?: 'a
             alignItems: 'center',
             gap: 10,
             padding: '15px 28px',
-            borderRadius: 100,
+            borderRadius: 6,
             border: 'none',
             background: oscuro ? COLORS.dark : COLORS.clay,
             color: oscuro ? COLORS.onDark : COLORS.onClay,
             fontSize: 16,
             fontWeight: 700,
             cursor: 'pointer',
-            boxShadow: '0 10px 24px rgba(80, 60, 20, 0.18)',
           }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -133,7 +132,7 @@ export default function BotonInstalar({ variante = 'amarillo' }: { variante?: 'a
               width: '100%',
               maxWidth: 420,
               background: COLORS.card,
-              borderRadius: 24,
+              borderRadius: 10,
               padding: 22,
               textAlign: 'left',
               color: COLORS.ink,
@@ -173,7 +172,7 @@ export default function BotonInstalar({ variante = 'amarillo' }: { variante?: 'a
                 width: '100%',
                 marginTop: 16,
                 padding: 13,
-                borderRadius: 100,
+                borderRadius: 6,
                 border: 'none',
                 background: COLORS.dark,
                 color: COLORS.onDark,
