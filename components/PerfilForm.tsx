@@ -31,12 +31,14 @@ import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
 import { TURNOS_TRABAJADOR } from '@/lib/turnos'
+import { UNIDADES_TARIFA } from '@/lib/tarifas'
 
 type Perfil = {
   nivel_educativo: string | null
   tipo_busqueda: string | null
   disponibilidad_horaria: string | null
   turno_preferido?: string | null
+  sueldo_pretendido?: number | null
   experiencia: string | null
   sobre_mi: string | null
   tiene_carnet: 'si' | 'no' | null
@@ -46,7 +48,13 @@ type Perfil = {
 
 type CategoriaT = { slug: string; nombre: string; requiere_matricula: boolean }
 type Grupo = { slug: string; nombre: string; categorias: CategoriaT[] }
-type CategoriaInteres = { slug: string; nombre: string; grupoNombre: string }
+type CategoriaInteres = {
+  slug: string
+  nombre: string
+  grupoNombre: string
+  tarifa?: number | null
+  tarifaUnidad?: string | null
+}
 
 const NIVELES = [
   { valor: 'primario', label: 'Primario' },
@@ -137,6 +145,18 @@ export default function PerfilForm({
   const [sobreMi, setSobreMi] = useState(perfilExistente?.sobre_mi ?? '')
   const [experiencia, setExperiencia] = useState(perfilExistente?.experiencia ?? '')
   const [categoriasInteres, setCategoriasInteres] = useState<CategoriaInteres[]>(categoriasInteresIniciales)
+  // Tarifa por categoría (por slug), aparte de la lista: así se conserva
+  // aunque cambie la selección en el picker. Monto en texto, solo dígitos.
+  const [tarifas, setTarifas] = useState<Record<string, { monto: string; unidad: string }>>(() =>
+    Object.fromEntries(
+      categoriasInteresIniciales
+        .filter((c) => c.tarifa)
+        .map((c) => [c.slug, { monto: String(c.tarifa), unidad: c.tarifaUnidad ?? 'hora' }])
+    )
+  )
+  const [sueldoPretendido, setSueldoPretendido] = useState(
+    perfilExistente?.sueldo_pretendido ? String(perfilExistente.sueldo_pretendido) : ''
+  )
   const [mostrarPicker, setMostrarPicker] = useState(false)
   const [visibleEnListado, setVisibleEnListado] = useState(visibleEnListadoInicial ?? false)
 
@@ -290,6 +310,10 @@ export default function PerfilForm({
     )
   }
 
+  function cambiarTarifa(slug: string, cambio: Partial<{ monto: string; unidad: string }>) {
+    setTarifas((prev) => ({ ...prev, [slug]: { ...(prev[slug] ?? { monto: '', unidad: 'hora' }), ...cambio } }))
+  }
+
   function quitarCategoria(slug: string) {
     setCategoriasInteres((prev) => prev.filter((c) => c.slug !== slug))
   }
@@ -365,6 +389,7 @@ export default function PerfilForm({
           tipo_busqueda: tipoBusqueda,
           disponibilidad_horaria: disponibilidad || null,
           turno_preferido: turnoPreferido || null,
+          sueldo_pretendido: tipoBusqueda !== 'changa' && sueldoPretendido ? Number(sueldoPretendido) : null,
           sobre_mi: sobreMi || null,
           experiencia: experiencia || null,
           porcentaje_perfil_completo: porcentajeCompleto,
@@ -389,7 +414,15 @@ export default function PerfilForm({
 
       if (categoriasInteres.length > 0) {
         const { error: errorCategorias } = await supabase.from('prestador_categorias').insert(
-          categoriasInteres.map((c) => ({ prestador_id: user.id, categoria_slug: c.slug }))
+          categoriasInteres.map((c) => {
+            const monto = Number(tarifas[c.slug]?.monto) || null
+            return {
+              prestador_id: user.id,
+              categoria_slug: c.slug,
+              tarifa: monto,
+              tarifa_unidad: monto ? tarifas[c.slug]?.unidad ?? 'hora' : null,
+            }
+          })
         )
         if (errorCategorias) {
           setError('Guardamos el perfil, pero no las categorías: ' + errorCategorias.message)
@@ -702,8 +735,64 @@ export default function PerfilForm({
                 />
               )}
 
+              {categoriasInteres.length > 0 && (
+                <>
+                  <TituloSeccion>¿Cuánto cobrás? (opcional)</TituloSeccion>
+                  <p style={{ ...ayuda, marginBottom: 12 }}>
+                    Una tarifa de referencia para cada categoría. Se ve en tu perfil; el precio final lo arreglás con quien te contrata.
+                  </p>
+                  {categoriasInteres.map((c) => {
+                    const t = tarifas[c.slug] ?? { monto: '', unidad: 'hora' }
+                    return (
+                      <div key={c.slug} style={{ marginBottom: 12 }}>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: COLORS.ink, margin: '0 0 6px' }}>{c.nombre}</p>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={t.monto ? `$ ${Number(t.monto).toLocaleString('es-AR')}` : ''}
+                            onChange={(e) => cambiarTarifa(c.slug, { monto: e.target.value.replace(/\D/g, '').slice(0, 8) })}
+                            placeholder="$ monto"
+                            aria-label={`Tarifa para ${c.nombre}`}
+                            style={{ ...inputEnTarjeta, flex: 1, minWidth: 0, marginBottom: 0 }}
+                          />
+                          <select
+                            value={t.unidad}
+                            onChange={(e) => cambiarTarifa(c.slug, { unidad: e.target.value })}
+                            aria-label={`Unidad de la tarifa para ${c.nombre}`}
+                            style={{ ...inputEnTarjeta, width: 'auto', flexShrink: 0, marginBottom: 0 }}
+                          >
+                            {UNIDADES_TARIFA.map((u) => (
+                              <option key={u.valor} value={u.valor}>
+                                {u.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div style={{ marginBottom: 22 }} />
+                </>
+              )}
+
               <TituloSeccion>¿Qué tipo de trabajo buscás?</TituloSeccion>
               {chipRow(TIPOS_BUSQUEDA, tipoBusqueda, setTipoBusqueda)}
+
+              {tipoBusqueda !== 'changa' && (
+                <>
+                  <TituloSeccion>Sueldo pretendido (opcional)</TituloSeccion>
+                  <p style={{ ...ayuda, marginBottom: 10 }}>Para un puesto fijo, por mes y en mano.</p>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={sueldoPretendido ? `$ ${Number(sueldoPretendido).toLocaleString('es-AR')}` : ''}
+                    onChange={(e) => setSueldoPretendido(e.target.value.replace(/\D/g, '').slice(0, 9))}
+                    placeholder="$ por mes"
+                    style={{ ...inputEnTarjeta, marginBottom: 22 }}
+                  />
+                </>
+              )}
 
               <TituloSeccion>Disponibilidad horaria</TituloSeccion>
               {chipRow(DISPONIBILIDADES, disponibilidad, setDisponibilidad)}

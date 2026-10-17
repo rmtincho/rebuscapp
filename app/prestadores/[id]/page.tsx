@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import PerfilPublico, { type Calificacion } from '@/components/PerfilPublico'
+import { formatearTarifa } from '@/lib/tarifas'
 import { anunciosPara } from '@/lib/anuncios'
 import { loBloqueo } from '@/lib/bloqueos'
 import { COLORS } from '@/lib/theme'
@@ -52,11 +53,11 @@ export default async function PerfilPrestadorPublicoPage({
     supabase
       .from('perfiles_prestador')
       .select(
-        'nivel_educativo, tipo_busqueda, disponibilidad_horaria, turno_preferido, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
+        'nivel_educativo, tipo_busqueda, disponibilidad_horaria, turno_preferido, sueldo_pretendido, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
       )
       .eq('usuario_id', id)
       .maybeSingle(),
-    supabase.from('prestador_categorias').select('categoria_slug, categorias ( nombre )').eq('prestador_id', id),
+    supabase.from('prestador_categorias').select('categoria_slug, tarifa, tarifa_unidad, categorias ( nombre )').eq('prestador_id', id),
     // Calificaciones y conteos por el servidor: son públicos en el perfil,
     // pero no dependemos de que RLS deje leer las filas de otra persona
     admin.from('calificaciones').select('*').eq('calificado_id', id),
@@ -81,10 +82,16 @@ export default async function PerfilPrestadorPublicoPage({
     }))
     .sort((a, b) => (b.fecha ?? '').localeCompare(a.fecha ?? ''))
 
-  const rubros: string[] = (categoriasInteres ?? []).map((c) => {
+  const rubros: string[] = []
+  // Tarifa de cada rubro, por nombre (las que cargó)
+  const tarifas: Record<string, string> = {}
+  for (const c of categoriasInteres ?? []) {
     const cat = c.categorias as { nombre: string } | { nombre: string }[] | null
-    return (Array.isArray(cat) ? cat[0]?.nombre : cat?.nombre) ?? c.categoria_slug
-  })
+    const nombre = (Array.isArray(cat) ? cat[0]?.nombre : cat?.nombre) ?? c.categoria_slug
+    rubros.push(nombre)
+    const tarifa = formatearTarifa(c.tarifa, c.tarifa_unidad)
+    if (tarifa) tarifas[nombre] = tarifa
+  }
 
   const esOtro = !!user && user.id !== id
   const bloqueado = esOtro ? await loBloqueo(user.id, id) : false
@@ -94,6 +101,7 @@ export default async function PerfilPrestadorPublicoPage({
       usuario={usuario}
       perfil={perfil}
       rubros={rubros}
+      tarifas={tarifas}
       calificaciones={calificaciones}
       hechos={completadosComoTrabajador ?? 0}
       ofrecidosCompletados={completadosComoOferente ?? 0}

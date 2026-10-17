@@ -22,6 +22,7 @@ import CategoriaPicker from '@/components/CategoriaPicker'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { TURNOS_TRABAJO } from '@/lib/turnos'
+import SubirLogo from '@/components/SubirLogo'
 import { notificarPedidoEditado } from '@/app/actions/notificaciones'
 
 type CategoriaT = { slug: string; nombre: string; requiere_matricula: boolean }
@@ -38,6 +39,8 @@ type Pedido = {
   pide_videollamada_previa: boolean
   es_comercio: boolean
   nombre_comercio: string | null
+  imagen_empresa: string | null
+  logo_comercio_url: string | null
   jornada: 'changa' | 'fulltime' | 'parttime'
   turno: string | null
   requisito_nivel_educativo: string | null
@@ -64,7 +67,15 @@ const checkboxRowStyle: React.CSSProperties = {
   padding: '13px 14px',
 }
 
-export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; grupos: Grupo[] }) {
+export default function EditarPedidoForm({
+  pedido,
+  grupos,
+  fotoPerfil,
+}: {
+  pedido: Pedido
+  grupos: Grupo[]
+  fotoPerfil: string | null
+}) {
   const router = useRouter()
   const supabase = createClient()
 
@@ -82,6 +93,8 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
   const [pideVideollamada, setPideVideollamada] = useState(pedido.pide_videollamada_previa)
   const [esComercio, setEsComercio] = useState(pedido.es_comercio)
   const [nombreComercio, setNombreComercio] = useState(pedido.nombre_comercio ?? '')
+  const [imagenEmpresa, setImagenEmpresa] = useState<'logo' | 'foto'>(pedido.imagen_empresa === 'foto' ? 'foto' : 'logo')
+  const [logoUrl, setLogoUrl] = useState<string | null>(pedido.logo_comercio_url)
   const [jornada, setJornada] = useState<'changa' | 'fulltime' | 'parttime'>(pedido.jornada ?? 'changa')
   // '' = sin especificar
   const [turno, setTurno] = useState(pedido.turno ?? '')
@@ -182,6 +195,8 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
         pide_videollamada_previa: pideVideollamada,
         es_comercio: esComercio,
         nombre_comercio: esComercio ? nombreComercio : null,
+        imagen_empresa: esComercio ? imagenEmpresa : null,
+        logo_comercio_url: esComercio && imagenEmpresa === 'logo' ? logoUrl : null,
         jornada: esComercio ? jornada : 'changa',
         turno: turno === 'rotativo' && (!esComercio || jornada === 'changa') ? null : turno || null,
         requisito_nivel_educativo: nivelRequerido || null,
@@ -328,6 +343,29 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
                 placeholder="Nombre de la empresa"
                 style={{ ...inputBaseStyle, marginBottom: 14 }}
               />
+
+              <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 500, margin: '0 0 8px' }}>
+                ¿Qué imagen mostramos en el trabajo?
+              </p>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                {[
+                  { valor: 'logo', label: 'Logo' },
+                  { valor: 'foto', label: 'Mi foto de perfil' },
+                ].map((op) => (
+                  <Chip key={op.valor} activo={imagenEmpresa === op.valor} onClick={() => setImagenEmpresa(op.valor as 'logo' | 'foto')}>
+                    {op.label}
+                  </Chip>
+                ))}
+              </div>
+              {imagenEmpresa === 'logo' ? (
+                <SubirLogo url={logoUrl} onChange={setLogoUrl} />
+              ) : (
+                <p style={{ fontSize: 12.5, color: COLORS.inkSoft, lineHeight: 1.45, margin: '0 0 14px' }}>
+                  {fotoPerfil
+                    ? 'Se va a ver la foto de tu perfil.'
+                    : 'Todavía no subiste una foto de perfil: hasta que la subas, se ve el ícono del rubro.'}
+                </p>
+              )}
 
               <p style={{ fontSize: 12, color: COLORS.inkSoft, fontWeight: 500, margin: '0 0 8px' }}>
                 ¿De qué rubro es? (opcional)

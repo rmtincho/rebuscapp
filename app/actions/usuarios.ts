@@ -133,9 +133,11 @@ export async function eliminarCuenta(confirmacion: string) {
     if (error) console.error('Eliminar cuenta, paso con error:', error.message);
   }
 
-  const { data: fotos } = await admin.storage.from('avatars').list(user.id);
-  if (fotos?.length) {
-    await admin.storage.from('avatars').remove(fotos.map((f) => `${user.id}/${f.name}`));
+  for (const bucket of ['avatars', 'logos']) {
+    const { data: archivos } = await admin.storage.from(bucket).list(user.id);
+    if (archivos?.length) {
+      await admin.storage.from(bucket).remove(archivos.map((f) => `${user.id}/${f.name}`));
+    }
   }
 
   // Borrado "suave" en Auth: no puede volver a entrar y el mail queda libre

@@ -6,9 +6,9 @@ import CompletarDatosForm from '@/components/CompletarDatosForm'
 export default async function CompletarDatosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ volver?: string }>
+  searchParams: Promise<{ volver?: string; para?: string }>
 }) {
-  const { volver } = await searchParams
+  const { volver, para } = await searchParams
   const supabase = await createClient()
 
   const {
@@ -33,6 +33,7 @@ export default async function CompletarDatosPage({
       edadActual={usuario?.edad ?? null}
       dniActual={usuario?.dni ?? ''}
       volverA={volver || '/'}
+      para={para === 'publicar' ? 'publicar' : 'postularse'}
     />
   )
 }

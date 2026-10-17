@@ -6,14 +6,27 @@ import { COLORS } from '@/lib/theme'
 import { PantallaBase, LinkVolver, TituloPagina } from '@/lib/ui'
 import { proximoPedidoPermitido, PEDIDOS_POR_DIA } from '@/lib/limites'
 import { formatearCuando } from '@/lib/fechas'
+import { faltanDatosBasicos } from '@/lib/datosBasicos'
 
-export default async function PublicarPage() {
+export default async function PublicarPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ empresa?: string }>
+}) {
+  const { empresa } = await searchParams
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
+
+  // Para publicar, los mismos datos básicos que para postularse (nombre,
+  // edad y DNI). Al completarlos vuelve acá, con lo que traía.
+  if (await faltanDatosBasicos(user.id)) {
+    const volver = empresa === 'true' ? '/publicar?empresa=true' : '/publicar'
+    redirect(`/completar-datos?para=publicar&volver=${encodeURIComponent(volver)}`)
+  }
 
   // Si ya usó su cupo, se lo decimos antes de que complete el formulario
   const proximo = await proximoPedidoPermitido(user.id)
@@ -38,10 +51,29 @@ export default async function PublicarPage() {
     )
   }
 
-  const { data: grupos } = await supabase
-    .from('categorias_grupo')
-    .select('slug, nombre, categorias ( slug, nombre, requiere_matricula )')
-    .order('nombre')
+  const [{ data: grupos }, { data: yo }, { data: ultimaEmpresa }] = await Promise.all([
+    supabase
+      .from('categorias_grupo')
+      .select('slug, nombre, categorias ( slug, nombre, requiere_matricula )')
+      .order('nombre'),
+    supabase.from('usuarios').select('foto_perfil_url').eq('id', user.id).maybeSingle(),
+    // Si ya publicó como empresa, el nombre, el logo y la imagen elegida
+    // vienen cargados la próxima vez
+    supabase
+      .from('pedidos')
+      .select('nombre_comercio, imagen_empresa, logo_comercio_url')
+      .eq('solicitante_id', user.id)
+      .eq('es_comercio', true)
+      .order('fecha_creacion', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ])
 
-  return <PublicarPedidoForm grupos={grupos ?? []} />
+  return (
+    <PublicarPedidoForm
+      grupos={grupos ?? []}
+      fotoPerfil={yo?.foto_perfil_url ?? null}
+      empresaAnterior={ultimaEmpresa ?? null}
+    />
+  )
 }

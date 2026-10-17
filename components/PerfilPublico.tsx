@@ -8,6 +8,7 @@ import BannerPublicidad from '@/components/BannerPublicidad'
 import DenunciarBloquear from '@/components/DenunciarBloquear'
 import type { Anuncio } from '@/lib/anuncios'
 import { TURNO_TRABAJADOR_ETIQUETA } from '@/lib/turnos'
+import { formatearSueldo } from '@/lib/tarifas'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
@@ -103,6 +104,7 @@ export type PerfilPublicoProps = {
     tipo_busqueda: string | null
     disponibilidad_horaria: string | null
     turno_preferido?: string | null
+    sueldo_pretendido?: number | null
     experiencia: string | null
     sobre_mi: string | null
     tiene_carnet: string | null
@@ -110,6 +112,8 @@ export type PerfilPublicoProps = {
     idiomas_declarados: string[] | null
   } | null
   rubros: string[]
+  // Tarifa de cada rubro, por nombre ('$8.000 por hora'); solo las que cargó
+  tarifas?: Record<string, string>
   calificaciones: Calificacion[]
   hechos: number
   ofrecidosCompletados: number
@@ -123,6 +127,7 @@ export default function PerfilPublico({
   usuario,
   perfil,
   rubros,
+  tarifas = {},
   calificaciones,
   hechos,
   ofrecidosCompletados,
@@ -173,6 +178,10 @@ export default function PerfilPublico({
   if (perfil?.turno_preferido && TURNO_TRABAJADOR_ETIQUETA[perfil.turno_preferido]) {
     datos.push({ valor: TURNO_TRABAJADOR_ETIQUETA[perfil.turno_preferido], etiqueta: 'Horario' })
   }
+  const sueldo = perfil?.tipo_busqueda !== 'changa' ? formatearSueldo(perfil?.sueldo_pretendido) : null
+  if (sueldo) {
+    datos.push({ valor: sueldo, etiqueta: 'Sueldo pretendido' })
+  }
   if (perfil?.nivel_educativo) {
     datos.push({ valor: NIVEL_LABEL[perfil.nivel_educativo] ?? perfil.nivel_educativo, etiqueta: 'Estudios' })
   }
@@ -221,6 +230,7 @@ export default function PerfilPublico({
           nombre={usuario.nombre}
           perfil={perfil}
           rubros={rubros}
+          tarifas={tarifas}
           // Trabajos hechos y ofrecidos ya están en la franja
           datos={datos.slice(2)}
           calificaciones={calificaciones}
@@ -287,6 +297,7 @@ export default function PerfilPublico({
                 {rubros.map((r) => (
                   <span key={r} style={chip}>
                     {r}
+                    {tarifas[r] && <strong style={{ fontWeight: 700 }}> · {tarifas[r]}</strong>}
                   </span>
                 ))}
               </div>
@@ -367,6 +378,7 @@ function PerfilPublicoWeb({
   nombre,
   perfil,
   rubros,
+  tarifas,
   datos,
   calificaciones,
   anuncio,
@@ -375,6 +387,7 @@ function PerfilPublicoWeb({
   nombre: string | null
   perfil: PerfilPublicoProps['perfil']
   rubros: string[]
+  tarifas: Record<string, string>
   datos: { valor: string; etiqueta: string }[]
   calificaciones: Calificacion[]
   anuncio: Anuncio | null
@@ -442,6 +455,7 @@ function PerfilPublicoWeb({
                 {rubros.map((r) => (
                   <span key={r} style={{ fontSize: 14, color: COLORS.ink, background: COLORS.clayTint, padding: '5px 10px', borderRadius: 4 }}>
                     {r}
+                    {tarifas[r] && <strong style={{ fontWeight: 700 }}> · {tarifas[r]}</strong>}
                   </span>
                 ))}
               </div>

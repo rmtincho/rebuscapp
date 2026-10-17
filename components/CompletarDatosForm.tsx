@@ -13,12 +13,15 @@ export default function CompletarDatosForm({
   edadActual,
   dniActual,
   volverA,
+  para = 'postularse',
 }: {
   nombreActual: string
   apellidoActual: string
   edadActual: number | null
   dniActual: string
   volverA: string
+  // Para qué se los pedimos: cambia el texto de arriba
+  para?: 'postularse' | 'publicar'
 }) {
   const router = useRouter()
 
@@ -75,18 +78,23 @@ export default function CompletarDatosForm({
   return (
     <PantallaBase>
       <div className="sin-limite-web" style={{ maxWidth: 420, margin: '0 auto', padding: '28px 20px 60px' }}>
-        <LinkVolver href={volverA} />
+        {/* /publicar manda de vuelta acá mientras falten datos: la flecha va al inicio */}
+        <LinkVolver href={para === 'publicar' ? '/' : volverA} />
         {/* En compu: panel amarillo fijo a la izquierda y el formulario a la derecha */}
         <div className="web-dos-columnas">
         <PanelFormulario
           titulo={'Completá tus datos'}
-          texto={'Los pedimos una sola vez, para que quien publica sepa que sos una persona real.'}
+          texto={
+            para === 'publicar'
+              ? 'Los pedimos una sola vez, para que quien se postule sepa que sos una persona real.'
+              : 'Los pedimos una sola vez, para que quien publica sepa que sos una persona real.'
+          }
           consejos={['Tu edad y tu DNI no se muestran a nadie.', 'Después podés cambiarlos desde tu perfil.']}
         />
         <div style={{ minWidth: 0 }}>
         <div className="solo-movil">
         <TituloPagina>Completá tus datos</TituloPagina>
-        <Subtitulo>Necesitamos esto para que puedas postularte a trabajos. Es una sola vez.</Subtitulo>
+        <Subtitulo>Necesitamos esto para que puedas {para === 'publicar' ? 'publicar un trabajo' : 'postularte a trabajos'}. Es una sola vez.</Subtitulo>
         </div>
         <form onSubmit={guardar} style={{ marginTop: 16 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: COLORS.inkSoft, marginBottom: 8 }}>

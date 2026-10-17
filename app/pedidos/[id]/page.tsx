@@ -10,7 +10,7 @@ import BannerPublicidad from '@/components/BannerPublicidad'
 import { anunciosPara } from '@/lib/anuncios'
 import { proximaPostulacionPermitida, POSTULACIONES_POR_DIA } from '@/lib/limites'
 import { formatearCuando, haceCuanto } from '@/lib/fechas'
-import { iconoParaCategoria } from '@/lib/categoryIcons'
+import IconoTrabajo, { imagenDeTrabajo } from '@/components/IconoTrabajo'
 import {
   caracteristicas,
   tituloDe,
@@ -53,6 +53,8 @@ export default async function DetallePedidoPage({
       tipo_comercio,
       jornada,
       turno,
+      imagen_empresa,
+      logo_comercio_url,
       requisito_nivel_educativo,
       edad_minima,
       requiere_carnet_conducir,
@@ -65,7 +67,7 @@ export default async function DetallePedidoPage({
       estado,
       fecha_creacion,
       categorias ( nombre, grupo_slug ),
-      usuarios!pedidos_solicitante_id_fkey ( nombre, apellido )
+      usuarios!pedidos_solicitante_id_fkey ( nombre, apellido, foto_perfil_url )
     `
     )
     .eq('id', id)
@@ -266,21 +268,7 @@ export default async function DetallePedidoPage({
             }}
           >
             <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-              <span
-                style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: '50%',
-                  background: COLORS.clay,
-                  color: COLORS.ink,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                {iconoParaCategoria(nombreCategoria)}
-              </span>
+              <IconoTrabajo categoria={nombreCategoria} logoUrl={imagenDeTrabajo(pedido as never)} tamano={46} />
               <div style={{ minWidth: 0, flex: 1 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.25, color: COLORS.ink, margin: 0 }}>
                   {tituloDe(pedido.descripcion)}

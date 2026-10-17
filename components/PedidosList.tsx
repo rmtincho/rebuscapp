@@ -2,7 +2,7 @@
 
 import { Fragment, useMemo } from 'react'
 import { COLORS } from '@/lib/theme'
-import { iconoParaCategoria } from '@/lib/categoryIcons'
+import IconoTrabajo, { imagenDeTrabajo } from '@/components/IconoTrabajo'
 import { haceCuanto } from '@/lib/fechas'
 import {
   caracteristicas,
@@ -27,8 +27,10 @@ type Pedido = DatosTrabajo & {
   fecha_creacion: string
   es_comercio: boolean
   nombre_comercio: string | null
+  imagen_empresa?: string | null
+  logo_comercio_url?: string | null
   categorias: { nombre: string; grupo_slug?: string | null } | null
-  usuarios: { nombre: string } | null
+  usuarios: { nombre: string; foto_perfil_url?: string | null } | null
   // Calculado en el servidor: ¿cumplo edad, estudios, carnet e idioma?
   cumple_requisitos?: boolean
 }
@@ -119,21 +121,7 @@ export default function PedidosList({
             }}
           >
             <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: '50%',
-                  background: COLORS.clay,
-                  color: COLORS.ink,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                {iconoParaCategoria(nombreCategoria)}
-              </div>
+              <IconoTrabajo categoria={nombreCategoria} logoUrl={imagenDeTrabajo(pedido)} tamano={40} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ margin: 0, fontWeight: 700, fontSize: 17.5, lineHeight: 1.3 }}>{titulo}</p>
                 <p style={{ margin: '3px 0 0', fontSize: 13.5, color: COLORS.inkSoft, lineHeight: 1.4 }}>

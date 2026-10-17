@@ -32,6 +32,8 @@ export default async function EditarPedidoPage({
       nombre_comercio,
       jornada,
       turno,
+      imagen_empresa,
+      logo_comercio_url,
       requisito_nivel_educativo,
       edad_minima,
       requiere_carnet_conducir,
@@ -58,10 +60,13 @@ export default async function EditarPedidoPage({
     redirect(`/pedidos/${id}`)
   }
 
-  const { data: grupos } = await supabase
-    .from('categorias_grupo')
-    .select('slug, nombre, categorias ( slug, nombre, requiere_matricula )')
-    .order('nombre')
+  const [{ data: grupos }, { data: yo }] = await Promise.all([
+    supabase
+      .from('categorias_grupo')
+      .select('slug, nombre, categorias ( slug, nombre, requiere_matricula )')
+      .order('nombre'),
+    supabase.from('usuarios').select('foto_perfil_url').eq('id', user.id).maybeSingle(),
+  ])
 
-  return <EditarPedidoForm pedido={pedido} grupos={grupos ?? []} />
+  return <EditarPedidoForm pedido={pedido} grupos={grupos ?? []} fotoPerfil={yo?.foto_perfil_url ?? null} />
 }

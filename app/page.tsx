@@ -57,8 +57,10 @@ export default async function HomePage() {
       idioma_requerido,
       jornada,
       turno,
+      imagen_empresa,
+      logo_comercio_url,
       categorias ( nombre, grupo_slug ),
-      usuarios!pedidos_solicitante_id_fkey ( nombre )
+      usuarios!pedidos_solicitante_id_fkey ( nombre, foto_perfil_url )
     `
     )
     .eq('estado', 'abierto')

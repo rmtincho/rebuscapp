@@ -6,7 +6,7 @@ import { TEMA_MODO, type ModoInicio } from '@/lib/modoInicio'
 import { useModo } from '@/components/ModoContext'
 import { COLORS } from '@/lib/theme'
 import { CATEGORIAS_DESTACADAS } from '@/lib/categoriasDestacadas'
-import { iconoParaCategoria } from '@/lib/categoryIcons'
+import IconoTrabajo, { imagenDeTrabajo } from '@/components/IconoTrabajo'
 import { haceCuanto } from '@/lib/fechas'
 import {
   caracteristicas,
@@ -40,6 +40,8 @@ export type PedidoWeb = {
   monto_a_convenir: boolean
   es_comercio: boolean
   nombre_comercio: string | null
+  imagen_empresa?: string | null
+  logo_comercio_url?: string | null
   fecha_creacion?: string | null
   categoria_slug?: string | null
   // 'changa' (puntual), 'fulltime' o 'parttime'
@@ -53,7 +55,7 @@ export type PedidoWeb = {
   // Calculado en el servidor: ¿cumplo edad, estudios, carnet e idioma?
   cumple_requisitos?: boolean
   categorias: { nombre: string; grupo_slug: string | null } | null
-  usuarios: { nombre: string } | null
+  usuarios: { nombre: string; foto_perfil_url?: string | null } | null
 }
 
 export type ActividadWeb = {
@@ -606,20 +608,7 @@ function FilaTrabajo({ p, rubro }: { p: PedidoWeb; rubro?: string }) {
         color: COLORS.ink,
       }}
     >
-      <span
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          background: COLORS.clay,
-          color: COLORS.ink,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {iconoParaCategoria(cat)}
-      </span>
+      <IconoTrabajo categoria={cat} logoUrl={imagenDeTrabajo(p)} tamano={44} />
 
       <div style={{ minWidth: 0 }}>
         <p style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.35, margin: 0 }}>{titulo}</p>

@@ -19,7 +19,7 @@ export default async function PerfilPage() {
   const { data: perfil } = await supabase
     .from('perfiles_prestador')
     .select(
-      'nivel_educativo, tipo_busqueda, disponibilidad_horaria, turno_preferido, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
+      'nivel_educativo, tipo_busqueda, disponibilidad_horaria, turno_preferido, sueldo_pretendido, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
     )
     .eq('usuario_id', user.id)
     .maybeSingle()
@@ -50,7 +50,7 @@ export default async function PerfilPage() {
 
   const { data: categoriasInteres } = await supabase
     .from('prestador_categorias')
-    .select('categoria_slug, categorias ( nombre )')
+    .select('categoria_slug, tarifa, tarifa_unidad, categorias ( nombre )')
     .eq('prestador_id', user.id)
 
   // Tu actividad: todo filtrado por el usuario de la sesión. Con el
@@ -138,6 +138,8 @@ export default async function PerfilPage() {
     slug: ci.categoria_slug,
     nombre: ci.categorias?.nombre ?? ci.categoria_slug,
     grupoNombre: gruposMapa[ci.categoria_slug] ?? '',
+    tarifa: ci.tarifa ?? null,
+    tarifaUnidad: ci.tarifa_unidad ?? null,
   }))
 
   return (
