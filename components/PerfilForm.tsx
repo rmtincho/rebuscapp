@@ -446,6 +446,9 @@ export default function PerfilForm({
           <TituloPagina>Tu perfil</TituloPagina>
           <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
 
+          {/* Lo primero, antes que la tarjeta: si no, queda abajo de todo y no se ve */}
+          {contrasenaArriba && <ContrasenaCuenta destacado />}
+
           <TarjetaPerfil
             nombre={nombreTarjeta}
             fotoUrl={fotoUrl}
@@ -493,7 +496,11 @@ export default function PerfilForm({
 
         <div style={{ minWidth: 0 }}>
 
-        {contrasenaArriba && <ContrasenaCuenta destacado />}
+        {contrasenaArriba && (
+          <div className="solo-escritorio">
+            <ContrasenaCuenta destacado />
+          </div>
+        )}
 
         <form onSubmit={guardar} className="perfil-form">
           {/* ——— Datos personales ——— */}

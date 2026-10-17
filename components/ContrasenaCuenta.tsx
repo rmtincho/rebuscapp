@@ -10,7 +10,7 @@ import { avisarContrasenaCreada } from '@/lib/useContrasena'
 // el código; la contraseña es un atajo para los que ya están dados de alta.
 // Supabase no dice si la cuenta ya tiene contraseña, así que el texto sirve
 // para los dos casos. Con `destacado` (la cuenta todavía no tiene: lo dice
-// useSinContrasena) va primero en el perfil, en amarillo y ya abierto.
+// useSinContrasena) va primero en el perfil, en amarillo lleno y ya abierto.
 export default function ContrasenaCuenta({ destacado = false }: { destacado?: boolean }) {
   const [abierto, setAbierto] = useState(destacado)
   const [nueva, setNueva] = useState('')
@@ -77,17 +77,22 @@ export default function ContrasenaCuenta({ destacado = false }: { destacado?: bo
       )}
       <div
         style={{
-          background: destacado ? COLORS.clayTint : COLORS.card,
-          border: destacado ? `1.5px solid ${COLORS.clay}` : 'none',
-          borderRadius: destacado ? 10 : 16,
-          boxShadow: destacado ? 'none' : COLORS.cardShadow,
-          padding: destacado ? '16px 18px' : '14px 16px',
+          background: destacado ? COLORS.clay : COLORS.card,
+          borderRadius: destacado ? 20 : 16,
+          boxShadow: COLORS.cardShadow,
+          padding: destacado ? '18px 18px' : '14px 16px',
         }}
       >
         {destacado && !listo && (
           <>
-            <p style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: COLORS.ink }}>Creá tu contraseña</p>
-            <p style={{ fontSize: 13.5, margin: '0 0 14px', color: COLORS.ink, lineHeight: 1.45 }}>
+            <p style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 18, fontWeight: 700, margin: '0 0 6px', color: COLORS.onClay }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20, flexShrink: 0 }}>
+                <rect x="4" y="11" width="16" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+              Creá tu contraseña
+            </p>
+            <p style={{ fontSize: 14, margin: '0 0 14px', color: COLORS.onClay, lineHeight: 1.45 }}>
               Todavía entrás con el código que te mandamos por mail. Con una contraseña entrás directo, sin esperarlo.
             </p>
           </>
@@ -133,7 +138,18 @@ export default function ContrasenaCuenta({ destacado = false }: { destacado?: bo
               <button
                 type="submit"
                 disabled={cargando}
-                style={{ flex: 1, padding: 11, fontSize: 14, fontWeight: 700, borderRadius: 100, border: 'none', background: COLORS.clay, color: COLORS.onClay, cursor: 'pointer' }}
+                style={{
+                  flex: 1,
+                  padding: 11,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  borderRadius: 100,
+                  border: 'none',
+                  // Sobre el amarillo, el botón va oscuro para que se vea
+                  background: destacado ? COLORS.dark : COLORS.clay,
+                  color: destacado ? COLORS.onDark : COLORS.onClay,
+                  cursor: 'pointer',
+                }}
               >
                 {cargando ? 'Guardando...' : 'Guardar contraseña'}
               </button>
@@ -145,7 +161,7 @@ export default function ContrasenaCuenta({ destacado = false }: { destacado?: bo
                   setRepetida('')
                   setError(null)
                 }}
-                style={{ padding: '11px 16px', fontSize: 14, fontWeight: 500, borderRadius: 100, border: `1.5px solid ${COLORS.line}`, background: 'none', color: COLORS.ink, cursor: 'pointer' }}
+                style={{ padding: '11px 16px', fontSize: 14, fontWeight: 500, borderRadius: 100, border: `1.5px solid ${destacado ? COLORS.onClay : COLORS.line}`, background: 'none', color: destacado ? COLORS.onClay : COLORS.ink, cursor: 'pointer' }}
               >
                 Cancelar
               </button>
