@@ -9,8 +9,9 @@ import { avisarContrasenaCreada } from '@/lib/useContrasena'
 // contraseña sin esperar el código por mail. La cuenta se crea siempre con
 // el código; la contraseña es un atajo para los que ya están dados de alta.
 // Supabase no dice si la cuenta ya tiene contraseña, así que el texto sirve
-// para los dos casos. Con `destacado` (la cuenta todavía no tiene: lo dice
-// useSinContrasena) va primero en el perfil, en amarillo lleno y ya abierto.
+// para los dos casos. Va siempre primero en el perfil; con `destacado` (la
+// cuenta todavía no tiene: lo dice useSinContrasena), en amarillo lleno y
+// ya abierto.
 export default function ContrasenaCuenta({ destacado = false }: { destacado?: boolean }) {
   const [abierto, setAbierto] = useState(destacado)
   const [nueva, setNueva] = useState('')
@@ -69,7 +70,7 @@ export default function ContrasenaCuenta({ destacado = false }: { destacado?: bo
   }
 
   return (
-    <div style={{ marginTop: destacado ? 0 : 28, marginBottom: destacado ? 28 : 0 }}>
+    <div style={{ marginBottom: 28 }}>
       {!destacado && (
         <p style={{ fontSize: 11.5, fontWeight: 700, color: COLORS.inkSoft, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
           Contraseña

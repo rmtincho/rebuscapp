@@ -71,18 +71,27 @@ export default function CabeceraModo({
             {cantidadTrabajos === 1 ? '1 trabajo abierto' : `${cantidadTrabajos} trabajos abiertos`} · postulate y chateá
           </p>
 
+          {/* Botón oscuro sobre el amarillo, para que no se pase por alto */}
           <a
-            href="/perfil"
+            href="/perfil#trabajador"
             style={{
-              display: 'block',
-              marginTop: 14,
-              fontSize: 13,
-              fontWeight: 500,
-              color: tema.texto,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              marginTop: 16,
+              padding: '14px 18px',
+              borderRadius: 100,
+              background: COLORS.dark,
+              color: COLORS.onDark,
+              fontSize: 15.5,
+              fontWeight: 700,
+              lineHeight: 1.3,
               textDecoration: 'none',
             }}
           >
-            Completá tu perfil y promocionate como trabajador →
+            Completá tu perfil y promocionate como trabajador
+            <span aria-hidden style={{ color: COLORS.clay, fontSize: 18, flexShrink: 0 }}>→</span>
           </a>
         </>
       ) : (

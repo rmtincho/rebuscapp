@@ -480,7 +480,8 @@ export default function PerfilForm({
           <Subtitulo>Así te ven los demás, tanto si publicás trabajos como si te postulás.</Subtitulo>
 
           {/* Lo primero, antes que la tarjeta: si no, queda abajo de todo y no se ve */}
-          {contrasenaArriba && <ContrasenaCuenta destacado />}
+          {/* key: al saberse que falta, se vuelve a montar ya abierta */}
+          <ContrasenaCuenta key={String(contrasenaArriba)} destacado={contrasenaArriba} />
 
           <TarjetaPerfil
             nombre={nombreTarjeta}
@@ -529,11 +530,9 @@ export default function PerfilForm({
 
         <div style={{ minWidth: 0 }}>
 
-        {contrasenaArriba && (
-          <div className="solo-escritorio">
-            <ContrasenaCuenta destacado />
-          </div>
-        )}
+        <div className="solo-escritorio">
+          <ContrasenaCuenta key={String(contrasenaArriba)} destacado={contrasenaArriba} />
+        </div>
 
         <form onSubmit={guardar} className="perfil-form">
           {/* ——— Datos personales ——— */}
@@ -959,7 +958,6 @@ export default function PerfilForm({
           </BotonPrincipal>
         </form>
 
-        {!contrasenaArriba && <ContrasenaCuenta />}
 
         <ListaBloqueados personas={bloqueados} />
 
