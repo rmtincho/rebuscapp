@@ -44,6 +44,7 @@ export type PedidoWeb = {
   categoria_slug?: string | null
   // 'changa' (puntual), 'fulltime' o 'parttime'
   jornada?: string | null
+  turno?: string | null
   edad_minima?: number | null
   requisito_nivel_educativo?: string | null
   requiere_carnet_conducir?: boolean | null

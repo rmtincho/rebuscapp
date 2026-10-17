@@ -21,6 +21,7 @@ import BottomNav from '@/components/BottomNav'
 import CategoriaPicker from '@/components/CategoriaPicker'
 import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
+import { TURNOS_TRABAJO } from '@/lib/turnos'
 import { notificarPedidoEditado } from '@/app/actions/notificaciones'
 
 type CategoriaT = { slug: string; nombre: string; requiere_matricula: boolean }
@@ -38,6 +39,7 @@ type Pedido = {
   es_comercio: boolean
   nombre_comercio: string | null
   jornada: 'changa' | 'fulltime' | 'parttime'
+  turno: string | null
   requisito_nivel_educativo: string | null
   edad_minima: number | null
   requiere_carnet_conducir: boolean
@@ -81,6 +83,8 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
   const [esComercio, setEsComercio] = useState(pedido.es_comercio)
   const [nombreComercio, setNombreComercio] = useState(pedido.nombre_comercio ?? '')
   const [jornada, setJornada] = useState<'changa' | 'fulltime' | 'parttime'>(pedido.jornada ?? 'changa')
+  // '' = sin especificar
+  const [turno, setTurno] = useState(pedido.turno ?? '')
   const [nivelRequerido, setNivelRequerido] = useState(pedido.requisito_nivel_educativo ?? '')
   const [edadMinima, setEdadMinima] = useState(pedido.edad_minima ? String(pedido.edad_minima) : '')
   const [requiereCarnet, setRequiereCarnet] = useState(pedido.requiere_carnet_conducir)
@@ -179,6 +183,7 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
         es_comercio: esComercio,
         nombre_comercio: esComercio ? nombreComercio : null,
         jornada: esComercio ? jornada : 'changa',
+        turno: turno === 'rotativo' && (!esComercio || jornada === 'changa') ? null : turno || null,
         requisito_nivel_educativo: nivelRequerido || null,
         edad_minima: edadMinima ? Number(edadMinima) : null,
         requiere_carnet_conducir: requiereCarnet,
@@ -297,6 +302,17 @@ export default function EditarPedidoForm({ pedido, grupos }: { pedido: Pedido; g
               ))}
             </div>
           )}
+
+          <Etiqueta>Horario (opcional)</Etiqueta>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+            {[{ valor: '', label: 'Indistinto' }, ...TURNOS_TRABAJO]
+              .filter((op) => op.valor !== 'rotativo' || jornada !== 'changa')
+              .map((op) => (
+                <Chip key={op.valor || 'indistinto'} activo={turno === op.valor} onClick={() => setTurno(op.valor)}>
+                  {op.label}
+                </Chip>
+              ))}
+          </div>
 
           <label style={{ ...checkboxRowStyle, marginBottom: esComercio ? 12 : 20 }}>
             <input type="checkbox" checked={esComercio} onChange={(e) => setEsComercio(e.target.checked)} />

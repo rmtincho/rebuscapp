@@ -56,6 +56,7 @@ export default async function HomePage() {
       categoria_carnet_requerida,
       idioma_requerido,
       jornada,
+      turno,
       categorias ( nombre, grupo_slug ),
       usuarios!pedidos_solicitante_id_fkey ( nombre )
     `

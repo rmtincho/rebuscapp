@@ -19,7 +19,7 @@ export default async function PerfilPage() {
   const { data: perfil } = await supabase
     .from('perfiles_prestador')
     .select(
-      'nivel_educativo, tipo_busqueda, disponibilidad_horaria, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
+      'nivel_educativo, tipo_busqueda, disponibilidad_horaria, turno_preferido, experiencia, sobre_mi, tiene_carnet, carnets_declarados, idiomas_declarados'
     )
     .eq('usuario_id', user.id)
     .maybeSingle()

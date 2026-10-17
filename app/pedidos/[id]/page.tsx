@@ -52,6 +52,7 @@ export default async function DetallePedidoPage({
       marca_vehiculo,
       tipo_comercio,
       jornada,
+      turno,
       requisito_nivel_educativo,
       edad_minima,
       requiere_carnet_conducir,

@@ -7,6 +7,7 @@ import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import BannerPublicidad from '@/components/BannerPublicidad'
 import DenunciarBloquear from '@/components/DenunciarBloquear'
 import type { Anuncio } from '@/lib/anuncios'
+import { TURNO_TRABAJADOR_ETIQUETA } from '@/lib/turnos'
 
 // Perfil público de una persona: lo que ven los demás (desde postulantes,
 // el listado de trabajadores o un chat). Arriba la tarjeta amarilla con
@@ -101,6 +102,7 @@ export type PerfilPublicoProps = {
     nivel_educativo: string | null
     tipo_busqueda: string | null
     disponibilidad_horaria: string | null
+    turno_preferido?: string | null
     experiencia: string | null
     sobre_mi: string | null
     tiene_carnet: string | null
@@ -136,9 +138,12 @@ export default function PerfilPublico({
   const nombreCompleto = usuario.apellido ? `${usuario.nombre} ${usuario.apellido}` : usuario.nombre
   const resumen = lineaResumen({
     rubros,
-    horario: perfil?.disponibilidad_horaria
-      ? DISPONIBILIDAD_LABEL[perfil.disponibilidad_horaria] ?? perfil.disponibilidad_horaria
-      : null,
+    horario: [
+      perfil?.disponibilidad_horaria && (DISPONIBILIDAD_LABEL[perfil.disponibilidad_horaria] ?? perfil.disponibilidad_horaria),
+      perfil?.turno_preferido && TURNO_TRABAJADOR_ETIQUETA[perfil.turno_preferido],
+    ]
+      .filter(Boolean)
+      .join(' · ') || null,
     tieneCarnet: perfil?.tiene_carnet,
     clasesCarnet: perfil?.carnets_declarados,
     idiomas: perfil?.idiomas_declarados,
@@ -164,6 +169,9 @@ export default function PerfilPublico({
       valor: DISPONIBILIDAD_LABEL[perfil.disponibilidad_horaria] ?? perfil.disponibilidad_horaria,
       etiqueta: 'Disponibilidad',
     })
+  }
+  if (perfil?.turno_preferido && TURNO_TRABAJADOR_ETIQUETA[perfil.turno_preferido]) {
+    datos.push({ valor: TURNO_TRABAJADOR_ETIQUETA[perfil.turno_preferido], etiqueta: 'Horario' })
   }
   if (perfil?.nivel_educativo) {
     datos.push({ valor: NIVEL_LABEL[perfil.nivel_educativo] ?? perfil.nivel_educativo, etiqueta: 'Estudios' })

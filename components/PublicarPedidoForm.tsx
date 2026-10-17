@@ -23,6 +23,7 @@ import { iconoParaCategoria } from '@/lib/categoryIcons'
 import { notificarPedidoCerca } from '@/app/actions/notificaciones'
 import { sugerirCategorias, type Sugerencia } from '@/lib/categorySuggest'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
+import { TURNOS_TRABAJO } from '@/lib/turnos'
 
 type CategoriaT = { slug: string; nombre: string; requiere_matricula: boolean }
 type Grupo = { slug: string; nombre: string; categorias: CategoriaT[] }
@@ -60,6 +61,8 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
   const [esComercio, setEsComercio] = useState(() => searchParams.get('empresa') === 'true')
   const [nombreComercio, setNombreComercio] = useState('')
   const [jornada, setJornada] = useState<'changa' | 'fulltime' | 'parttime'>('changa')
+  // '' = sin especificar
+  const [turno, setTurno] = useState('')
   const [nivelRequerido, setNivelRequerido] = useState('')
   // Edad mínima: '' = sin requisito
   const [edadMinima, setEdadMinima] = useState('')
@@ -186,6 +189,7 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
         es_comercio: esComercio,
         nombre_comercio: esComercio ? nombreComercio : null,
         jornada: esComercio ? jornada : 'changa',
+        turno: turno === 'rotativo' && (!esComercio || jornada === 'changa') ? null : turno || null,
         requisito_nivel_educativo: nivelRequerido || null,
         edad_minima: edadMinima ? Number(edadMinima) : null,
         requiere_carnet_conducir: requiereCarnet,
@@ -303,6 +307,17 @@ export default function PublicarPedidoForm({ grupos }: { grupos: Grupo[] }) {
               ))}
             </div>
           )}
+
+          <Etiqueta>Horario (opcional)</Etiqueta>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+            {[{ valor: '', label: 'Indistinto' }, ...TURNOS_TRABAJO]
+              .filter((op) => op.valor !== 'rotativo' || jornada !== 'changa')
+              .map((op) => (
+                <Chip key={op.valor || 'indistinto'} activo={turno === op.valor} onClick={() => setTurno(op.valor)}>
+                  {op.label}
+                </Chip>
+              ))}
+          </div>
 
           <label style={{ ...checkboxRowStyle, marginBottom: esComercio ? 12 : 20 }}>
             <input type="checkbox" checked={esComercio} onChange={(e) => setEsComercio(e.target.checked)} />

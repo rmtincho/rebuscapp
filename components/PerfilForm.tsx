@@ -30,11 +30,13 @@ import { useSinContrasena } from '@/lib/useContrasena'
 import HeroPerfil, { BotonHero } from '@/components/HeroPerfil'
 import { CLASES_CARNET, IDIOMAS_COMUNES } from '@/lib/carnetsIdiomas'
 import { guardarDatosPersonales } from '@/app/actions/usuarios'
+import { TURNOS_TRABAJADOR } from '@/lib/turnos'
 
 type Perfil = {
   nivel_educativo: string | null
   tipo_busqueda: string | null
   disponibilidad_horaria: string | null
+  turno_preferido?: string | null
   experiencia: string | null
   sobre_mi: string | null
   tiene_carnet: 'si' | 'no' | null
@@ -131,6 +133,7 @@ export default function PerfilForm({
   const [nivelEducativo, setNivelEducativo] = useState(perfilExistente?.nivel_educativo ?? '')
   const [tipoBusqueda, setTipoBusqueda] = useState(perfilExistente?.tipo_busqueda ?? 'changa')
   const [disponibilidad, setDisponibilidad] = useState(perfilExistente?.disponibilidad_horaria ?? '')
+  const [turnoPreferido, setTurnoPreferido] = useState(perfilExistente?.turno_preferido ?? '')
   const [sobreMi, setSobreMi] = useState(perfilExistente?.sobre_mi ?? '')
   const [experiencia, setExperiencia] = useState(perfilExistente?.experiencia ?? '')
   const [categoriasInteres, setCategoriasInteres] = useState<CategoriaInteres[]>(categoriasInteresIniciales)
@@ -186,6 +189,7 @@ export default function PerfilForm({
     categoriasInteres.length > 0 ||
     nivelEducativo !== '' ||
     disponibilidad !== '' ||
+    turnoPreferido !== '' ||
     sobreMi.trim() !== '' ||
     experiencia.trim() !== '' ||
     tieneCarnet !== '' ||
@@ -198,7 +202,13 @@ export default function PerfilForm({
   const nombreTarjeta = `${nombre} ${apellido}`.trim() || 'Tu nombre'
   const resumen = lineaResumen({
     rubros: categoriasInteres.map((c) => c.nombre),
-    horario: DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
+    horario:
+      [
+        DISPONIBILIDADES.find((d) => d.valor === disponibilidad)?.label,
+        TURNOS_TRABAJADOR.find((t) => t.valor === turnoPreferido)?.label,
+      ]
+        .filter(Boolean)
+        .join(' · ') || undefined,
     tieneCarnet,
     clasesCarnet: carnetsDeclarados,
     idiomas: idiomasDeclarados,
@@ -354,6 +364,7 @@ export default function PerfilForm({
           nivel_educativo: nivelEducativo || null,
           tipo_busqueda: tipoBusqueda,
           disponibilidad_horaria: disponibilidad || null,
+          turno_preferido: turnoPreferido || null,
           sobre_mi: sobreMi || null,
           experiencia: experiencia || null,
           porcentaje_perfil_completo: porcentajeCompleto,
@@ -689,6 +700,9 @@ export default function PerfilForm({
 
               <TituloSeccion>Disponibilidad horaria</TituloSeccion>
               {chipRow(DISPONIBILIDADES, disponibilidad, setDisponibilidad)}
+
+              <TituloSeccion>¿De día o de noche?</TituloSeccion>
+              {chipRow(TURNOS_TRABAJADOR, turnoPreferido, setTurnoPreferido)}
 
               <TituloSeccion>Nivel educativo</TituloSeccion>
               {chipRow(NIVELES, nivelEducativo, setNivelEducativo)}

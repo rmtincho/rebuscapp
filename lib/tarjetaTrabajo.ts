@@ -2,9 +2,12 @@
 // la web (InicioWeb): el título y las etiquetas de características con sus
 // colores.
 
+import { TURNO_TRABAJO_ETIQUETA } from '@/lib/turnos'
+
 export type DatosTrabajo = {
   es_comercio: boolean
   jornada?: string | null
+  turno?: string | null
   edad_minima?: number | null
   requisito_nivel_educativo?: string | null
   requiere_carnet_conducir?: boolean | null
@@ -51,6 +54,7 @@ export const COLOR_PRECIO = { fondo: '#2563EB', texto: '#FFFFFF' }
 export function caracteristicas(p: DatosTrabajo): { texto: string; tipo: keyof typeof COLOR_CARACTERISTICA }[] {
   const lista: ({ texto: string | null | undefined; tipo: keyof typeof COLOR_CARACTERISTICA })[] = [
     { texto: p.jornada ? JORNADA[p.jornada] : null, tipo: 'jornada' },
+    { texto: p.turno ? TURNO_TRABAJO_ETIQUETA[p.turno] : null, tipo: 'jornada' },
     { texto: p.es_comercio ? 'Comercio' : null, tipo: 'comercio' },
     { texto: p.edad_minima ? `Desde ${p.edad_minima} años` : null, tipo: 'requisito' },
     { texto: p.requisito_nivel_educativo ? NIVEL[p.requisito_nivel_educativo] ?? p.requisito_nivel_educativo : null, tipo: 'requisito' },
