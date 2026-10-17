@@ -652,7 +652,8 @@ export default function PerfilForm({
 
             <div className="perfil-bloque" style={tarjeta}>
               <TituloSeccion>¿En qué querés trabajar?</TituloSeccion>
-              <p style={{ ...ayuda, marginBottom: 12 }}>
+              {/* Más grande que el resto de las ayudas: es el motivo para elegir categorías */}
+              <p style={{ ...ayuda, fontSize: 14.5, fontWeight: 500, color: COLORS.ink, marginBottom: 14 }}>
                 Te avisamos cuando se publique un trabajo de estas categorías, y así te encuentran.
               </p>
 
