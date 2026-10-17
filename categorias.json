@@ -169,6 +169,10 @@
         { "nombre": "Filmación de eventos", "slug": "filmacion-eventos", "requiere_matricula": false },
         { "nombre": "Animación infantil", "slug": "animacion-infantil", "requiere_matricula": false },
         { "nombre": "Payasos y magia", "slug": "payasos-magia", "requiere_matricula": false },
+        { "nombre": "Animación de fiestas (casamientos, 15, hora loca)", "slug": "animacion-fiestas", "requiere_matricula": false },
+        { "nombre": "Conductor/a / maestro/a de ceremonias", "slug": "conductor-eventos", "requiere_matricula": false },
+        { "nombre": "Locutor/a / voz en off", "slug": "locutor", "requiere_matricula": false },
+        { "nombre": "Músicos y cantantes en vivo", "slug": "musica-en-vivo", "requiere_matricula": false },
         { "nombre": "Organización completa de eventos", "slug": "organizacion-eventos", "requiere_matricula": false },
         { "nombre": "DJ / sonido", "slug": "dj-sonido", "requiere_matricula": false },
         { "nombre": "Decoración de eventos", "slug": "decoracion-eventos", "requiere_matricula": false },
@@ -326,6 +330,20 @@
         { "nombre": "Página web o tienda online", "slug": "pagina-web-tienda", "requiere_matricula": false },
         { "nombre": "Programador/a de PLC / automatización", "slug": "programador-plc", "requiere_matricula": false },
         { "nombre": "Community manager / redes sociales", "slug": "community-manager", "requiere_matricula": false }
+      ]
+    },
+    {
+      "grupo": "Modelos y promoción",
+      "slug_grupo": "modelos",
+      "items": [
+        { "nombre": "Modelo publicitario/a (fotos y video)", "slug": "modelo-publicitario", "requiere_matricula": false },
+        { "nombre": "Modelo de catálogo y ropa", "slug": "modelo-catalogo", "requiere_matricula": false },
+        { "nombre": "Modelo de pasarela / desfiles", "slug": "modelo-pasarela", "requiere_matricula": false },
+        { "nombre": "Modelo de manos y pies", "slug": "modelo-manos-pies", "requiere_matricula": false },
+        { "nombre": "Modelo de rostro y cabello", "slug": "modelo-rostro-cabello", "requiere_matricula": false },
+        { "nombre": "Modelo vivo para dibujo y arte", "slug": "modelo-vivo-arte", "requiere_matricula": false },
+        { "nombre": "Promotor/a / azafata de eventos", "slug": "promotor-azafata", "requiere_matricula": false },
+        { "nombre": "Extra / figurante (TV, cine, publicidad)", "slug": "extra-figurante", "requiere_matricula": false }
       ]
     },
     {

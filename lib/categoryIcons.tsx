@@ -138,6 +138,16 @@ const ICONOS: { claves: string[]; icono: ReactElement }[] = [
     ),
   },
   {
+    // Antes que belleza y eventos: "Promotor/a de eventos" o "rostro y cabello" no son de esos rubros
+    claves: ['modelo', 'promotor', 'azafata', 'figurante'],
+    icono: (
+      <svg {...props}>
+        <circle cx="12" cy="7" r="4" />
+        <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+      </svg>
+    ),
+  },
+  {
     claves: ['peluquer', 'manicura', 'maquillaje', 'masaje', 'estética'],
     icono: (
       <svg {...props}>
@@ -148,7 +158,7 @@ const ICONOS: { claves: string[]; icono: ReactElement }[] = [
     ),
   },
   {
-    claves: ['mozo', 'bartender', 'evento', 'fotograf', 'filmac', 'animac', 'dj', 'decorac', 'gastronom', 'pasteler', 'cocinero'],
+    claves: ['mozo', 'bartender', 'evento', 'fotograf', 'filmac', 'animac', 'dj', 'decorac', 'gastronom', 'pasteler', 'cocinero', 'ceremonias', 'locutor', 'músicos'],
     icono: (
       <svg {...props}>
         <path d="M5.8 11.3 2 22l10.7-3.8M4 3h16M4 3c0 6 4 9 4 9M20 3c0 6-4 9-4 9M9 12h6" />
